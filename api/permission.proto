@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package permission;
+
+// Define the service
+service Permission {
+  rpc CheckPermission (PermissionRequest) returns (PermissionResponse);
+}
+
+// Define the messages
+message PermissionRequest {
+  string user_id = 1;
+  string resource = 2;
+  string action = 3;
+}
+
+message PermissionResponse {
+  bool allowed = 1;
+}
