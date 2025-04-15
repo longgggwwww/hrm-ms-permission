@@ -6,14 +6,20 @@ option go_package = "github.com/longgggwww/hrm-permission/api";
 
 // Define the service
 service Role {
-  rpc GetRoles (GetRolesRequest) returns (GetRolesResponse);
+  rpc GetRoles () returns (GetRolesResponse);
   rpc GetRoleById (GetRoleByIdRequest) returns (GetRoleByIdResponse);
   rpc CreateRole (CreateRoleRequest) returns (CreateRoleResponse);
   rpc UpdateRole (UpdateRoleRequest) returns (UpdateRoleResponse);
   rpc DeleteRole (DeleteRoleRequest) returns (DeleteRoleResponse);
 }
 
-message GetRolesRequest {}
+message Role {
+  string id = 1;
+  string name = 2;
+  string color = 3;
+  string description = 4;
+  repeated string permissions = 5; // Thêm trường permissions
+}
 
 message GetRolesResponse {
   repeated Role roles = 1;
@@ -25,14 +31,6 @@ message GetRoleByIdRequest {
 
 message GetRoleByIdResponse {
   Role role = 1;
-}
-
-message Role {
-  string id = 1;
-  string name = 2;
-  string color = 3;
-  string description = 4;
-  repeated string permissions = 5; // Thêm trường permissions
 }
 
 message CreateRoleRequest {
