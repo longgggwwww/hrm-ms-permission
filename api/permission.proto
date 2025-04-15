@@ -2,18 +2,66 @@ syntax = "proto3";
 
 package permission;
 
+option go_package = "github.com/longgggwww/hrm-permission/api";
+
 // Define the service
 service Permission {
-  rpc CheckPermission (PermissionRequest) returns (PermissionResponse);
+  rpc GetRoles (GetRolesRequest) returns (GetRolesResponse);
+  rpc GetRoleById (GetRoleByIdRequest) returns (GetRoleByIdResponse);
+  rpc CreateRole (CreateRoleRequest) returns (CreateRoleResponse);
+  rpc UpdateRole (UpdateRoleRequest) returns (UpdateRoleResponse);
+  rpc DeleteRole (DeleteRoleRequest) returns (DeleteRoleResponse);
 }
 
-// Define the messages
-message PermissionRequest {
-  string user_id = 1;
-  string resource = 2;
-  string action = 3;
+message GetRolesRequest {}
+
+message GetRolesResponse {
+  repeated Role roles = 1;
 }
 
-message PermissionResponse {
-  bool allowed = 1;
+message GetRoleByIdRequest {
+  string id = 1;
+}
+
+message GetRoleByIdResponse {
+  Role role = 1;
+}
+
+message Role {
+  string id = 1;
+  string name = 2;
+  string color = 3;
+  string description = 4;
+  repeated string permissions = 5; // Thêm trường permissions
+}
+
+message CreateRoleRequest {
+  string name = 1;
+  string color = 2;
+  string description = 3;
+  repeated string permissions = 4; // Thêm trường permissions
+}
+
+message CreateRoleResponse {
+  Role role = 1;
+}
+
+message UpdateRoleRequest {
+  string id = 1;
+  string name = 2;
+  string color = 3;
+  string description = 4;
+  repeated string permissions = 5; // Thêm trường permissions
+}
+
+message UpdateRoleResponse {
+  Role role = 1;
+}
+
+message DeleteRoleRequest {
+  string id = 1;
+}
+
+message DeleteRoleResponse {
+  string message = 1;
 }
