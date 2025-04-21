@@ -1,68 +1,55 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/longgggwww/hrm-ms-permission/ent"
 	"github.com/longgggwww/hrm-ms-permission/ent/proto/entpb"
+	"github.com/longgggwww/hrm-ms-permission/internal/handlers"
 	"google.golang.org/grpc"
 )
 
-func main() {
-	// Initialize an ent client.
-	client, err := ent.Open("postgres", "host=localhost port=5432 user=root dbname=permission password=123456 sslmode=disable")
-	if err != nil {
-		log.Fatalf("failed opening connection to postgres: %v", err)
-	}
-	defer client.Close()
-	// Run the auto migration tool.
-	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
-	}
+func startGRPCServer(client *ent.Client) {
+	perm := entpb.NewPermService(client)
+	permGroup := entpb.NewPermGroupService(client)
 
-	// Run the migration tool (creating tables, etc).
-	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
-	}
-
-	// permGroup := client.PermGroup.Create().
-	// 	SetCode("PERM_GROUP_1").
-	// 	SetName("Permission Group 1").SaveX(ctx)
-
-	// fmt.Println(permGroup)
-
-	// perm := client.Perm.Create().
-	// 	SetCode("PERM_1").
-	// 	SetName("Permission 1").
-	// 	SetDescription("This is permission 1").SetGroupID(permGroup.ID).SaveX(ctx)
-
-	// fmt.Println(perm)
-
-	// Initialize the generated User service.
-	svc := entpb.NewPermService(client)
-	svcGroup := entpb.NewPermGroupService(client)
-
-	// Create a new gRPC server (you can wire multiple services to a single server).
 	server := grpc.NewServer()
-
 	fmt.Println("Starting gRPC server on port 5000...")
 
-	// Register the User service with the server.
-	entpb.RegisterPermServiceServer(server, svc)
-	entpb.RegisterPermGroupServiceServer(server, svcGroup)
+	entpb.RegisterPermServiceServer(server, perm)
+	entpb.RegisterPermGroupServiceServer(server, permGroup)
 
-	// Open port 5000 for listening to traffic.
 	lis, err := net.Listen("tcp", ":5000")
 	if err != nil {
 		log.Fatalf("failed listening: %s", err)
 	}
 
-	// Listen for traffic indefinitely.
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("server ended: %s", err)
 	}
+}
+
+func startHTTPServer(client *ent.Client) {
+	r := gin.Default()
+
+	r.GET("/perms", handlers.GetPermsHandler(client))
+
+	if err := r.Run(":8080"); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
+}
+
+func main() {
+	client, err := ent.Open("postgres", "host=localhost port=5433 user=root dbname=permission password=123456 sslmode=disable")
+	if err != nil {
+		log.Fatalf("failed opening connection to postgres: %v", err)
+	}
+	defer client.Close()
+
+	go startHTTPServer(client)
+	startGRPCServer(client)
 }

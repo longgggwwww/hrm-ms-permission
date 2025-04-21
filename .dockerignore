@@ -1,51 +1,5 @@
-# Ignore build artifacts
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-*.test
-*.out
-*.log
-*.tmp
-
-# Ignore directories
-vendor/
-node_modules/
-
 # Ignore IDE/editor specific files
-.idea/
-.vscode/
 *.swp
 
 # Ignore environment files
 .env
-
-# Ignore Docker artifacts
-distroless/
-
-# Ignore Go specific files
-*.a
-*.o
-*.cgo
-*.h
-*.swp
-
-# Ignore generated files by ent
-ent/schema.go
-ent/generate.go
-ent/ent.go
-ent/enttest/enttest.go
-ent/migrate/schema.go
-ent/migrate/migrate.go
-ent/hook/hook.go
-ent/runtime/runtime.go
-ent/permission/permission.go
-ent/permission/where.go
-ent/predicate/predicate.go
-ent/tx.go
-ent/permission_create.go
-ent/permission_delete.go
-ent/permission_query.go
-ent/permission_update.go
-mutation.go

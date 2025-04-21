@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/longgggwww/hrm-ms-permission/ent/perm"
@@ -18,6 +19,7 @@ type PermGroupCreate struct {
 	config
 	mutation *PermGroupMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCode sets the "code" field.
@@ -113,6 +115,7 @@ func (pgc *PermGroupCreate) createSpec() (*PermGroup, *sqlgraph.CreateSpec) {
 		_node = &PermGroup{config: pgc.config}
 		_spec = sqlgraph.NewCreateSpec(permgroup.Table, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt))
 	)
+	_spec.OnConflict = pgc.conflict
 	if value, ok := pgc.mutation.Code(); ok {
 		_spec.SetField(permgroup.FieldCode, field.TypeString, value)
 		_node.Code = value
@@ -140,11 +143,186 @@ func (pgc *PermGroupCreate) createSpec() (*PermGroup, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.PermGroup.Create().
+//		SetCode(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.PermGroupUpsert) {
+//			SetCode(v+v).
+//		}).
+//		Exec(ctx)
+func (pgc *PermGroupCreate) OnConflict(opts ...sql.ConflictOption) *PermGroupUpsertOne {
+	pgc.conflict = opts
+	return &PermGroupUpsertOne{
+		create: pgc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.PermGroup.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (pgc *PermGroupCreate) OnConflictColumns(columns ...string) *PermGroupUpsertOne {
+	pgc.conflict = append(pgc.conflict, sql.ConflictColumns(columns...))
+	return &PermGroupUpsertOne{
+		create: pgc,
+	}
+}
+
+type (
+	// PermGroupUpsertOne is the builder for "upsert"-ing
+	//  one PermGroup node.
+	PermGroupUpsertOne struct {
+		create *PermGroupCreate
+	}
+
+	// PermGroupUpsert is the "OnConflict" setter.
+	PermGroupUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCode sets the "code" field.
+func (u *PermGroupUpsert) SetCode(v string) *PermGroupUpsert {
+	u.Set(permgroup.FieldCode, v)
+	return u
+}
+
+// UpdateCode sets the "code" field to the value that was provided on create.
+func (u *PermGroupUpsert) UpdateCode() *PermGroupUpsert {
+	u.SetExcluded(permgroup.FieldCode)
+	return u
+}
+
+// SetName sets the "name" field.
+func (u *PermGroupUpsert) SetName(v string) *PermGroupUpsert {
+	u.Set(permgroup.FieldName, v)
+	return u
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *PermGroupUpsert) UpdateName() *PermGroupUpsert {
+	u.SetExcluded(permgroup.FieldName)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.PermGroup.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *PermGroupUpsertOne) UpdateNewValues() *PermGroupUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.PermGroup.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *PermGroupUpsertOne) Ignore() *PermGroupUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *PermGroupUpsertOne) DoNothing() *PermGroupUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the PermGroupCreate.OnConflict
+// documentation for more info.
+func (u *PermGroupUpsertOne) Update(set func(*PermGroupUpsert)) *PermGroupUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&PermGroupUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCode sets the "code" field.
+func (u *PermGroupUpsertOne) SetCode(v string) *PermGroupUpsertOne {
+	return u.Update(func(s *PermGroupUpsert) {
+		s.SetCode(v)
+	})
+}
+
+// UpdateCode sets the "code" field to the value that was provided on create.
+func (u *PermGroupUpsertOne) UpdateCode() *PermGroupUpsertOne {
+	return u.Update(func(s *PermGroupUpsert) {
+		s.UpdateCode()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *PermGroupUpsertOne) SetName(v string) *PermGroupUpsertOne {
+	return u.Update(func(s *PermGroupUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *PermGroupUpsertOne) UpdateName() *PermGroupUpsertOne {
+	return u.Update(func(s *PermGroupUpsert) {
+		s.UpdateName()
+	})
+}
+
+// Exec executes the query.
+func (u *PermGroupUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for PermGroupCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *PermGroupUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *PermGroupUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *PermGroupUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // PermGroupCreateBulk is the builder for creating many PermGroup entities in bulk.
 type PermGroupCreateBulk struct {
 	config
 	err      error
 	builders []*PermGroupCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the PermGroup entities in the database.
@@ -173,6 +351,7 @@ func (pgcb *PermGroupCreateBulk) Save(ctx context.Context) ([]*PermGroup, error)
 					_, err = mutators[i+1].Mutate(root, pgcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = pgcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, pgcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -223,6 +402,138 @@ func (pgcb *PermGroupCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (pgcb *PermGroupCreateBulk) ExecX(ctx context.Context) {
 	if err := pgcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.PermGroup.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.PermGroupUpsert) {
+//			SetCode(v+v).
+//		}).
+//		Exec(ctx)
+func (pgcb *PermGroupCreateBulk) OnConflict(opts ...sql.ConflictOption) *PermGroupUpsertBulk {
+	pgcb.conflict = opts
+	return &PermGroupUpsertBulk{
+		create: pgcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.PermGroup.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (pgcb *PermGroupCreateBulk) OnConflictColumns(columns ...string) *PermGroupUpsertBulk {
+	pgcb.conflict = append(pgcb.conflict, sql.ConflictColumns(columns...))
+	return &PermGroupUpsertBulk{
+		create: pgcb,
+	}
+}
+
+// PermGroupUpsertBulk is the builder for "upsert"-ing
+// a bulk of PermGroup nodes.
+type PermGroupUpsertBulk struct {
+	create *PermGroupCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.PermGroup.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *PermGroupUpsertBulk) UpdateNewValues() *PermGroupUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.PermGroup.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *PermGroupUpsertBulk) Ignore() *PermGroupUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *PermGroupUpsertBulk) DoNothing() *PermGroupUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the PermGroupCreateBulk.OnConflict
+// documentation for more info.
+func (u *PermGroupUpsertBulk) Update(set func(*PermGroupUpsert)) *PermGroupUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&PermGroupUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCode sets the "code" field.
+func (u *PermGroupUpsertBulk) SetCode(v string) *PermGroupUpsertBulk {
+	return u.Update(func(s *PermGroupUpsert) {
+		s.SetCode(v)
+	})
+}
+
+// UpdateCode sets the "code" field to the value that was provided on create.
+func (u *PermGroupUpsertBulk) UpdateCode() *PermGroupUpsertBulk {
+	return u.Update(func(s *PermGroupUpsert) {
+		s.UpdateCode()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *PermGroupUpsertBulk) SetName(v string) *PermGroupUpsertBulk {
+	return u.Update(func(s *PermGroupUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *PermGroupUpsertBulk) UpdateName() *PermGroupUpsertBulk {
+	return u.Update(func(s *PermGroupUpsert) {
+		s.UpdateName()
+	})
+}
+
+// Exec executes the query.
+func (u *PermGroupUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the PermGroupCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for PermGroupCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *PermGroupUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

@@ -1,0 +1,16 @@
+code,perm_group_code,name,description
+HR_MANAGEMENT,HR,Quản lý nhân sự,Quyền quản lý thông tin nhân sự
+HR_MANAGEMENT_READ,HR,Xem thông tin nhân sự,Quyền xem thông tin nhân sự
+HR_MANAGEMENT_WRITE,HR,Tạo nhân sự,Quyền tạo nhân sự
+HR_MANAGEMENT_UPDATE,HR,Cập nhật thông tin nhân sự,Quyền cập nhật thông tin nhân sự
+HR_MANAGEMENT_DELETE,HR,Xóa nhân sự,Quyền xóa nhân sự
+FINANCE_MANAGEMENT,FINANCE,Quản lý tài chính,Quyền quản lý thông tin tài chính
+FINANCE_MANAGEMENT_READ,FINANCE,Xem thông tin tài chính,Quyền xem thông tin tài chính
+FINANCE_MANAGEMENT_WRITE,FINANCE,Tạo thông tin tài chính,Quyền tạo thông tin tài chính
+FINANCE_MANAGEMENT_UPDATE,FINANCE,Cập nhật thông tin tài chính,Quyền cập nhật thông tin tài chính
+FINANCE_MANAGEMENT_DELETE,FINANCE,Xóa thông tin tài chính,Quyền xóa thông tin tài chính
+PROJECT_MANAGEMENT,PROJECT,Quản lý dự án,Quyền quản lý thông tin dự án
+PROJECT_MANAGEMENT_READ,PROJECT,Xem thông tin dự án,Quyền xem thông tin dự án
+PROJECT_MANAGEMENT_WRITE,PROJECT,Tạo dự án,Quyền tạo dự án
+PROJECT_MANAGEMENT_UPDATE,PROJECT,Cập nhật thông tin dự án,Quyền cập nhật thông tin dự án
+PROJECT_MANAGEMENT_DELETE,PROJECT,Xóa dự án,Quyền xóa dự án
