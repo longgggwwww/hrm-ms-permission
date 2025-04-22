@@ -13,6 +13,7 @@ import (
 	"github.com/longgggwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwww/hrm-ms-permission/ent/predicate"
+	"github.com/longgggwww/hrm-ms-permission/ent/role"
 )
 
 // PermUpdate is the builder for updating Perm entities.
@@ -95,6 +96,21 @@ func (pu *PermUpdate) SetGroup(p *PermGroup) *PermUpdate {
 	return pu.SetGroupID(p.ID)
 }
 
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (pu *PermUpdate) AddRoleIDs(ids ...int) *PermUpdate {
+	pu.mutation.AddRoleIDs(ids...)
+	return pu
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (pu *PermUpdate) AddRoles(r ...*Role) *PermUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return pu.AddRoleIDs(ids...)
+}
+
 // Mutation returns the PermMutation object of the builder.
 func (pu *PermUpdate) Mutation() *PermMutation {
 	return pu.mutation
@@ -104,6 +120,27 @@ func (pu *PermUpdate) Mutation() *PermMutation {
 func (pu *PermUpdate) ClearGroup() *PermUpdate {
 	pu.mutation.ClearGroup()
 	return pu
+}
+
+// ClearRoles clears all "roles" edges to the Role entity.
+func (pu *PermUpdate) ClearRoles() *PermUpdate {
+	pu.mutation.ClearRoles()
+	return pu
+}
+
+// RemoveRoleIDs removes the "roles" edge to Role entities by IDs.
+func (pu *PermUpdate) RemoveRoleIDs(ids ...int) *PermUpdate {
+	pu.mutation.RemoveRoleIDs(ids...)
+	return pu
+}
+
+// RemoveRoles removes "roles" edges to Role entities.
+func (pu *PermUpdate) RemoveRoles(r ...*Role) *PermUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return pu.RemoveRoleIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -189,6 +226,51 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pu.mutation.RolesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   perm.RolesTable,
+			Columns: perm.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.RemovedRolesIDs(); len(nodes) > 0 && !pu.mutation.RolesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   perm.RolesTable,
+			Columns: perm.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   perm.RolesTable,
+			Columns: perm.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -283,6 +365,21 @@ func (puo *PermUpdateOne) SetGroup(p *PermGroup) *PermUpdateOne {
 	return puo.SetGroupID(p.ID)
 }
 
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (puo *PermUpdateOne) AddRoleIDs(ids ...int) *PermUpdateOne {
+	puo.mutation.AddRoleIDs(ids...)
+	return puo
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (puo *PermUpdateOne) AddRoles(r ...*Role) *PermUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return puo.AddRoleIDs(ids...)
+}
+
 // Mutation returns the PermMutation object of the builder.
 func (puo *PermUpdateOne) Mutation() *PermMutation {
 	return puo.mutation
@@ -292,6 +389,27 @@ func (puo *PermUpdateOne) Mutation() *PermMutation {
 func (puo *PermUpdateOne) ClearGroup() *PermUpdateOne {
 	puo.mutation.ClearGroup()
 	return puo
+}
+
+// ClearRoles clears all "roles" edges to the Role entity.
+func (puo *PermUpdateOne) ClearRoles() *PermUpdateOne {
+	puo.mutation.ClearRoles()
+	return puo
+}
+
+// RemoveRoleIDs removes the "roles" edge to Role entities by IDs.
+func (puo *PermUpdateOne) RemoveRoleIDs(ids ...int) *PermUpdateOne {
+	puo.mutation.RemoveRoleIDs(ids...)
+	return puo
+}
+
+// RemoveRoles removes "roles" edges to Role entities.
+func (puo *PermUpdateOne) RemoveRoles(r ...*Role) *PermUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return puo.RemoveRoleIDs(ids...)
 }
 
 // Where appends a list predicates to the PermUpdate builder.
@@ -407,6 +525,51 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.RolesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   perm.RolesTable,
+			Columns: perm.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.RemovedRolesIDs(); len(nodes) > 0 && !puo.mutation.RolesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   perm.RolesTable,
+			Columns: perm.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   perm.RolesTable,
+			Columns: perm.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

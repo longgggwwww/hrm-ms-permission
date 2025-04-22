@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/longgggwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
+	"github.com/longgggwww/hrm-ms-permission/ent/role"
 )
 
 // PermCreate is the builder for creating a Perm entity.
@@ -65,6 +66,21 @@ func (pc *PermCreate) SetNillableGroupID(id *int) *PermCreate {
 // SetGroup sets the "group" edge to the PermGroup entity.
 func (pc *PermCreate) SetGroup(p *PermGroup) *PermCreate {
 	return pc.SetGroupID(p.ID)
+}
+
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (pc *PermCreate) AddRoleIDs(ids ...int) *PermCreate {
+	pc.mutation.AddRoleIDs(ids...)
+	return pc
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (pc *PermCreate) AddRoles(r ...*Role) *PermCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return pc.AddRoleIDs(ids...)
 }
 
 // Mutation returns the PermMutation object of the builder.
@@ -166,6 +182,22 @@ func (pc *PermCreate) createSpec() (*Perm, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.perm_group = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   perm.RolesTable,
+			Columns: perm.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

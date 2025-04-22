@@ -26,6 +26,7 @@ func (Perm) Fields() []ent.Field {
 func (Perm) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("group", PermGroup.Type).Unique().Annotations(entproto.Field(5)),
+		edge.From("roles", Role.Type).Ref("perms").Annotations(entproto.Field(6)),
 	}
 }
 

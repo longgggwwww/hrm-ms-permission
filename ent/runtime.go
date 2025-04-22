@@ -4,6 +4,7 @@ package ent
 
 import (
 	"github.com/longgggwww/hrm-ms-permission/ent/perm"
+	"github.com/longgggwww/hrm-ms-permission/ent/role"
 	"github.com/longgggwww/hrm-ms-permission/ent/schema"
 )
 
@@ -17,4 +18,10 @@ func init() {
 	permDescName := permFields[1].Descriptor()
 	// perm.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	perm.NameValidator = permDescName.Validators[0].(func(string) error)
+	roleFields := schema.Role{}.Fields()
+	_ = roleFields
+	// roleDescName is the schema descriptor for name field.
+	roleDescName := roleFields[0].Descriptor()
+	// role.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	role.NameValidator = roleDescName.Validators[0].(func(string) error)
 }

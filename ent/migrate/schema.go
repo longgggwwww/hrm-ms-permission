@@ -42,13 +42,55 @@ var (
 		Columns:    PermGroupsColumns,
 		PrimaryKey: []*schema.Column{PermGroupsColumns[0]},
 	}
+	// RolesColumns holds the columns for the "roles" table.
+	RolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "color", Type: field.TypeString, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+	}
+	// RolesTable holds the schema information for the "roles" table.
+	RolesTable = &schema.Table{
+		Name:       "roles",
+		Columns:    RolesColumns,
+		PrimaryKey: []*schema.Column{RolesColumns[0]},
+	}
+	// RolePermsColumns holds the columns for the "role_perms" table.
+	RolePermsColumns = []*schema.Column{
+		{Name: "role_id", Type: field.TypeInt},
+		{Name: "perm_id", Type: field.TypeInt},
+	}
+	// RolePermsTable holds the schema information for the "role_perms" table.
+	RolePermsTable = &schema.Table{
+		Name:       "role_perms",
+		Columns:    RolePermsColumns,
+		PrimaryKey: []*schema.Column{RolePermsColumns[0], RolePermsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "role_perms_role_id",
+				Columns:    []*schema.Column{RolePermsColumns[0]},
+				RefColumns: []*schema.Column{RolesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "role_perms_perm_id",
+				Columns:    []*schema.Column{RolePermsColumns[1]},
+				RefColumns: []*schema.Column{PermsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		PermsTable,
 		PermGroupsTable,
+		RolesTable,
+		RolePermsTable,
 	}
 )
 
 func init() {
 	PermsTable.ForeignKeys[0].RefTable = PermGroupsTable
+	RolePermsTable.ForeignKeys[0].RefTable = RolesTable
+	RolePermsTable.ForeignKeys[1].RefTable = PermsTable
 }

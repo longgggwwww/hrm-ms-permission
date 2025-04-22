@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/longgggwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
+	"github.com/longgggwww/hrm-ms-permission/ent/role"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -76,6 +77,7 @@ func checkColumn(table, column string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			perm.Table:      perm.ValidColumn,
 			permgroup.Table: permgroup.ValidColumn,
+			role.Table:      role.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

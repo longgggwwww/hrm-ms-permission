@@ -9,7 +9,6 @@ import (
 	fmt "fmt"
 	ent "github.com/longgggwww/hrm-ms-permission/ent"
 	perm "github.com/longgggwww/hrm-ms-permission/ent/perm"
-	permgroup "github.com/longgggwww/hrm-ms-permission/ent/permgroup"
 	role "github.com/longgggwww/hrm-ms-permission/ent/role"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -18,50 +17,44 @@ import (
 	strconv "strconv"
 )
 
-// PermService implements PermServiceServer
-type PermService struct {
+// RoleService implements RoleServiceServer
+type RoleService struct {
 	client *ent.Client
-	UnimplementedPermServiceServer
+	UnimplementedRoleServiceServer
 }
 
-// NewPermService returns a new PermService
-func NewPermService(client *ent.Client) *PermService {
-	return &PermService{
+// NewRoleService returns a new RoleService
+func NewRoleService(client *ent.Client) *RoleService {
+	return &RoleService{
 		client: client,
 	}
 }
 
-// toProtoPerm transforms the ent type to the pb type
-func toProtoPerm(e *ent.Perm) (*Perm, error) {
-	v := &Perm{}
-	code := e.Code
-	v.Code = code
+// toProtoRole transforms the ent type to the pb type
+func toProtoRole(e *ent.Role) (*Role, error) {
+	v := &Role{}
+	color := wrapperspb.String(e.Color)
+	v.Color = color
 	description := wrapperspb.String(e.Description)
 	v.Description = description
 	id := int64(e.ID)
 	v.Id = id
 	name := e.Name
 	v.Name = name
-	if edg := e.Edges.Group; edg != nil {
+	for _, edg := range e.Edges.Perms {
 		id := int64(edg.ID)
-		v.Group = &PermGroup{
-			Id: id,
-		}
-	}
-	for _, edg := range e.Edges.Roles {
-		id := int64(edg.ID)
-		v.Roles = append(v.Roles, &Role{
+		v.Perms = append(v.Perms, &Perm{
 			Id: id,
 		})
 	}
 	return v, nil
 }
 
-// toProtoPermList transforms a list of ent type to a list of pb type
-func toProtoPermList(e []*ent.Perm) ([]*Perm, error) {
-	var pbList []*Perm
+// toProtoRoleList transforms a list of ent type to a list of pb type
+func toProtoRoleList(e []*ent.Role) ([]*Role, error) {
+	var pbList []*Role
 	for _, entEntity := range e {
-		pbEntity, err := toProtoPerm(entEntity)
+		pbEntity, err := toProtoRole(entEntity)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
@@ -70,17 +63,17 @@ func toProtoPermList(e []*ent.Perm) ([]*Perm, error) {
 	return pbList, nil
 }
 
-// Create implements PermServiceServer.Create
-func (svc *PermService) Create(ctx context.Context, req *CreatePermRequest) (*Perm, error) {
-	perm := req.GetPerm()
-	m, err := svc.createBuilder(perm)
+// Create implements RoleServiceServer.Create
+func (svc *RoleService) Create(ctx context.Context, req *CreateRoleRequest) (*Role, error) {
+	role := req.GetRole()
+	m, err := svc.createBuilder(role)
 	if err != nil {
 		return nil, err
 	}
 	res, err := m.Save(ctx)
 	switch {
 	case err == nil:
-		proto, err := toProtoPerm(res)
+		proto, err := toProtoRole(res)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
@@ -95,24 +88,21 @@ func (svc *PermService) Create(ctx context.Context, req *CreatePermRequest) (*Pe
 
 }
 
-// Get implements PermServiceServer.Get
-func (svc *PermService) Get(ctx context.Context, req *GetPermRequest) (*Perm, error) {
+// Get implements RoleServiceServer.Get
+func (svc *RoleService) Get(ctx context.Context, req *GetRoleRequest) (*Role, error) {
 	var (
 		err error
-		get *ent.Perm
+		get *ent.Role
 	)
 	id := int(req.GetId())
 	switch req.GetView() {
-	case GetPermRequest_VIEW_UNSPECIFIED, GetPermRequest_BASIC:
-		get, err = svc.client.Perm.Get(ctx, id)
-	case GetPermRequest_WITH_EDGE_IDS:
-		get, err = svc.client.Perm.Query().
-			Where(perm.ID(id)).
-			WithGroup(func(query *ent.PermGroupQuery) {
-				query.Select(permgroup.FieldID)
-			}).
-			WithRoles(func(query *ent.RoleQuery) {
-				query.Select(role.FieldID)
+	case GetRoleRequest_VIEW_UNSPECIFIED, GetRoleRequest_BASIC:
+		get, err = svc.client.Role.Get(ctx, id)
+	case GetRoleRequest_WITH_EDGE_IDS:
+		get, err = svc.client.Role.Query().
+			Where(role.ID(id)).
+			WithPerms(func(query *ent.PermQuery) {
+				query.Select(perm.FieldID)
 			}).
 			Only(ctx)
 	default:
@@ -120,7 +110,7 @@ func (svc *PermService) Get(ctx context.Context, req *GetPermRequest) (*Perm, er
 	}
 	switch {
 	case err == nil:
-		return toProtoPerm(get)
+		return toProtoRole(get)
 	case ent.IsNotFound(err):
 		return nil, status.Errorf(codes.NotFound, "not found: %s", err)
 	default:
@@ -129,32 +119,30 @@ func (svc *PermService) Get(ctx context.Context, req *GetPermRequest) (*Perm, er
 
 }
 
-// Update implements PermServiceServer.Update
-func (svc *PermService) Update(ctx context.Context, req *UpdatePermRequest) (*Perm, error) {
-	perm := req.GetPerm()
-	permID := int(perm.GetId())
-	m := svc.client.Perm.UpdateOneID(permID)
-	permCode := perm.GetCode()
-	m.SetCode(permCode)
-	if perm.GetDescription() != nil {
-		permDescription := perm.GetDescription().GetValue()
-		m.SetDescription(permDescription)
+// Update implements RoleServiceServer.Update
+func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Role, error) {
+	role := req.GetRole()
+	roleID := int(role.GetId())
+	m := svc.client.Role.UpdateOneID(roleID)
+	if role.GetColor() != nil {
+		roleColor := role.GetColor().GetValue()
+		m.SetColor(roleColor)
 	}
-	permName := perm.GetName()
-	m.SetName(permName)
-	if perm.GetGroup() != nil {
-		permGroup := int(perm.GetGroup().GetId())
-		m.SetGroupID(permGroup)
+	if role.GetDescription() != nil {
+		roleDescription := role.GetDescription().GetValue()
+		m.SetDescription(roleDescription)
 	}
-	for _, item := range perm.GetRoles() {
-		roles := int(item.GetId())
-		m.AddRoleIDs(roles)
+	roleName := role.GetName()
+	m.SetName(roleName)
+	for _, item := range role.GetPerms() {
+		perms := int(item.GetId())
+		m.AddPermIDs(perms)
 	}
 
 	res, err := m.Save(ctx)
 	switch {
 	case err == nil:
-		proto, err := toProtoPerm(res)
+		proto, err := toProtoRole(res)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
@@ -169,11 +157,11 @@ func (svc *PermService) Update(ctx context.Context, req *UpdatePermRequest) (*Pe
 
 }
 
-// Delete implements PermServiceServer.Delete
-func (svc *PermService) Delete(ctx context.Context, req *DeletePermRequest) (*emptypb.Empty, error) {
+// Delete implements RoleServiceServer.Delete
+func (svc *RoleService) Delete(ctx context.Context, req *DeleteRoleRequest) (*emptypb.Empty, error) {
 	var err error
 	id := int(req.GetId())
-	err = svc.client.Perm.DeleteOneID(id).Exec(ctx)
+	err = svc.client.Role.DeleteOneID(id).Exec(ctx)
 	switch {
 	case err == nil:
 		return &emptypb.Empty{}, nil
@@ -185,11 +173,11 @@ func (svc *PermService) Delete(ctx context.Context, req *DeletePermRequest) (*em
 
 }
 
-// List implements PermServiceServer.List
-func (svc *PermService) List(ctx context.Context, req *ListPermRequest) (*ListPermResponse, error) {
+// List implements RoleServiceServer.List
+func (svc *RoleService) List(ctx context.Context, req *ListRoleRequest) (*ListRoleResponse, error) {
 	var (
 		err      error
-		entList  []*ent.Perm
+		entList  []*ent.Role
 		pageSize int
 	)
 	pageSize = int(req.GetPageSize())
@@ -199,8 +187,8 @@ func (svc *PermService) List(ctx context.Context, req *ListPermRequest) (*ListPe
 	case pageSize == 0 || pageSize > entproto.MaxPageSize:
 		pageSize = entproto.MaxPageSize
 	}
-	listQuery := svc.client.Perm.Query().
-		Order(ent.Desc(perm.FieldID)).
+	listQuery := svc.client.Role.Query().
+		Order(ent.Desc(role.FieldID)).
 		Limit(pageSize + 1)
 	if req.GetPageToken() != "" {
 		bytes, err := base64.StdEncoding.DecodeString(req.PageToken)
@@ -213,18 +201,15 @@ func (svc *PermService) List(ctx context.Context, req *ListPermRequest) (*ListPe
 		}
 		pageToken := int(token)
 		listQuery = listQuery.
-			Where(perm.IDLTE(pageToken))
+			Where(role.IDLTE(pageToken))
 	}
 	switch req.GetView() {
-	case ListPermRequest_VIEW_UNSPECIFIED, ListPermRequest_BASIC:
+	case ListRoleRequest_VIEW_UNSPECIFIED, ListRoleRequest_BASIC:
 		entList, err = listQuery.All(ctx)
-	case ListPermRequest_WITH_EDGE_IDS:
+	case ListRoleRequest_WITH_EDGE_IDS:
 		entList, err = listQuery.
-			WithGroup(func(query *ent.PermGroupQuery) {
-				query.Select(permgroup.FieldID)
-			}).
-			WithRoles(func(query *ent.RoleQuery) {
-				query.Select(role.FieldID)
+			WithPerms(func(query *ent.PermQuery) {
+				query.Select(perm.FieldID)
 			}).
 			All(ctx)
 	}
@@ -236,12 +221,12 @@ func (svc *PermService) List(ctx context.Context, req *ListPermRequest) (*ListPe
 				[]byte(fmt.Sprintf("%v", entList[len(entList)-1].ID)))
 			entList = entList[:len(entList)-1]
 		}
-		protoList, err := toProtoPermList(entList)
+		protoList, err := toProtoRoleList(entList)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
-		return &ListPermResponse{
-			PermList:      protoList,
+		return &ListRoleResponse{
+			RoleList:      protoList,
 			NextPageToken: nextPageToken,
 		}, nil
 	default:
@@ -250,30 +235,30 @@ func (svc *PermService) List(ctx context.Context, req *ListPermRequest) (*ListPe
 
 }
 
-// BatchCreate implements PermServiceServer.BatchCreate
-func (svc *PermService) BatchCreate(ctx context.Context, req *BatchCreatePermsRequest) (*BatchCreatePermsResponse, error) {
+// BatchCreate implements RoleServiceServer.BatchCreate
+func (svc *RoleService) BatchCreate(ctx context.Context, req *BatchCreateRolesRequest) (*BatchCreateRolesResponse, error) {
 	requests := req.GetRequests()
 	if len(requests) > entproto.MaxBatchCreateSize {
 		return nil, status.Errorf(codes.InvalidArgument, "batch size cannot be greater than %d", entproto.MaxBatchCreateSize)
 	}
-	bulk := make([]*ent.PermCreate, len(requests))
+	bulk := make([]*ent.RoleCreate, len(requests))
 	for i, req := range requests {
-		perm := req.GetPerm()
+		role := req.GetRole()
 		var err error
-		bulk[i], err = svc.createBuilder(perm)
+		bulk[i], err = svc.createBuilder(role)
 		if err != nil {
 			return nil, err
 		}
 	}
-	res, err := svc.client.Perm.CreateBulk(bulk...).Save(ctx)
+	res, err := svc.client.Role.CreateBulk(bulk...).Save(ctx)
 	switch {
 	case err == nil:
-		protoList, err := toProtoPermList(res)
+		protoList, err := toProtoRoleList(res)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
-		return &BatchCreatePermsResponse{
-			Perms: protoList,
+		return &BatchCreateRolesResponse{
+			Roles: protoList,
 		}, nil
 	case sqlgraph.IsUniqueConstraintError(err):
 		return nil, status.Errorf(codes.AlreadyExists, "already exists: %s", err)
@@ -285,23 +270,21 @@ func (svc *PermService) BatchCreate(ctx context.Context, req *BatchCreatePermsRe
 
 }
 
-func (svc *PermService) createBuilder(perm *Perm) (*ent.PermCreate, error) {
-	m := svc.client.Perm.Create()
-	permCode := perm.GetCode()
-	m.SetCode(permCode)
-	if perm.GetDescription() != nil {
-		permDescription := perm.GetDescription().GetValue()
-		m.SetDescription(permDescription)
+func (svc *RoleService) createBuilder(role *Role) (*ent.RoleCreate, error) {
+	m := svc.client.Role.Create()
+	if role.GetColor() != nil {
+		roleColor := role.GetColor().GetValue()
+		m.SetColor(roleColor)
 	}
-	permName := perm.GetName()
-	m.SetName(permName)
-	if perm.GetGroup() != nil {
-		permGroup := int(perm.GetGroup().GetId())
-		m.SetGroupID(permGroup)
+	if role.GetDescription() != nil {
+		roleDescription := role.GetDescription().GetValue()
+		m.SetDescription(roleDescription)
 	}
-	for _, item := range perm.GetRoles() {
-		roles := int(item.GetId())
-		m.AddRoleIDs(roles)
+	roleName := role.GetName()
+	m.SetName(roleName)
+	for _, item := range role.GetPerms() {
+		perms := int(item.GetId())
+		m.AddPermIDs(perms)
 	}
 	return m, nil
 }

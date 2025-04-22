@@ -34,9 +34,11 @@ type Perm struct {
 type PermEdges struct {
 	// Group holds the value of the group edge.
 	Group *PermGroup `json:"group,omitempty"`
+	// Roles holds the value of the roles edge.
+	Roles []*Role `json:"roles,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -48,6 +50,15 @@ func (e PermEdges) GroupOrErr() (*PermGroup, error) {
 		return nil, &NotFoundError{label: permgroup.Label}
 	}
 	return nil, &NotLoadedError{edge: "group"}
+}
+
+// RolesOrErr returns the Roles value or an error if the edge
+// was not loaded in eager-loading.
+func (e PermEdges) RolesOrErr() ([]*Role, error) {
+	if e.loadedTypes[1] {
+		return e.Roles, nil
+	}
+	return nil, &NotLoadedError{edge: "roles"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -123,6 +134,11 @@ func (pe *Perm) Value(name string) (ent.Value, error) {
 // QueryGroup queries the "group" edge of the Perm entity.
 func (pe *Perm) QueryGroup() *PermGroupQuery {
 	return NewPermClient(pe.config).QueryGroup(pe)
+}
+
+// QueryRoles queries the "roles" edge of the Perm entity.
+func (pe *Perm) QueryRoles() *RoleQuery {
+	return NewPermClient(pe.config).QueryRoles(pe)
 }
 
 // Update returns a builder for updating this Perm.
