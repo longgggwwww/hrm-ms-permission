@@ -41,6 +41,7 @@ func startHTTPServer(client *ent.Client) {
 	r := gin.Default()
 
 	r.GET("/perms", handlers.GetPermsHandler(client))
+	r.GET("/perm-groups", handlers.GetPermGroupsHandler(client))
 	r.GET("/roles", handlers.GetRolesHandler(client))
 
 	if err := r.Run(":8080"); err != nil {
@@ -53,12 +54,12 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	DB_URI := os.Getenv("DB_URI")
-	if DB_URI == "" {
-		log.Fatalf("DB_URI is not set in the environment variables")
+	DB_URL := os.Getenv("DB_URL")
+	if DB_URL == "" {
+		log.Fatalf("DB_URL is not set in the environment variables")
 	}
 
-	client, err := ent.Open("postgres", DB_URI)
+	client, err := ent.Open("postgres", DB_URL)
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
