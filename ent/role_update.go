@@ -28,6 +28,20 @@ func (ru *RoleUpdate) Where(ps ...predicate.Role) *RoleUpdate {
 	return ru
 }
 
+// SetCode sets the "code" field.
+func (ru *RoleUpdate) SetCode(s string) *RoleUpdate {
+	ru.mutation.SetCode(s)
+	return ru
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (ru *RoleUpdate) SetNillableCode(s *string) *RoleUpdate {
+	if s != nil {
+		ru.SetCode(*s)
+	}
+	return ru
+}
+
 // SetName sets the "name" field.
 func (ru *RoleUpdate) SetName(s string) *RoleUpdate {
 	ru.mutation.SetName(s)
@@ -172,6 +186,9 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := ru.mutation.Code(); ok {
+		_spec.SetField(role.FieldCode, field.TypeString, value)
+	}
 	if value, ok := ru.mutation.Name(); ok {
 		_spec.SetField(role.FieldName, field.TypeString, value)
 	}
@@ -250,6 +267,20 @@ type RoleUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *RoleMutation
+}
+
+// SetCode sets the "code" field.
+func (ruo *RoleUpdateOne) SetCode(s string) *RoleUpdateOne {
+	ruo.mutation.SetCode(s)
+	return ruo
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (ruo *RoleUpdateOne) SetNillableCode(s *string) *RoleUpdateOne {
+	if s != nil {
+		ruo.SetCode(*s)
+	}
+	return ruo
 }
 
 // SetName sets the "name" field.
@@ -425,6 +456,9 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ruo.mutation.Code(); ok {
+		_spec.SetField(role.FieldCode, field.TypeString, value)
 	}
 	if value, ok := ruo.mutation.Name(); ok {
 		_spec.SetField(role.FieldName, field.TypeString, value)

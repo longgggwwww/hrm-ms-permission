@@ -3,3 +3,6 @@
 
 # Ignore environment files
 .env
+
+# Ignore temporary files and directories
+tmp/

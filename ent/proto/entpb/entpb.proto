@@ -148,13 +148,15 @@ message BatchCreatePermGroupsResponse {
 message Role {
   int64 id = 1;
 
-  string name = 2;
+  string code = 2;
 
-  google.protobuf.StringValue color = 3;
+  string name = 3;
 
-  google.protobuf.StringValue description = 4;
+  google.protobuf.StringValue color = 4;
 
-  repeated Perm perms = 5;
+  google.protobuf.StringValue description = 5;
+
+  repeated Perm perms = 6;
 }
 
 message CreateRoleRequest {

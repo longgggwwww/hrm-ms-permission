@@ -89,6 +89,11 @@ func (pgc *PermGroupCreate) check() error {
 	if _, ok := pgc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "PermGroup.name"`)}
 	}
+	if v, ok := pgc.mutation.Name(); ok {
+		if err := permgroup.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "PermGroup.name": %w`, err)}
+		}
+	}
 	return nil
 }
 

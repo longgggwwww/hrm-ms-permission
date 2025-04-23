@@ -16,16 +16,17 @@ type Role struct {
 // Fields of the Role.
 func (Role) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").Unique().NotEmpty().Annotations(entproto.Field(2)),
-		field.String("color").Optional().Annotations(entproto.Field(3)),
-		field.String("description").Optional().Annotations(entproto.Field(4)),
+		field.String("code").Unique().Annotations(entproto.Field(2)),
+		field.String("name").NotEmpty().Annotations(entproto.Field(3)),
+		field.String("color").Optional().Annotations(entproto.Field(4)),
+		field.String("description").Optional().Annotations(entproto.Field(5)),
 	}
 }
 
 // Edges of the Role.
 func (Role) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("perms", Perm.Type).Annotations(entproto.Field(5)),
+		edge.To("perms", Perm.Type).Annotations(entproto.Field(6)),
 	}
 }
 

@@ -299,12 +299,12 @@ func (rq *RoleQuery) WithPerms(opts ...func(*PermQuery)) *RoleQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Code string `json:"code,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Role.Query().
-//		GroupBy(role.FieldName).
+//		GroupBy(role.FieldCode).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (rq *RoleQuery) GroupBy(field string, fields ...string) *RoleGroupBy {
@@ -322,11 +322,11 @@ func (rq *RoleQuery) GroupBy(field string, fields ...string) *RoleGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Code string `json:"code,omitempty"`
 //	}
 //
 //	client.Role.Query().
-//		Select(role.FieldName).
+//		Select(role.FieldCode).
 //		Scan(ctx, &v)
 func (rq *RoleQuery) Select(fields ...string) *RoleSelect {
 	rq.ctx.Fields = append(rq.ctx.Fields, fields...)

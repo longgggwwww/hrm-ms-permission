@@ -17,7 +17,7 @@ type PermGroup struct {
 func (PermGroup) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("code").Unique().Annotations(entproto.Field(2)),
-		field.String("name").Annotations(entproto.Field(3)),
+		field.String("name").NotEmpty().Annotations(entproto.Field(3)),
 	}
 }
 

@@ -1117,6 +1117,7 @@ type RoleMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	code          *string
 	name          *string
 	color         *string
 	description   *string
@@ -1225,6 +1226,42 @@ func (m *RoleMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetCode sets the "code" field.
+func (m *RoleMutation) SetCode(s string) {
+	m.code = &s
+}
+
+// Code returns the value of the "code" field in the mutation.
+func (m *RoleMutation) Code() (r string, exists bool) {
+	v := m.code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCode returns the old "code" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCode: %w", err)
+	}
+	return oldValue.Code, nil
+}
+
+// ResetCode resets all changes to the "code" field.
+func (m *RoleMutation) ResetCode() {
+	m.code = nil
 }
 
 // SetName sets the "name" field.
@@ -1449,7 +1486,10 @@ func (m *RoleMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RoleMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
+	if m.code != nil {
+		fields = append(fields, role.FieldCode)
+	}
 	if m.name != nil {
 		fields = append(fields, role.FieldName)
 	}
@@ -1467,6 +1507,8 @@ func (m *RoleMutation) Fields() []string {
 // schema.
 func (m *RoleMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case role.FieldCode:
+		return m.Code()
 	case role.FieldName:
 		return m.Name()
 	case role.FieldColor:
@@ -1482,6 +1524,8 @@ func (m *RoleMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case role.FieldCode:
+		return m.OldCode(ctx)
 	case role.FieldName:
 		return m.OldName(ctx)
 	case role.FieldColor:
@@ -1497,6 +1541,13 @@ func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *RoleMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case role.FieldCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCode(v)
+		return nil
 	case role.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -1582,6 +1633,9 @@ func (m *RoleMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *RoleMutation) ResetField(name string) error {
 	switch name {
+	case role.FieldCode:
+		m.ResetCode()
+		return nil
 	case role.FieldName:
 		m.ResetName()
 		return nil

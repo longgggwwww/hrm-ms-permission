@@ -33,6 +33,8 @@ func NewRoleService(client *ent.Client) *RoleService {
 // toProtoRole transforms the ent type to the pb type
 func toProtoRole(e *ent.Role) (*Role, error) {
 	v := &Role{}
+	code := e.Code
+	v.Code = code
 	color := wrapperspb.String(e.Color)
 	v.Color = color
 	description := wrapperspb.String(e.Description)
@@ -124,6 +126,8 @@ func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Ro
 	role := req.GetRole()
 	roleID := int(role.GetId())
 	m := svc.client.Role.UpdateOneID(roleID)
+	roleCode := role.GetCode()
+	m.SetCode(roleCode)
 	if role.GetColor() != nil {
 		roleColor := role.GetColor().GetValue()
 		m.SetColor(roleColor)
@@ -272,6 +276,8 @@ func (svc *RoleService) BatchCreate(ctx context.Context, req *BatchCreateRolesRe
 
 func (svc *RoleService) createBuilder(role *Role) (*ent.RoleCreate, error) {
 	m := svc.client.Role.Create()
+	roleCode := role.GetCode()
+	m.SetCode(roleCode)
 	if role.GetColor() != nil {
 		roleColor := role.GetColor().GetValue()
 		m.SetColor(roleColor)

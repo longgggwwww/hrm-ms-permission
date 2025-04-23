@@ -1242,10 +1242,11 @@ func (x *BatchCreatePermGroupsResponse) GetPermGroups() []*PermGroup {
 type Role struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Color         *wrapperspb.StringValue `protobuf:"bytes,3,opt,name=color,proto3" json:"color,omitempty"`
-	Description   *wrapperspb.StringValue `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	Perms         []*Perm                 `protobuf:"bytes,5,rep,name=perms,proto3" json:"perms,omitempty"`
+	Code          string                  `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	Name          string                  `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Color         *wrapperspb.StringValue `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
+	Description   *wrapperspb.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	Perms         []*Perm                 `protobuf:"bytes,6,rep,name=perms,proto3" json:"perms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1285,6 +1286,13 @@ func (x *Role) GetId() int64 {
 		return x.Id
 	}
 	return 0
+}
+
+func (x *Role) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
 }
 
 func (x *Role) GetName() string {
@@ -1776,13 +1784,14 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\brequests\x18\x01 \x03(\v2\x1d.entpb.CreatePermGroupRequestR\brequests\"R\n" +
 	"\x1dBatchCreatePermGroupsResponse\x121\n" +
 	"\vperm_groups\x18\x01 \x03(\v2\x10.entpb.PermGroupR\n" +
-	"permGroups\"\xc1\x01\n" +
+	"permGroups\"\xd5\x01\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x122\n" +
-	"\x05color\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueR\x05color\x12>\n" +
-	"\vdescription\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueR\vdescription\x12!\n" +
-	"\x05perms\x18\x05 \x03(\v2\v.entpb.PermR\x05perms\"4\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x122\n" +
+	"\x05color\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueR\x05color\x12>\n" +
+	"\vdescription\x18\x05 \x01(\v2\x1c.google.protobuf.StringValueR\vdescription\x12!\n" +
+	"\x05perms\x18\x06 \x03(\v2\v.entpb.PermR\x05perms\"4\n" +
 	"\x11CreateRoleRequest\x12\x1f\n" +
 	"\x04role\x18\x01 \x01(\v2\v.entpb.RoleR\x04role\"\x8c\x01\n" +
 	"\x0eGetRoleRequest\x12\x0e\n" +

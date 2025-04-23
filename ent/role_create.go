@@ -22,6 +22,12 @@ type RoleCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetCode sets the "code" field.
+func (rc *RoleCreate) SetCode(s string) *RoleCreate {
+	rc.mutation.SetCode(s)
+	return rc
+}
+
 // SetName sets the "name" field.
 func (rc *RoleCreate) SetName(s string) *RoleCreate {
 	rc.mutation.SetName(s)
@@ -105,6 +111,9 @@ func (rc *RoleCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (rc *RoleCreate) check() error {
+	if _, ok := rc.mutation.Code(); !ok {
+		return &ValidationError{Name: "code", err: errors.New(`ent: missing required field "Role.code"`)}
+	}
 	if _, ok := rc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Role.name"`)}
 	}
@@ -140,6 +149,10 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 		_spec = sqlgraph.NewCreateSpec(role.Table, sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt))
 	)
 	_spec.OnConflict = rc.conflict
+	if value, ok := rc.mutation.Code(); ok {
+		_spec.SetField(role.FieldCode, field.TypeString, value)
+		_node.Code = value
+	}
 	if value, ok := rc.mutation.Name(); ok {
 		_spec.SetField(role.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -175,7 +188,7 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Role.Create().
-//		SetName(v).
+//		SetCode(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -184,7 +197,7 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.RoleUpsert) {
-//			SetName(v+v).
+//			SetCode(v+v).
 //		}).
 //		Exec(ctx)
 func (rc *RoleCreate) OnConflict(opts ...sql.ConflictOption) *RoleUpsertOne {
@@ -219,6 +232,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetCode sets the "code" field.
+func (u *RoleUpsert) SetCode(v string) *RoleUpsert {
+	u.Set(role.FieldCode, v)
+	return u
+}
+
+// UpdateCode sets the "code" field to the value that was provided on create.
+func (u *RoleUpsert) UpdateCode() *RoleUpsert {
+	u.SetExcluded(role.FieldCode)
+	return u
+}
 
 // SetName sets the "name" field.
 func (u *RoleUpsert) SetName(v string) *RoleUpsert {
@@ -306,6 +331,20 @@ func (u *RoleUpsertOne) Update(set func(*RoleUpsert)) *RoleUpsertOne {
 		set(&RoleUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetCode sets the "code" field.
+func (u *RoleUpsertOne) SetCode(v string) *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.SetCode(v)
+	})
+}
+
+// UpdateCode sets the "code" field to the value that was provided on create.
+func (u *RoleUpsertOne) UpdateCode() *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.UpdateCode()
+	})
 }
 
 // SetName sets the "name" field.
@@ -498,7 +537,7 @@ func (rcb *RoleCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.RoleUpsert) {
-//			SetName(v+v).
+//			SetCode(v+v).
 //		}).
 //		Exec(ctx)
 func (rcb *RoleCreateBulk) OnConflict(opts ...sql.ConflictOption) *RoleUpsertBulk {
@@ -565,6 +604,20 @@ func (u *RoleUpsertBulk) Update(set func(*RoleUpsert)) *RoleUpsertBulk {
 		set(&RoleUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetCode sets the "code" field.
+func (u *RoleUpsertBulk) SetCode(v string) *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.SetCode(v)
+	})
+}
+
+// UpdateCode sets the "code" field to the value that was provided on create.
+func (u *RoleUpsertBulk) UpdateCode() *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.UpdateCode()
+	})
 }
 
 // SetName sets the "name" field.

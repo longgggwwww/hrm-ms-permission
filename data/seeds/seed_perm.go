@@ -1,7 +1,7 @@
 package seeds
 
 import (
-	ctx "context"
+	"context"
 	"encoding/csv"
 	"log"
 	"os"
@@ -10,51 +10,67 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/longgggwww/hrm-ms-permission/ent"
 	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
+	"github.com/longgggwww/hrm-ms-permission/internal/utils"
 )
 
-func SeedPerms(ctx ctx.Context, client *ent.Client) error {
+func SeedPerms(ctx context.Context, client *ent.Client) error {
 	filePath := filepath.Join("data", "perm.csv")
 	file, err := os.Open(filePath)
 	if err != nil {
-		return err
+		return utils.WrapError("opening file", err)
 	}
 	defer file.Close()
 
 	reader := csv.NewReader(file)
-	// Skip the header row
-	if _, err := reader.Read(); err != nil {
-		return err
+	// Read the header row to map column names to indices
+	header, err := reader.Read()
+	if err != nil {
+		return utils.WrapError("reading header row", err)
+	}
+
+	headerMap := make(map[string]int)
+	for i, col := range header {
+		headerMap[col] = i
 	}
 
 	records, err := reader.ReadAll()
 	if err != nil {
-		return err
+		return utils.WrapError("reading CSV records", err)
 	}
 
 	for _, record := range records {
-		// Assuming record[0] is the permission name and record[1] is the description
-		log.Printf("Seeding permission: %s - %s", record[0], record[1])
+		// Validate required columns
+		codeIdx, codeExists := headerMap["code"]
+		groupCodeIdx, groupCodeExists := headerMap["group_code"]
+		nameIdx, nameExists := headerMap["name"]
+		descIdx, descExists := headerMap["description"]
 
-		// Find the group by code
-		group, err := client.PermGroup.
-			Query().
-			Where(permgroup.Code(record[1])).
-			Only(ctx)
-		if err != nil {
-			log.Printf("Failed to find group for permission %s: %s", record[0], err)
+		if !codeExists || !groupCodeExists || !nameExists || !descExists {
+			log.Printf("Skipping record due to missing required columns: %v", record)
 			continue
 		}
 
-		err = client.Perm.Create().
-			SetCode(record[0]).
-			SetName(record[2]).
-			SetDescription(record[3]).
-			SetGroupID(group.ID).
-			OnConflict(sql.ConflictColumns("code")).
-			UpdateNewValues().
-			Exec(ctx)
+		log.Printf("Seeding permission: %s - %s", record[codeIdx], record[groupCodeIdx])
+
+		group, err := client.PermGroup.
+			Query().
+			Where(permgroup.Code(record[groupCodeIdx])).
+			Only(ctx)
 		if err != nil {
-			log.Printf("Failed to seed permission: %s - %s", record[0], err)
+			log.Printf("Failed to find group for permission %s: %v", record[codeIdx], err)
+			continue
+		}
+
+		perm := client.Perm.Create().
+			SetCode(record[codeIdx]).
+			SetName(record[nameIdx]).
+			SetDescription(record[descIdx]).
+			SetGroup(group).
+			OnConflict(sql.ConflictColumns("code")).
+			UpdateNewValues()
+
+		if err := perm.Exec(ctx); err != nil {
+			log.Printf("Failed to seed permission %s: %v", record[codeIdx], err)
 		}
 	}
 

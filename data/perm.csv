@@ -1,4 +1,4 @@
-code,perm_group_code,name,description
+code,group_code,name,description
 HR_MANAGEMENT,HR,Quản lý nhân sự,Quyền quản lý thông tin nhân sự
 HR_MANAGEMENT_READ,HR,Xem thông tin nhân sự,Quyền xem thông tin nhân sự
 HR_MANAGEMENT_WRITE,HR,Tạo nhân sự,Quyền tạo nhân sự

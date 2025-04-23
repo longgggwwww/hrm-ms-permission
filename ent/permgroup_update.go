@@ -124,7 +124,20 @@ func (pgu *PermGroupUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (pgu *PermGroupUpdate) check() error {
+	if v, ok := pgu.mutation.Name(); ok {
+		if err := permgroup.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "PermGroup.name": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (pgu *PermGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := pgu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(permgroup.Table, permgroup.Columns, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt))
 	if ps := pgu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -313,7 +326,20 @@ func (pguo *PermGroupUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (pguo *PermGroupUpdateOne) check() error {
+	if v, ok := pguo.mutation.Name(); ok {
+		if err := permgroup.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "PermGroup.name": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (pguo *PermGroupUpdateOne) sqlSave(ctx context.Context) (_node *PermGroup, err error) {
+	if err := pguo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(permgroup.Table, permgroup.Columns, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt))
 	id, ok := pguo.mutation.ID()
 	if !ok {

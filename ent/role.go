@@ -16,6 +16,8 @@ type Role struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Code holds the value of the "code" field.
+	Code string `json:"code,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Color holds the value of the "color" field.
@@ -53,7 +55,7 @@ func (*Role) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case role.FieldID:
 			values[i] = new(sql.NullInt64)
-		case role.FieldName, role.FieldColor, role.FieldDescription:
+		case role.FieldCode, role.FieldName, role.FieldColor, role.FieldDescription:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -76,6 +78,12 @@ func (r *Role) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			r.ID = int(value.Int64)
+		case role.FieldCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field code", values[i])
+			} else if value.Valid {
+				r.Code = value.String
+			}
 		case role.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -135,6 +143,9 @@ func (r *Role) String() string {
 	var builder strings.Builder
 	builder.WriteString("Role(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", r.ID))
+	builder.WriteString("code=")
+	builder.WriteString(r.Code)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(r.Name)
 	builder.WriteString(", ")
