@@ -7,7 +7,7 @@ import "google/protobuf/empty.proto";
 
 import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/longgggwww/hrm-ms-permission/ent/proto/entpb";
+option go_package = "github.com/longgggwwww/hrm-ms-permission/ent/proto/entpb";
 
 message Perm {
   int64 id = 1;
@@ -215,6 +215,70 @@ message BatchCreateRolesResponse {
   repeated Role roles = 1;
 }
 
+message UserRole {
+  int64 id = 1;
+
+  string user_id = 2;
+
+  int64 role_id = 3;
+}
+
+message CreateUserRoleRequest {
+  UserRole user_role = 1;
+}
+
+message GetUserRoleRequest {
+  int64 id = 1;
+
+  View view = 2;
+
+  enum View {
+    VIEW_UNSPECIFIED = 0;
+
+    BASIC = 1;
+
+    WITH_EDGE_IDS = 2;
+  }
+}
+
+message UpdateUserRoleRequest {
+  UserRole user_role = 1;
+}
+
+message DeleteUserRoleRequest {
+  int64 id = 1;
+}
+
+message ListUserRoleRequest {
+  int32 page_size = 1;
+
+  string page_token = 2;
+
+  View view = 3;
+
+  enum View {
+    VIEW_UNSPECIFIED = 0;
+
+    BASIC = 1;
+
+    WITH_EDGE_IDS = 2;
+  }
+}
+
+message ListUserRoleResponse {
+  repeated UserRole user_role_list = 1;
+
+  string next_page_token = 2;
+}
+
+message BatchCreateUserRolesRequest {
+  repeated CreateUserRoleRequest requests = 1;
+}
+
+message BatchCreateUserRolesResponse {
+  repeated UserRole user_roles = 1;
+}
+
 service PermService {
   rpc Create ( CreatePermRequest ) returns ( Perm );
 
@@ -255,4 +319,18 @@ service RoleService {
   rpc List ( ListRoleRequest ) returns ( ListRoleResponse );
 
   rpc BatchCreate ( BatchCreateRolesRequest ) returns ( BatchCreateRolesResponse );
+}
+
+service UserRoleService {
+  rpc Create ( CreateUserRoleRequest ) returns ( UserRole );
+
+  rpc Get ( GetUserRoleRequest ) returns ( UserRole );
+
+  rpc Update ( UpdateUserRoleRequest ) returns ( UserRole );
+
+  rpc Delete ( DeleteUserRoleRequest ) returns ( google.protobuf.Empty );
+
+  rpc List ( ListUserRoleRequest ) returns ( ListUserRoleResponse );
+
+  rpc BatchCreate ( BatchCreateUserRolesRequest ) returns ( BatchCreateUserRolesResponse );
 }

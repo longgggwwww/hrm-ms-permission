@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/longgggwww/hrm-ms-permission/ent/perm"
-	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
+	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 )
 
 // PermGroupCreate is the builder for creating a PermGroup entity.

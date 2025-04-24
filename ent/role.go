@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/longgggwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/role"
 )
 
 // Role is the model entity for the Role schema.

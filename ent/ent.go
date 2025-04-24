@@ -12,9 +12,10 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/longgggwww/hrm-ms-permission/ent/perm"
-	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
-	"github.com/longgggwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
+	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
+	"github.com/longgggwwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -78,6 +79,7 @@ func checkColumn(table, column string) error {
 			perm.Table:      perm.ValidColumn,
 			permgroup.Table: permgroup.ValidColumn,
 			role.Table:      role.ValidColumn,
+			userrole.Table:  userrole.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

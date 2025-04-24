@@ -8,8 +8,8 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"github.com/longgggwww/hrm-ms-permission/data/seeds"
-	"github.com/longgggwww/hrm-ms-permission/ent"
+	"github.com/longgggwwww/hrm-ms-permission/data/seeds"
+	"github.com/longgggwwww/hrm-ms-permission/ent"
 )
 
 func main() {

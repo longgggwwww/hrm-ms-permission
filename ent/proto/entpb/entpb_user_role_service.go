@@ -8,55 +8,43 @@ import (
 	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	fmt "fmt"
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
-	perm "github.com/longgggwwww/hrm-ms-permission/ent/perm"
-	role "github.com/longgggwwww/hrm-ms-permission/ent/role"
+	userrole "github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	strconv "strconv"
 )
 
-// RoleService implements RoleServiceServer
-type RoleService struct {
+// UserRoleService implements UserRoleServiceServer
+type UserRoleService struct {
 	client *ent.Client
-	UnimplementedRoleServiceServer
+	UnimplementedUserRoleServiceServer
 }
 
-// NewRoleService returns a new RoleService
-func NewRoleService(client *ent.Client) *RoleService {
-	return &RoleService{
+// NewUserRoleService returns a new UserRoleService
+func NewUserRoleService(client *ent.Client) *UserRoleService {
+	return &UserRoleService{
 		client: client,
 	}
 }
 
-// toProtoRole transforms the ent type to the pb type
-func toProtoRole(e *ent.Role) (*Role, error) {
-	v := &Role{}
-	code := e.Code
-	v.Code = code
-	color := wrapperspb.String(e.Color)
-	v.Color = color
-	description := wrapperspb.String(e.Description)
-	v.Description = description
+// toProtoUserRole transforms the ent type to the pb type
+func toProtoUserRole(e *ent.UserRole) (*UserRole, error) {
+	v := &UserRole{}
 	id := int64(e.ID)
 	v.Id = id
-	name := e.Name
-	v.Name = name
-	for _, edg := range e.Edges.Perms {
-		id := int64(edg.ID)
-		v.Perms = append(v.Perms, &Perm{
-			Id: id,
-		})
-	}
+	role_id := int64(e.RoleID)
+	v.RoleId = role_id
+	user_id := e.UserID
+	v.UserId = user_id
 	return v, nil
 }
 
-// toProtoRoleList transforms a list of ent type to a list of pb type
-func toProtoRoleList(e []*ent.Role) ([]*Role, error) {
-	var pbList []*Role
+// toProtoUserRoleList transforms a list of ent type to a list of pb type
+func toProtoUserRoleList(e []*ent.UserRole) ([]*UserRole, error) {
+	var pbList []*UserRole
 	for _, entEntity := range e {
-		pbEntity, err := toProtoRole(entEntity)
+		pbEntity, err := toProtoUserRole(entEntity)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
@@ -65,17 +53,17 @@ func toProtoRoleList(e []*ent.Role) ([]*Role, error) {
 	return pbList, nil
 }
 
-// Create implements RoleServiceServer.Create
-func (svc *RoleService) Create(ctx context.Context, req *CreateRoleRequest) (*Role, error) {
-	role := req.GetRole()
-	m, err := svc.createBuilder(role)
+// Create implements UserRoleServiceServer.Create
+func (svc *UserRoleService) Create(ctx context.Context, req *CreateUserRoleRequest) (*UserRole, error) {
+	userrole := req.GetUserRole()
+	m, err := svc.createBuilder(userrole)
 	if err != nil {
 		return nil, err
 	}
 	res, err := m.Save(ctx)
 	switch {
 	case err == nil:
-		proto, err := toProtoRole(res)
+		proto, err := toProtoUserRole(res)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
@@ -90,29 +78,26 @@ func (svc *RoleService) Create(ctx context.Context, req *CreateRoleRequest) (*Ro
 
 }
 
-// Get implements RoleServiceServer.Get
-func (svc *RoleService) Get(ctx context.Context, req *GetRoleRequest) (*Role, error) {
+// Get implements UserRoleServiceServer.Get
+func (svc *UserRoleService) Get(ctx context.Context, req *GetUserRoleRequest) (*UserRole, error) {
 	var (
 		err error
-		get *ent.Role
+		get *ent.UserRole
 	)
 	id := int(req.GetId())
 	switch req.GetView() {
-	case GetRoleRequest_VIEW_UNSPECIFIED, GetRoleRequest_BASIC:
-		get, err = svc.client.Role.Get(ctx, id)
-	case GetRoleRequest_WITH_EDGE_IDS:
-		get, err = svc.client.Role.Query().
-			Where(role.ID(id)).
-			WithPerms(func(query *ent.PermQuery) {
-				query.Select(perm.FieldID)
-			}).
+	case GetUserRoleRequest_VIEW_UNSPECIFIED, GetUserRoleRequest_BASIC:
+		get, err = svc.client.UserRole.Get(ctx, id)
+	case GetUserRoleRequest_WITH_EDGE_IDS:
+		get, err = svc.client.UserRole.Query().
+			Where(userrole.ID(id)).
 			Only(ctx)
 	default:
 		return nil, status.Error(codes.InvalidArgument, "invalid argument: unknown view")
 	}
 	switch {
 	case err == nil:
-		return toProtoRole(get)
+		return toProtoUserRole(get)
 	case ent.IsNotFound(err):
 		return nil, status.Errorf(codes.NotFound, "not found: %s", err)
 	default:
@@ -121,32 +106,20 @@ func (svc *RoleService) Get(ctx context.Context, req *GetRoleRequest) (*Role, er
 
 }
 
-// Update implements RoleServiceServer.Update
-func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Role, error) {
-	role := req.GetRole()
-	roleID := int(role.GetId())
-	m := svc.client.Role.UpdateOneID(roleID)
-	roleCode := role.GetCode()
-	m.SetCode(roleCode)
-	if role.GetColor() != nil {
-		roleColor := role.GetColor().GetValue()
-		m.SetColor(roleColor)
-	}
-	if role.GetDescription() != nil {
-		roleDescription := role.GetDescription().GetValue()
-		m.SetDescription(roleDescription)
-	}
-	roleName := role.GetName()
-	m.SetName(roleName)
-	for _, item := range role.GetPerms() {
-		perms := int(item.GetId())
-		m.AddPermIDs(perms)
-	}
+// Update implements UserRoleServiceServer.Update
+func (svc *UserRoleService) Update(ctx context.Context, req *UpdateUserRoleRequest) (*UserRole, error) {
+	userrole := req.GetUserRole()
+	userroleID := int(userrole.GetId())
+	m := svc.client.UserRole.UpdateOneID(userroleID)
+	userroleRoleID := int(userrole.GetRoleId())
+	m.SetRoleID(userroleRoleID)
+	userroleUserID := userrole.GetUserId()
+	m.SetUserID(userroleUserID)
 
 	res, err := m.Save(ctx)
 	switch {
 	case err == nil:
-		proto, err := toProtoRole(res)
+		proto, err := toProtoUserRole(res)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
@@ -161,11 +134,11 @@ func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Ro
 
 }
 
-// Delete implements RoleServiceServer.Delete
-func (svc *RoleService) Delete(ctx context.Context, req *DeleteRoleRequest) (*emptypb.Empty, error) {
+// Delete implements UserRoleServiceServer.Delete
+func (svc *UserRoleService) Delete(ctx context.Context, req *DeleteUserRoleRequest) (*emptypb.Empty, error) {
 	var err error
 	id := int(req.GetId())
-	err = svc.client.Role.DeleteOneID(id).Exec(ctx)
+	err = svc.client.UserRole.DeleteOneID(id).Exec(ctx)
 	switch {
 	case err == nil:
 		return &emptypb.Empty{}, nil
@@ -177,11 +150,11 @@ func (svc *RoleService) Delete(ctx context.Context, req *DeleteRoleRequest) (*em
 
 }
 
-// List implements RoleServiceServer.List
-func (svc *RoleService) List(ctx context.Context, req *ListRoleRequest) (*ListRoleResponse, error) {
+// List implements UserRoleServiceServer.List
+func (svc *UserRoleService) List(ctx context.Context, req *ListUserRoleRequest) (*ListUserRoleResponse, error) {
 	var (
 		err      error
-		entList  []*ent.Role
+		entList  []*ent.UserRole
 		pageSize int
 	)
 	pageSize = int(req.GetPageSize())
@@ -191,8 +164,8 @@ func (svc *RoleService) List(ctx context.Context, req *ListRoleRequest) (*ListRo
 	case pageSize == 0 || pageSize > entproto.MaxPageSize:
 		pageSize = entproto.MaxPageSize
 	}
-	listQuery := svc.client.Role.Query().
-		Order(ent.Desc(role.FieldID)).
+	listQuery := svc.client.UserRole.Query().
+		Order(ent.Desc(userrole.FieldID)).
 		Limit(pageSize + 1)
 	if req.GetPageToken() != "" {
 		bytes, err := base64.StdEncoding.DecodeString(req.PageToken)
@@ -205,16 +178,13 @@ func (svc *RoleService) List(ctx context.Context, req *ListRoleRequest) (*ListRo
 		}
 		pageToken := int(token)
 		listQuery = listQuery.
-			Where(role.IDLTE(pageToken))
+			Where(userrole.IDLTE(pageToken))
 	}
 	switch req.GetView() {
-	case ListRoleRequest_VIEW_UNSPECIFIED, ListRoleRequest_BASIC:
+	case ListUserRoleRequest_VIEW_UNSPECIFIED, ListUserRoleRequest_BASIC:
 		entList, err = listQuery.All(ctx)
-	case ListRoleRequest_WITH_EDGE_IDS:
+	case ListUserRoleRequest_WITH_EDGE_IDS:
 		entList, err = listQuery.
-			WithPerms(func(query *ent.PermQuery) {
-				query.Select(perm.FieldID)
-			}).
 			All(ctx)
 	}
 	switch {
@@ -225,12 +195,12 @@ func (svc *RoleService) List(ctx context.Context, req *ListRoleRequest) (*ListRo
 				[]byte(fmt.Sprintf("%v", entList[len(entList)-1].ID)))
 			entList = entList[:len(entList)-1]
 		}
-		protoList, err := toProtoRoleList(entList)
+		protoList, err := toProtoUserRoleList(entList)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
-		return &ListRoleResponse{
-			RoleList:      protoList,
+		return &ListUserRoleResponse{
+			UserRoleList:  protoList,
 			NextPageToken: nextPageToken,
 		}, nil
 	default:
@@ -239,30 +209,30 @@ func (svc *RoleService) List(ctx context.Context, req *ListRoleRequest) (*ListRo
 
 }
 
-// BatchCreate implements RoleServiceServer.BatchCreate
-func (svc *RoleService) BatchCreate(ctx context.Context, req *BatchCreateRolesRequest) (*BatchCreateRolesResponse, error) {
+// BatchCreate implements UserRoleServiceServer.BatchCreate
+func (svc *UserRoleService) BatchCreate(ctx context.Context, req *BatchCreateUserRolesRequest) (*BatchCreateUserRolesResponse, error) {
 	requests := req.GetRequests()
 	if len(requests) > entproto.MaxBatchCreateSize {
 		return nil, status.Errorf(codes.InvalidArgument, "batch size cannot be greater than %d", entproto.MaxBatchCreateSize)
 	}
-	bulk := make([]*ent.RoleCreate, len(requests))
+	bulk := make([]*ent.UserRoleCreate, len(requests))
 	for i, req := range requests {
-		role := req.GetRole()
+		userrole := req.GetUserRole()
 		var err error
-		bulk[i], err = svc.createBuilder(role)
+		bulk[i], err = svc.createBuilder(userrole)
 		if err != nil {
 			return nil, err
 		}
 	}
-	res, err := svc.client.Role.CreateBulk(bulk...).Save(ctx)
+	res, err := svc.client.UserRole.CreateBulk(bulk...).Save(ctx)
 	switch {
 	case err == nil:
-		protoList, err := toProtoRoleList(res)
+		protoList, err := toProtoUserRoleList(res)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 		}
-		return &BatchCreateRolesResponse{
-			Roles: protoList,
+		return &BatchCreateUserRolesResponse{
+			UserRoles: protoList,
 		}, nil
 	case sqlgraph.IsUniqueConstraintError(err):
 		return nil, status.Errorf(codes.AlreadyExists, "already exists: %s", err)
@@ -274,23 +244,11 @@ func (svc *RoleService) BatchCreate(ctx context.Context, req *BatchCreateRolesRe
 
 }
 
-func (svc *RoleService) createBuilder(role *Role) (*ent.RoleCreate, error) {
-	m := svc.client.Role.Create()
-	roleCode := role.GetCode()
-	m.SetCode(roleCode)
-	if role.GetColor() != nil {
-		roleColor := role.GetColor().GetValue()
-		m.SetColor(roleColor)
-	}
-	if role.GetDescription() != nil {
-		roleDescription := role.GetDescription().GetValue()
-		m.SetDescription(roleDescription)
-	}
-	roleName := role.GetName()
-	m.SetName(roleName)
-	for _, item := range role.GetPerms() {
-		perms := int(item.GetId())
-		m.AddPermIDs(perms)
-	}
+func (svc *UserRoleService) createBuilder(userrole *UserRole) (*ent.UserRoleCreate, error) {
+	m := svc.client.UserRole.Create()
+	userroleRoleID := int(userrole.GetRoleId())
+	m.SetRoleID(userroleRoleID)
+	userroleUserID := userrole.GetUserId()
+	m.SetUserID(userroleUserID)
 	return m, nil
 }

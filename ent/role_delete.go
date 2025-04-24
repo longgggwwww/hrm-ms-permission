@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/longgggwww/hrm-ms-permission/ent/predicate"
-	"github.com/longgggwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
+	"github.com/longgggwwww/hrm-ms-permission/ent/role"
 )
 
 // RoleDelete is the builder for deleting a Role entity.

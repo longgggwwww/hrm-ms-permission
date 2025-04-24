@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/longgggwww/hrm-ms-permission/ent"
-	"github.com/longgggwww/hrm-ms-permission/ent/perm"
-	"github.com/longgggwww/hrm-ms-permission/internal/utils"
+	"github.com/longgggwwww/hrm-ms-permission/ent"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
+	"github.com/longgggwwww/hrm-ms-permission/internal/utils"
 )
 
 func SeedRoles(ctx context.Context, client *ent.Client) error {

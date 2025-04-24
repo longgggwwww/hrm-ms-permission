@@ -1,4 +1,4 @@
-module github.com/longgggwww/hrm-ms-permission
+module github.com/longgggwwww/hrm-ms-permission
 
 go 1.24.2
 

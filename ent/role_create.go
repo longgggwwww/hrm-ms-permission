@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/longgggwww/hrm-ms-permission/ent/perm"
-	"github.com/longgggwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
+	"github.com/longgggwwww/hrm-ms-permission/ent/role"
 )
 
 // RoleCreate is the builder for creating a Role entity.

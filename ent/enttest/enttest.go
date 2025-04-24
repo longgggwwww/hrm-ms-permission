@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/longgggwww/hrm-ms-permission/ent"
+	"github.com/longgggwwww/hrm-ms-permission/ent"
 	// required by schema hooks.
-	_ "github.com/longgggwww/hrm-ms-permission/ent/runtime"
+	_ "github.com/longgggwwww/hrm-ms-permission/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/longgggwww/hrm-ms-permission/ent/migrate"
+	"github.com/longgggwwww/hrm-ms-permission/ent/migrate"
 )
 
 type (

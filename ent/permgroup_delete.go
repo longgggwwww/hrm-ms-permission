@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
-	"github.com/longgggwww/hrm-ms-permission/ent/predicate"
+	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
+	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 )
 
 // PermGroupDelete is the builder for deleting a PermGroup entity.

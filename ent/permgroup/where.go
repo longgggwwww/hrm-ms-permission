@@ -5,7 +5,7 @@ package permgroup
 import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/longgggwww/hrm-ms-permission/ent/predicate"
+	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

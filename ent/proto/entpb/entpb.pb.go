@@ -319,6 +319,104 @@ func (ListRoleRequest_View) EnumDescriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{23, 0}
 }
 
+type GetUserRoleRequest_View int32
+
+const (
+	GetUserRoleRequest_VIEW_UNSPECIFIED GetUserRoleRequest_View = 0
+	GetUserRoleRequest_BASIC            GetUserRoleRequest_View = 1
+	GetUserRoleRequest_WITH_EDGE_IDS    GetUserRoleRequest_View = 2
+)
+
+// Enum value maps for GetUserRoleRequest_View.
+var (
+	GetUserRoleRequest_View_name = map[int32]string{
+		0: "VIEW_UNSPECIFIED",
+		1: "BASIC",
+		2: "WITH_EDGE_IDS",
+	}
+	GetUserRoleRequest_View_value = map[string]int32{
+		"VIEW_UNSPECIFIED": 0,
+		"BASIC":            1,
+		"WITH_EDGE_IDS":    2,
+	}
+)
+
+func (x GetUserRoleRequest_View) Enum() *GetUserRoleRequest_View {
+	p := new(GetUserRoleRequest_View)
+	*p = x
+	return p
+}
+
+func (x GetUserRoleRequest_View) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (GetUserRoleRequest_View) Descriptor() protoreflect.EnumDescriptor {
+	return file_entpb_entpb_proto_enumTypes[6].Descriptor()
+}
+
+func (GetUserRoleRequest_View) Type() protoreflect.EnumType {
+	return &file_entpb_entpb_proto_enumTypes[6]
+}
+
+func (x GetUserRoleRequest_View) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use GetUserRoleRequest_View.Descriptor instead.
+func (GetUserRoleRequest_View) EnumDescriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{29, 0}
+}
+
+type ListUserRoleRequest_View int32
+
+const (
+	ListUserRoleRequest_VIEW_UNSPECIFIED ListUserRoleRequest_View = 0
+	ListUserRoleRequest_BASIC            ListUserRoleRequest_View = 1
+	ListUserRoleRequest_WITH_EDGE_IDS    ListUserRoleRequest_View = 2
+)
+
+// Enum value maps for ListUserRoleRequest_View.
+var (
+	ListUserRoleRequest_View_name = map[int32]string{
+		0: "VIEW_UNSPECIFIED",
+		1: "BASIC",
+		2: "WITH_EDGE_IDS",
+	}
+	ListUserRoleRequest_View_value = map[string]int32{
+		"VIEW_UNSPECIFIED": 0,
+		"BASIC":            1,
+		"WITH_EDGE_IDS":    2,
+	}
+)
+
+func (x ListUserRoleRequest_View) Enum() *ListUserRoleRequest_View {
+	p := new(ListUserRoleRequest_View)
+	*p = x
+	return p
+}
+
+func (x ListUserRoleRequest_View) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ListUserRoleRequest_View) Descriptor() protoreflect.EnumDescriptor {
+	return file_entpb_entpb_proto_enumTypes[7].Descriptor()
+}
+
+func (ListUserRoleRequest_View) Type() protoreflect.EnumType {
+	return &file_entpb_entpb_proto_enumTypes[7]
+}
+
+func (x ListUserRoleRequest_View) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ListUserRoleRequest_View.Descriptor instead.
+func (ListUserRoleRequest_View) EnumDescriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{32, 0}
+}
+
 type Perm struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1707,6 +1805,450 @@ func (x *BatchCreateRolesResponse) GetRoles() []*Role {
 	return nil
 }
 
+type UserRole struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserRole) Reset() {
+	*x = UserRole{}
+	mi := &file_entpb_entpb_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserRole) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserRole) ProtoMessage() {}
+
+func (x *UserRole) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserRole.ProtoReflect.Descriptor instead.
+func (*UserRole) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *UserRole) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserRole) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UserRole) GetRoleId() int64 {
+	if x != nil {
+		return x.RoleId
+	}
+	return 0
+}
+
+type CreateUserRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserRole      *UserRole              `protobuf:"bytes,1,opt,name=user_role,json=userRole,proto3" json:"user_role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateUserRoleRequest) Reset() {
+	*x = CreateUserRoleRequest{}
+	mi := &file_entpb_entpb_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateUserRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateUserRoleRequest) ProtoMessage() {}
+
+func (x *CreateUserRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateUserRoleRequest.ProtoReflect.Descriptor instead.
+func (*CreateUserRoleRequest) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *CreateUserRoleRequest) GetUserRole() *UserRole {
+	if x != nil {
+		return x.UserRole
+	}
+	return nil
+}
+
+type GetUserRoleRequest struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	View          GetUserRoleRequest_View `protobuf:"varint,2,opt,name=view,proto3,enum=entpb.GetUserRoleRequest_View" json:"view,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserRoleRequest) Reset() {
+	*x = GetUserRoleRequest{}
+	mi := &file_entpb_entpb_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserRoleRequest) ProtoMessage() {}
+
+func (x *GetUserRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserRoleRequest.ProtoReflect.Descriptor instead.
+func (*GetUserRoleRequest) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *GetUserRoleRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *GetUserRoleRequest) GetView() GetUserRoleRequest_View {
+	if x != nil {
+		return x.View
+	}
+	return GetUserRoleRequest_VIEW_UNSPECIFIED
+}
+
+type UpdateUserRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserRole      *UserRole              `protobuf:"bytes,1,opt,name=user_role,json=userRole,proto3" json:"user_role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserRoleRequest) Reset() {
+	*x = UpdateUserRoleRequest{}
+	mi := &file_entpb_entpb_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserRoleRequest) ProtoMessage() {}
+
+func (x *UpdateUserRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserRoleRequest.ProtoReflect.Descriptor instead.
+func (*UpdateUserRoleRequest) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *UpdateUserRoleRequest) GetUserRole() *UserRole {
+	if x != nil {
+		return x.UserRole
+	}
+	return nil
+}
+
+type DeleteUserRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteUserRoleRequest) Reset() {
+	*x = DeleteUserRoleRequest{}
+	mi := &file_entpb_entpb_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteUserRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteUserRoleRequest) ProtoMessage() {}
+
+func (x *DeleteUserRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteUserRoleRequest.ProtoReflect.Descriptor instead.
+func (*DeleteUserRoleRequest) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *DeleteUserRoleRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type ListUserRoleRequest struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	PageSize      int32                    `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	PageToken     string                   `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	View          ListUserRoleRequest_View `protobuf:"varint,3,opt,name=view,proto3,enum=entpb.ListUserRoleRequest_View" json:"view,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserRoleRequest) Reset() {
+	*x = ListUserRoleRequest{}
+	mi := &file_entpb_entpb_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserRoleRequest) ProtoMessage() {}
+
+func (x *ListUserRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserRoleRequest.ProtoReflect.Descriptor instead.
+func (*ListUserRoleRequest) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *ListUserRoleRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListUserRoleRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+func (x *ListUserRoleRequest) GetView() ListUserRoleRequest_View {
+	if x != nil {
+		return x.View
+	}
+	return ListUserRoleRequest_VIEW_UNSPECIFIED
+}
+
+type ListUserRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserRoleList  []*UserRole            `protobuf:"bytes,1,rep,name=user_role_list,json=userRoleList,proto3" json:"user_role_list,omitempty"`
+	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserRoleResponse) Reset() {
+	*x = ListUserRoleResponse{}
+	mi := &file_entpb_entpb_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserRoleResponse) ProtoMessage() {}
+
+func (x *ListUserRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserRoleResponse.ProtoReflect.Descriptor instead.
+func (*ListUserRoleResponse) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *ListUserRoleResponse) GetUserRoleList() []*UserRole {
+	if x != nil {
+		return x.UserRoleList
+	}
+	return nil
+}
+
+func (x *ListUserRoleResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+type BatchCreateUserRolesRequest struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Requests      []*CreateUserRoleRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchCreateUserRolesRequest) Reset() {
+	*x = BatchCreateUserRolesRequest{}
+	mi := &file_entpb_entpb_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchCreateUserRolesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchCreateUserRolesRequest) ProtoMessage() {}
+
+func (x *BatchCreateUserRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchCreateUserRolesRequest.ProtoReflect.Descriptor instead.
+func (*BatchCreateUserRolesRequest) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *BatchCreateUserRolesRequest) GetRequests() []*CreateUserRoleRequest {
+	if x != nil {
+		return x.Requests
+	}
+	return nil
+}
+
+type BatchCreateUserRolesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserRoles     []*UserRole            `protobuf:"bytes,1,rep,name=user_roles,json=userRoles,proto3" json:"user_roles,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchCreateUserRolesResponse) Reset() {
+	*x = BatchCreateUserRolesResponse{}
+	mi := &file_entpb_entpb_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchCreateUserRolesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchCreateUserRolesResponse) ProtoMessage() {}
+
+func (x *BatchCreateUserRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_entpb_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchCreateUserRolesResponse.ProtoReflect.Descriptor instead.
+func (*BatchCreateUserRolesResponse) Descriptor() ([]byte, []int) {
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *BatchCreateUserRolesResponse) GetUserRoles() []*UserRole {
+	if x != nil {
+		return x.UserRoles
+	}
+	return nil
+}
+
 var File_entpb_entpb_proto protoreflect.FileDescriptor
 
 const file_entpb_entpb_proto_rawDesc = "" +
@@ -1820,7 +2362,41 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x17BatchCreateRolesRequest\x124\n" +
 	"\brequests\x18\x01 \x03(\v2\x18.entpb.CreateRoleRequestR\brequests\"=\n" +
 	"\x18BatchCreateRolesResponse\x12!\n" +
-	"\x05roles\x18\x01 \x03(\v2\v.entpb.RoleR\x05roles2\xdf\x02\n" +
+	"\x05roles\x18\x01 \x03(\v2\v.entpb.RoleR\x05roles\"L\n" +
+	"\bUserRole\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x17\n" +
+	"\arole_id\x18\x03 \x01(\x03R\x06roleId\"E\n" +
+	"\x15CreateUserRoleRequest\x12,\n" +
+	"\tuser_role\x18\x01 \x01(\v2\x0f.entpb.UserRoleR\buserRole\"\x94\x01\n" +
+	"\x12GetUserRoleRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x122\n" +
+	"\x04view\x18\x02 \x01(\x0e2\x1e.entpb.GetUserRoleRequest.ViewR\x04view\":\n" +
+	"\x04View\x12\x14\n" +
+	"\x10VIEW_UNSPECIFIED\x10\x00\x12\t\n" +
+	"\x05BASIC\x10\x01\x12\x11\n" +
+	"\rWITH_EDGE_IDS\x10\x02\"E\n" +
+	"\x15UpdateUserRoleRequest\x12,\n" +
+	"\tuser_role\x18\x01 \x01(\v2\x0f.entpb.UserRoleR\buserRole\"'\n" +
+	"\x15DeleteUserRoleRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xc2\x01\n" +
+	"\x13ListUserRoleRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\x123\n" +
+	"\x04view\x18\x03 \x01(\x0e2\x1f.entpb.ListUserRoleRequest.ViewR\x04view\":\n" +
+	"\x04View\x12\x14\n" +
+	"\x10VIEW_UNSPECIFIED\x10\x00\x12\t\n" +
+	"\x05BASIC\x10\x01\x12\x11\n" +
+	"\rWITH_EDGE_IDS\x10\x02\"u\n" +
+	"\x14ListUserRoleResponse\x125\n" +
+	"\x0euser_role_list\x18\x01 \x03(\v2\x0f.entpb.UserRoleR\fuserRoleList\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"W\n" +
+	"\x1bBatchCreateUserRolesRequest\x128\n" +
+	"\brequests\x18\x01 \x03(\v2\x1c.entpb.CreateUserRoleRequestR\brequests\"N\n" +
+	"\x1cBatchCreateUserRolesResponse\x12.\n" +
+	"\n" +
+	"user_roles\x18\x01 \x03(\v2\x0f.entpb.UserRoleR\tuserRoles2\xdf\x02\n" +
 	"\vPermService\x12/\n" +
 	"\x06Create\x12\x18.entpb.CreatePermRequest\x1a\v.entpb.Perm\x12)\n" +
 	"\x03Get\x12\x15.entpb.GetPermRequest\x1a\v.entpb.Perm\x12/\n" +
@@ -1841,7 +2417,14 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x06Update\x12\x18.entpb.UpdateRoleRequest\x1a\v.entpb.Role\x12:\n" +
 	"\x06Delete\x12\x18.entpb.DeleteRoleRequest\x1a\x16.google.protobuf.Empty\x127\n" +
 	"\x04List\x12\x16.entpb.ListRoleRequest\x1a\x17.entpb.ListRoleResponse\x12N\n" +
-	"\vBatchCreate\x12\x1e.entpb.BatchCreateRolesRequest\x1a\x1f.entpb.BatchCreateRolesResponseB9Z7github.com/longgggwww/hrm-ms-permission/ent/proto/entpbb\x06proto3"
+	"\vBatchCreate\x12\x1e.entpb.BatchCreateRolesRequest\x1a\x1f.entpb.BatchCreateRolesResponse2\x8f\x03\n" +
+	"\x0fUserRoleService\x127\n" +
+	"\x06Create\x12\x1c.entpb.CreateUserRoleRequest\x1a\x0f.entpb.UserRole\x121\n" +
+	"\x03Get\x12\x19.entpb.GetUserRoleRequest\x1a\x0f.entpb.UserRole\x127\n" +
+	"\x06Update\x12\x1c.entpb.UpdateUserRoleRequest\x1a\x0f.entpb.UserRole\x12>\n" +
+	"\x06Delete\x12\x1c.entpb.DeleteUserRoleRequest\x1a\x16.google.protobuf.Empty\x12?\n" +
+	"\x04List\x12\x1a.entpb.ListUserRoleRequest\x1a\x1b.entpb.ListUserRoleResponse\x12V\n" +
+	"\vBatchCreate\x12\".entpb.BatchCreateUserRolesRequest\x1a#.entpb.BatchCreateUserRolesResponseB:Z8github.com/longgggwwww/hrm-ms-permission/ent/proto/entpbb\x06proto3"
 
 var (
 	file_entpb_entpb_proto_rawDescOnce sync.Once
@@ -1855,8 +2438,8 @@ func file_entpb_entpb_proto_rawDescGZIP() []byte {
 	return file_entpb_entpb_proto_rawDescData
 }
 
-var file_entpb_entpb_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_entpb_entpb_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_entpb_entpb_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
+var file_entpb_entpb_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_entpb_entpb_proto_goTypes = []any{
 	(GetPermRequest_View)(0),              // 0: entpb.GetPermRequest.View
 	(ListPermRequest_View)(0),             // 1: entpb.ListPermRequest.View
@@ -1864,106 +2447,136 @@ var file_entpb_entpb_proto_goTypes = []any{
 	(ListPermGroupRequest_View)(0),        // 3: entpb.ListPermGroupRequest.View
 	(GetRoleRequest_View)(0),              // 4: entpb.GetRoleRequest.View
 	(ListRoleRequest_View)(0),             // 5: entpb.ListRoleRequest.View
-	(*Perm)(nil),                          // 6: entpb.Perm
-	(*CreatePermRequest)(nil),             // 7: entpb.CreatePermRequest
-	(*GetPermRequest)(nil),                // 8: entpb.GetPermRequest
-	(*UpdatePermRequest)(nil),             // 9: entpb.UpdatePermRequest
-	(*DeletePermRequest)(nil),             // 10: entpb.DeletePermRequest
-	(*ListPermRequest)(nil),               // 11: entpb.ListPermRequest
-	(*ListPermResponse)(nil),              // 12: entpb.ListPermResponse
-	(*BatchCreatePermsRequest)(nil),       // 13: entpb.BatchCreatePermsRequest
-	(*BatchCreatePermsResponse)(nil),      // 14: entpb.BatchCreatePermsResponse
-	(*PermGroup)(nil),                     // 15: entpb.PermGroup
-	(*CreatePermGroupRequest)(nil),        // 16: entpb.CreatePermGroupRequest
-	(*GetPermGroupRequest)(nil),           // 17: entpb.GetPermGroupRequest
-	(*UpdatePermGroupRequest)(nil),        // 18: entpb.UpdatePermGroupRequest
-	(*DeletePermGroupRequest)(nil),        // 19: entpb.DeletePermGroupRequest
-	(*ListPermGroupRequest)(nil),          // 20: entpb.ListPermGroupRequest
-	(*ListPermGroupResponse)(nil),         // 21: entpb.ListPermGroupResponse
-	(*BatchCreatePermGroupsRequest)(nil),  // 22: entpb.BatchCreatePermGroupsRequest
-	(*BatchCreatePermGroupsResponse)(nil), // 23: entpb.BatchCreatePermGroupsResponse
-	(*Role)(nil),                          // 24: entpb.Role
-	(*CreateRoleRequest)(nil),             // 25: entpb.CreateRoleRequest
-	(*GetRoleRequest)(nil),                // 26: entpb.GetRoleRequest
-	(*UpdateRoleRequest)(nil),             // 27: entpb.UpdateRoleRequest
-	(*DeleteRoleRequest)(nil),             // 28: entpb.DeleteRoleRequest
-	(*ListRoleRequest)(nil),               // 29: entpb.ListRoleRequest
-	(*ListRoleResponse)(nil),              // 30: entpb.ListRoleResponse
-	(*BatchCreateRolesRequest)(nil),       // 31: entpb.BatchCreateRolesRequest
-	(*BatchCreateRolesResponse)(nil),      // 32: entpb.BatchCreateRolesResponse
-	(*wrapperspb.StringValue)(nil),        // 33: google.protobuf.StringValue
-	(*emptypb.Empty)(nil),                 // 34: google.protobuf.Empty
+	(GetUserRoleRequest_View)(0),          // 6: entpb.GetUserRoleRequest.View
+	(ListUserRoleRequest_View)(0),         // 7: entpb.ListUserRoleRequest.View
+	(*Perm)(nil),                          // 8: entpb.Perm
+	(*CreatePermRequest)(nil),             // 9: entpb.CreatePermRequest
+	(*GetPermRequest)(nil),                // 10: entpb.GetPermRequest
+	(*UpdatePermRequest)(nil),             // 11: entpb.UpdatePermRequest
+	(*DeletePermRequest)(nil),             // 12: entpb.DeletePermRequest
+	(*ListPermRequest)(nil),               // 13: entpb.ListPermRequest
+	(*ListPermResponse)(nil),              // 14: entpb.ListPermResponse
+	(*BatchCreatePermsRequest)(nil),       // 15: entpb.BatchCreatePermsRequest
+	(*BatchCreatePermsResponse)(nil),      // 16: entpb.BatchCreatePermsResponse
+	(*PermGroup)(nil),                     // 17: entpb.PermGroup
+	(*CreatePermGroupRequest)(nil),        // 18: entpb.CreatePermGroupRequest
+	(*GetPermGroupRequest)(nil),           // 19: entpb.GetPermGroupRequest
+	(*UpdatePermGroupRequest)(nil),        // 20: entpb.UpdatePermGroupRequest
+	(*DeletePermGroupRequest)(nil),        // 21: entpb.DeletePermGroupRequest
+	(*ListPermGroupRequest)(nil),          // 22: entpb.ListPermGroupRequest
+	(*ListPermGroupResponse)(nil),         // 23: entpb.ListPermGroupResponse
+	(*BatchCreatePermGroupsRequest)(nil),  // 24: entpb.BatchCreatePermGroupsRequest
+	(*BatchCreatePermGroupsResponse)(nil), // 25: entpb.BatchCreatePermGroupsResponse
+	(*Role)(nil),                          // 26: entpb.Role
+	(*CreateRoleRequest)(nil),             // 27: entpb.CreateRoleRequest
+	(*GetRoleRequest)(nil),                // 28: entpb.GetRoleRequest
+	(*UpdateRoleRequest)(nil),             // 29: entpb.UpdateRoleRequest
+	(*DeleteRoleRequest)(nil),             // 30: entpb.DeleteRoleRequest
+	(*ListRoleRequest)(nil),               // 31: entpb.ListRoleRequest
+	(*ListRoleResponse)(nil),              // 32: entpb.ListRoleResponse
+	(*BatchCreateRolesRequest)(nil),       // 33: entpb.BatchCreateRolesRequest
+	(*BatchCreateRolesResponse)(nil),      // 34: entpb.BatchCreateRolesResponse
+	(*UserRole)(nil),                      // 35: entpb.UserRole
+	(*CreateUserRoleRequest)(nil),         // 36: entpb.CreateUserRoleRequest
+	(*GetUserRoleRequest)(nil),            // 37: entpb.GetUserRoleRequest
+	(*UpdateUserRoleRequest)(nil),         // 38: entpb.UpdateUserRoleRequest
+	(*DeleteUserRoleRequest)(nil),         // 39: entpb.DeleteUserRoleRequest
+	(*ListUserRoleRequest)(nil),           // 40: entpb.ListUserRoleRequest
+	(*ListUserRoleResponse)(nil),          // 41: entpb.ListUserRoleResponse
+	(*BatchCreateUserRolesRequest)(nil),   // 42: entpb.BatchCreateUserRolesRequest
+	(*BatchCreateUserRolesResponse)(nil),  // 43: entpb.BatchCreateUserRolesResponse
+	(*wrapperspb.StringValue)(nil),        // 44: google.protobuf.StringValue
+	(*emptypb.Empty)(nil),                 // 45: google.protobuf.Empty
 }
 var file_entpb_entpb_proto_depIdxs = []int32{
-	33, // 0: entpb.Perm.description:type_name -> google.protobuf.StringValue
-	15, // 1: entpb.Perm.group:type_name -> entpb.PermGroup
-	24, // 2: entpb.Perm.roles:type_name -> entpb.Role
-	6,  // 3: entpb.CreatePermRequest.perm:type_name -> entpb.Perm
+	44, // 0: entpb.Perm.description:type_name -> google.protobuf.StringValue
+	17, // 1: entpb.Perm.group:type_name -> entpb.PermGroup
+	26, // 2: entpb.Perm.roles:type_name -> entpb.Role
+	8,  // 3: entpb.CreatePermRequest.perm:type_name -> entpb.Perm
 	0,  // 4: entpb.GetPermRequest.view:type_name -> entpb.GetPermRequest.View
-	6,  // 5: entpb.UpdatePermRequest.perm:type_name -> entpb.Perm
+	8,  // 5: entpb.UpdatePermRequest.perm:type_name -> entpb.Perm
 	1,  // 6: entpb.ListPermRequest.view:type_name -> entpb.ListPermRequest.View
-	6,  // 7: entpb.ListPermResponse.perm_list:type_name -> entpb.Perm
-	7,  // 8: entpb.BatchCreatePermsRequest.requests:type_name -> entpb.CreatePermRequest
-	6,  // 9: entpb.BatchCreatePermsResponse.perms:type_name -> entpb.Perm
-	6,  // 10: entpb.PermGroup.perms:type_name -> entpb.Perm
-	15, // 11: entpb.CreatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
+	8,  // 7: entpb.ListPermResponse.perm_list:type_name -> entpb.Perm
+	9,  // 8: entpb.BatchCreatePermsRequest.requests:type_name -> entpb.CreatePermRequest
+	8,  // 9: entpb.BatchCreatePermsResponse.perms:type_name -> entpb.Perm
+	8,  // 10: entpb.PermGroup.perms:type_name -> entpb.Perm
+	17, // 11: entpb.CreatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
 	2,  // 12: entpb.GetPermGroupRequest.view:type_name -> entpb.GetPermGroupRequest.View
-	15, // 13: entpb.UpdatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
+	17, // 13: entpb.UpdatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
 	3,  // 14: entpb.ListPermGroupRequest.view:type_name -> entpb.ListPermGroupRequest.View
-	15, // 15: entpb.ListPermGroupResponse.perm_group_list:type_name -> entpb.PermGroup
-	16, // 16: entpb.BatchCreatePermGroupsRequest.requests:type_name -> entpb.CreatePermGroupRequest
-	15, // 17: entpb.BatchCreatePermGroupsResponse.perm_groups:type_name -> entpb.PermGroup
-	33, // 18: entpb.Role.color:type_name -> google.protobuf.StringValue
-	33, // 19: entpb.Role.description:type_name -> google.protobuf.StringValue
-	6,  // 20: entpb.Role.perms:type_name -> entpb.Perm
-	24, // 21: entpb.CreateRoleRequest.role:type_name -> entpb.Role
+	17, // 15: entpb.ListPermGroupResponse.perm_group_list:type_name -> entpb.PermGroup
+	18, // 16: entpb.BatchCreatePermGroupsRequest.requests:type_name -> entpb.CreatePermGroupRequest
+	17, // 17: entpb.BatchCreatePermGroupsResponse.perm_groups:type_name -> entpb.PermGroup
+	44, // 18: entpb.Role.color:type_name -> google.protobuf.StringValue
+	44, // 19: entpb.Role.description:type_name -> google.protobuf.StringValue
+	8,  // 20: entpb.Role.perms:type_name -> entpb.Perm
+	26, // 21: entpb.CreateRoleRequest.role:type_name -> entpb.Role
 	4,  // 22: entpb.GetRoleRequest.view:type_name -> entpb.GetRoleRequest.View
-	24, // 23: entpb.UpdateRoleRequest.role:type_name -> entpb.Role
+	26, // 23: entpb.UpdateRoleRequest.role:type_name -> entpb.Role
 	5,  // 24: entpb.ListRoleRequest.view:type_name -> entpb.ListRoleRequest.View
-	24, // 25: entpb.ListRoleResponse.role_list:type_name -> entpb.Role
-	25, // 26: entpb.BatchCreateRolesRequest.requests:type_name -> entpb.CreateRoleRequest
-	24, // 27: entpb.BatchCreateRolesResponse.roles:type_name -> entpb.Role
-	7,  // 28: entpb.PermService.Create:input_type -> entpb.CreatePermRequest
-	8,  // 29: entpb.PermService.Get:input_type -> entpb.GetPermRequest
-	9,  // 30: entpb.PermService.Update:input_type -> entpb.UpdatePermRequest
-	10, // 31: entpb.PermService.Delete:input_type -> entpb.DeletePermRequest
-	11, // 32: entpb.PermService.List:input_type -> entpb.ListPermRequest
-	13, // 33: entpb.PermService.BatchCreate:input_type -> entpb.BatchCreatePermsRequest
-	16, // 34: entpb.PermGroupService.Create:input_type -> entpb.CreatePermGroupRequest
-	17, // 35: entpb.PermGroupService.Get:input_type -> entpb.GetPermGroupRequest
-	18, // 36: entpb.PermGroupService.Update:input_type -> entpb.UpdatePermGroupRequest
-	19, // 37: entpb.PermGroupService.Delete:input_type -> entpb.DeletePermGroupRequest
-	20, // 38: entpb.PermGroupService.List:input_type -> entpb.ListPermGroupRequest
-	22, // 39: entpb.PermGroupService.BatchCreate:input_type -> entpb.BatchCreatePermGroupsRequest
-	25, // 40: entpb.RoleService.Create:input_type -> entpb.CreateRoleRequest
-	26, // 41: entpb.RoleService.Get:input_type -> entpb.GetRoleRequest
-	27, // 42: entpb.RoleService.Update:input_type -> entpb.UpdateRoleRequest
-	28, // 43: entpb.RoleService.Delete:input_type -> entpb.DeleteRoleRequest
-	29, // 44: entpb.RoleService.List:input_type -> entpb.ListRoleRequest
-	31, // 45: entpb.RoleService.BatchCreate:input_type -> entpb.BatchCreateRolesRequest
-	6,  // 46: entpb.PermService.Create:output_type -> entpb.Perm
-	6,  // 47: entpb.PermService.Get:output_type -> entpb.Perm
-	6,  // 48: entpb.PermService.Update:output_type -> entpb.Perm
-	34, // 49: entpb.PermService.Delete:output_type -> google.protobuf.Empty
-	12, // 50: entpb.PermService.List:output_type -> entpb.ListPermResponse
-	14, // 51: entpb.PermService.BatchCreate:output_type -> entpb.BatchCreatePermsResponse
-	15, // 52: entpb.PermGroupService.Create:output_type -> entpb.PermGroup
-	15, // 53: entpb.PermGroupService.Get:output_type -> entpb.PermGroup
-	15, // 54: entpb.PermGroupService.Update:output_type -> entpb.PermGroup
-	34, // 55: entpb.PermGroupService.Delete:output_type -> google.protobuf.Empty
-	21, // 56: entpb.PermGroupService.List:output_type -> entpb.ListPermGroupResponse
-	23, // 57: entpb.PermGroupService.BatchCreate:output_type -> entpb.BatchCreatePermGroupsResponse
-	24, // 58: entpb.RoleService.Create:output_type -> entpb.Role
-	24, // 59: entpb.RoleService.Get:output_type -> entpb.Role
-	24, // 60: entpb.RoleService.Update:output_type -> entpb.Role
-	34, // 61: entpb.RoleService.Delete:output_type -> google.protobuf.Empty
-	30, // 62: entpb.RoleService.List:output_type -> entpb.ListRoleResponse
-	32, // 63: entpb.RoleService.BatchCreate:output_type -> entpb.BatchCreateRolesResponse
-	46, // [46:64] is the sub-list for method output_type
-	28, // [28:46] is the sub-list for method input_type
-	28, // [28:28] is the sub-list for extension type_name
-	28, // [28:28] is the sub-list for extension extendee
-	0,  // [0:28] is the sub-list for field type_name
+	26, // 25: entpb.ListRoleResponse.role_list:type_name -> entpb.Role
+	27, // 26: entpb.BatchCreateRolesRequest.requests:type_name -> entpb.CreateRoleRequest
+	26, // 27: entpb.BatchCreateRolesResponse.roles:type_name -> entpb.Role
+	35, // 28: entpb.CreateUserRoleRequest.user_role:type_name -> entpb.UserRole
+	6,  // 29: entpb.GetUserRoleRequest.view:type_name -> entpb.GetUserRoleRequest.View
+	35, // 30: entpb.UpdateUserRoleRequest.user_role:type_name -> entpb.UserRole
+	7,  // 31: entpb.ListUserRoleRequest.view:type_name -> entpb.ListUserRoleRequest.View
+	35, // 32: entpb.ListUserRoleResponse.user_role_list:type_name -> entpb.UserRole
+	36, // 33: entpb.BatchCreateUserRolesRequest.requests:type_name -> entpb.CreateUserRoleRequest
+	35, // 34: entpb.BatchCreateUserRolesResponse.user_roles:type_name -> entpb.UserRole
+	9,  // 35: entpb.PermService.Create:input_type -> entpb.CreatePermRequest
+	10, // 36: entpb.PermService.Get:input_type -> entpb.GetPermRequest
+	11, // 37: entpb.PermService.Update:input_type -> entpb.UpdatePermRequest
+	12, // 38: entpb.PermService.Delete:input_type -> entpb.DeletePermRequest
+	13, // 39: entpb.PermService.List:input_type -> entpb.ListPermRequest
+	15, // 40: entpb.PermService.BatchCreate:input_type -> entpb.BatchCreatePermsRequest
+	18, // 41: entpb.PermGroupService.Create:input_type -> entpb.CreatePermGroupRequest
+	19, // 42: entpb.PermGroupService.Get:input_type -> entpb.GetPermGroupRequest
+	20, // 43: entpb.PermGroupService.Update:input_type -> entpb.UpdatePermGroupRequest
+	21, // 44: entpb.PermGroupService.Delete:input_type -> entpb.DeletePermGroupRequest
+	22, // 45: entpb.PermGroupService.List:input_type -> entpb.ListPermGroupRequest
+	24, // 46: entpb.PermGroupService.BatchCreate:input_type -> entpb.BatchCreatePermGroupsRequest
+	27, // 47: entpb.RoleService.Create:input_type -> entpb.CreateRoleRequest
+	28, // 48: entpb.RoleService.Get:input_type -> entpb.GetRoleRequest
+	29, // 49: entpb.RoleService.Update:input_type -> entpb.UpdateRoleRequest
+	30, // 50: entpb.RoleService.Delete:input_type -> entpb.DeleteRoleRequest
+	31, // 51: entpb.RoleService.List:input_type -> entpb.ListRoleRequest
+	33, // 52: entpb.RoleService.BatchCreate:input_type -> entpb.BatchCreateRolesRequest
+	36, // 53: entpb.UserRoleService.Create:input_type -> entpb.CreateUserRoleRequest
+	37, // 54: entpb.UserRoleService.Get:input_type -> entpb.GetUserRoleRequest
+	38, // 55: entpb.UserRoleService.Update:input_type -> entpb.UpdateUserRoleRequest
+	39, // 56: entpb.UserRoleService.Delete:input_type -> entpb.DeleteUserRoleRequest
+	40, // 57: entpb.UserRoleService.List:input_type -> entpb.ListUserRoleRequest
+	42, // 58: entpb.UserRoleService.BatchCreate:input_type -> entpb.BatchCreateUserRolesRequest
+	8,  // 59: entpb.PermService.Create:output_type -> entpb.Perm
+	8,  // 60: entpb.PermService.Get:output_type -> entpb.Perm
+	8,  // 61: entpb.PermService.Update:output_type -> entpb.Perm
+	45, // 62: entpb.PermService.Delete:output_type -> google.protobuf.Empty
+	14, // 63: entpb.PermService.List:output_type -> entpb.ListPermResponse
+	16, // 64: entpb.PermService.BatchCreate:output_type -> entpb.BatchCreatePermsResponse
+	17, // 65: entpb.PermGroupService.Create:output_type -> entpb.PermGroup
+	17, // 66: entpb.PermGroupService.Get:output_type -> entpb.PermGroup
+	17, // 67: entpb.PermGroupService.Update:output_type -> entpb.PermGroup
+	45, // 68: entpb.PermGroupService.Delete:output_type -> google.protobuf.Empty
+	23, // 69: entpb.PermGroupService.List:output_type -> entpb.ListPermGroupResponse
+	25, // 70: entpb.PermGroupService.BatchCreate:output_type -> entpb.BatchCreatePermGroupsResponse
+	26, // 71: entpb.RoleService.Create:output_type -> entpb.Role
+	26, // 72: entpb.RoleService.Get:output_type -> entpb.Role
+	26, // 73: entpb.RoleService.Update:output_type -> entpb.Role
+	45, // 74: entpb.RoleService.Delete:output_type -> google.protobuf.Empty
+	32, // 75: entpb.RoleService.List:output_type -> entpb.ListRoleResponse
+	34, // 76: entpb.RoleService.BatchCreate:output_type -> entpb.BatchCreateRolesResponse
+	35, // 77: entpb.UserRoleService.Create:output_type -> entpb.UserRole
+	35, // 78: entpb.UserRoleService.Get:output_type -> entpb.UserRole
+	35, // 79: entpb.UserRoleService.Update:output_type -> entpb.UserRole
+	45, // 80: entpb.UserRoleService.Delete:output_type -> google.protobuf.Empty
+	41, // 81: entpb.UserRoleService.List:output_type -> entpb.ListUserRoleResponse
+	43, // 82: entpb.UserRoleService.BatchCreate:output_type -> entpb.BatchCreateUserRolesResponse
+	59, // [59:83] is the sub-list for method output_type
+	35, // [35:59] is the sub-list for method input_type
+	35, // [35:35] is the sub-list for extension type_name
+	35, // [35:35] is the sub-list for extension extendee
+	0,  // [0:35] is the sub-list for field type_name
 }
 
 func init() { file_entpb_entpb_proto_init() }
@@ -1976,10 +2589,10 @@ func file_entpb_entpb_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_entpb_entpb_proto_rawDesc), len(file_entpb_entpb_proto_rawDesc)),
-			NumEnums:      6,
-			NumMessages:   27,
+			NumEnums:      8,
+			NumMessages:   36,
 			NumExtensions: 0,
-			NumServices:   3,
+			NumServices:   4,
 		},
 		GoTypes:           file_entpb_entpb_proto_goTypes,
 		DependencyIndexes: file_entpb_entpb_proto_depIdxs,

@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/longgggwww/hrm-ms-permission/ent"
+	"github.com/longgggwwww/hrm-ms-permission/ent"
 )
 
 // The PermFunc type is an adapter to allow the use of ordinary
@@ -43,6 +43,18 @@ func (f RoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleMutation", m)
+}
+
+// The UserRoleFunc type is an adapter to allow the use of ordinary
+// function as UserRole mutator.
+type UserRoleFunc func(context.Context, *ent.UserRoleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserRoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserRoleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserRoleMutation", m)
 }
 
 // Condition is a hook condition function.

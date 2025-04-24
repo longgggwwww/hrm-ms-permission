@@ -18,6 +18,8 @@ type Tx struct {
 	PermGroup *PermGroupClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
+	// UserRole is the client for interacting with the UserRole builders.
+	UserRole *UserRoleClient
 
 	// lazily loaded.
 	client     *Client
@@ -152,6 +154,7 @@ func (tx *Tx) init() {
 	tx.Perm = NewPermClient(tx.config)
 	tx.PermGroup = NewPermGroupClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
+	tx.UserRole = NewUserRoleClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

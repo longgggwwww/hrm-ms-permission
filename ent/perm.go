@@ -8,8 +8,8 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/longgggwww/hrm-ms-permission/ent/perm"
-	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
+	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 )
 
 // Perm is the model entity for the Perm schema.

@@ -3,10 +3,11 @@
 package ent
 
 import (
-	"github.com/longgggwww/hrm-ms-permission/ent/perm"
-	"github.com/longgggwww/hrm-ms-permission/ent/permgroup"
-	"github.com/longgggwww/hrm-ms-permission/ent/role"
-	"github.com/longgggwww/hrm-ms-permission/ent/schema"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
+	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
+	"github.com/longgggwwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/schema"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -31,4 +32,10 @@ func init() {
 	roleDescName := roleFields[1].Descriptor()
 	// role.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	role.NameValidator = roleDescName.Validators[0].(func(string) error)
+	userroleFields := schema.UserRole{}.Fields()
+	_ = userroleFields
+	// userroleDescUserID is the schema descriptor for user_id field.
+	userroleDescUserID := userroleFields[0].Descriptor()
+	// userrole.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	userrole.UserIDValidator = userroleDescUserID.Validators[0].(func(string) error)
 }

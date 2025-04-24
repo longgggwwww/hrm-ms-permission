@@ -896,3 +896,295 @@ var RoleService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "entpb/entpb.proto",
 }
+
+const (
+	UserRoleService_Create_FullMethodName      = "/entpb.UserRoleService/Create"
+	UserRoleService_Get_FullMethodName         = "/entpb.UserRoleService/Get"
+	UserRoleService_Update_FullMethodName      = "/entpb.UserRoleService/Update"
+	UserRoleService_Delete_FullMethodName      = "/entpb.UserRoleService/Delete"
+	UserRoleService_List_FullMethodName        = "/entpb.UserRoleService/List"
+	UserRoleService_BatchCreate_FullMethodName = "/entpb.UserRoleService/BatchCreate"
+)
+
+// UserRoleServiceClient is the client API for UserRoleService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserRoleServiceClient interface {
+	Create(ctx context.Context, in *CreateUserRoleRequest, opts ...grpc.CallOption) (*UserRole, error)
+	Get(ctx context.Context, in *GetUserRoleRequest, opts ...grpc.CallOption) (*UserRole, error)
+	Update(ctx context.Context, in *UpdateUserRoleRequest, opts ...grpc.CallOption) (*UserRole, error)
+	Delete(ctx context.Context, in *DeleteUserRoleRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	List(ctx context.Context, in *ListUserRoleRequest, opts ...grpc.CallOption) (*ListUserRoleResponse, error)
+	BatchCreate(ctx context.Context, in *BatchCreateUserRolesRequest, opts ...grpc.CallOption) (*BatchCreateUserRolesResponse, error)
+}
+
+type userRoleServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserRoleServiceClient(cc grpc.ClientConnInterface) UserRoleServiceClient {
+	return &userRoleServiceClient{cc}
+}
+
+func (c *userRoleServiceClient) Create(ctx context.Context, in *CreateUserRoleRequest, opts ...grpc.CallOption) (*UserRole, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserRole)
+	err := c.cc.Invoke(ctx, UserRoleService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userRoleServiceClient) Get(ctx context.Context, in *GetUserRoleRequest, opts ...grpc.CallOption) (*UserRole, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserRole)
+	err := c.cc.Invoke(ctx, UserRoleService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userRoleServiceClient) Update(ctx context.Context, in *UpdateUserRoleRequest, opts ...grpc.CallOption) (*UserRole, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserRole)
+	err := c.cc.Invoke(ctx, UserRoleService_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userRoleServiceClient) Delete(ctx context.Context, in *DeleteUserRoleRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserRoleService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userRoleServiceClient) List(ctx context.Context, in *ListUserRoleRequest, opts ...grpc.CallOption) (*ListUserRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserRoleResponse)
+	err := c.cc.Invoke(ctx, UserRoleService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userRoleServiceClient) BatchCreate(ctx context.Context, in *BatchCreateUserRolesRequest, opts ...grpc.CallOption) (*BatchCreateUserRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BatchCreateUserRolesResponse)
+	err := c.cc.Invoke(ctx, UserRoleService_BatchCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserRoleServiceServer is the server API for UserRoleService service.
+// All implementations must embed UnimplementedUserRoleServiceServer
+// for forward compatibility.
+type UserRoleServiceServer interface {
+	Create(context.Context, *CreateUserRoleRequest) (*UserRole, error)
+	Get(context.Context, *GetUserRoleRequest) (*UserRole, error)
+	Update(context.Context, *UpdateUserRoleRequest) (*UserRole, error)
+	Delete(context.Context, *DeleteUserRoleRequest) (*emptypb.Empty, error)
+	List(context.Context, *ListUserRoleRequest) (*ListUserRoleResponse, error)
+	BatchCreate(context.Context, *BatchCreateUserRolesRequest) (*BatchCreateUserRolesResponse, error)
+	mustEmbedUnimplementedUserRoleServiceServer()
+}
+
+// UnimplementedUserRoleServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedUserRoleServiceServer struct{}
+
+func (UnimplementedUserRoleServiceServer) Create(context.Context, *CreateUserRoleRequest) (*UserRole, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedUserRoleServiceServer) Get(context.Context, *GetUserRoleRequest) (*UserRole, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedUserRoleServiceServer) Update(context.Context, *UpdateUserRoleRequest) (*UserRole, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedUserRoleServiceServer) Delete(context.Context, *DeleteUserRoleRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedUserRoleServiceServer) List(context.Context, *ListUserRoleRequest) (*ListUserRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedUserRoleServiceServer) BatchCreate(context.Context, *BatchCreateUserRolesRequest) (*BatchCreateUserRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchCreate not implemented")
+}
+func (UnimplementedUserRoleServiceServer) mustEmbedUnimplementedUserRoleServiceServer() {}
+func (UnimplementedUserRoleServiceServer) testEmbeddedByValue()                         {}
+
+// UnsafeUserRoleServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserRoleServiceServer will
+// result in compilation errors.
+type UnsafeUserRoleServiceServer interface {
+	mustEmbedUnimplementedUserRoleServiceServer()
+}
+
+func RegisterUserRoleServiceServer(s grpc.ServiceRegistrar, srv UserRoleServiceServer) {
+	// If the following call pancis, it indicates UnimplementedUserRoleServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&UserRoleService_ServiceDesc, srv)
+}
+
+func _UserRoleService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserRoleServiceServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserRoleService_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserRoleServiceServer).Create(ctx, req.(*CreateUserRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserRoleService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserRoleServiceServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserRoleService_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserRoleServiceServer).Get(ctx, req.(*GetUserRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserRoleService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserRoleServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserRoleService_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserRoleServiceServer).Update(ctx, req.(*UpdateUserRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserRoleService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserRoleServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserRoleService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserRoleServiceServer).Delete(ctx, req.(*DeleteUserRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserRoleService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserRoleServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserRoleService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserRoleServiceServer).List(ctx, req.(*ListUserRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserRoleService_BatchCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchCreateUserRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserRoleServiceServer).BatchCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserRoleService_BatchCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserRoleServiceServer).BatchCreate(ctx, req.(*BatchCreateUserRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserRoleService_ServiceDesc is the grpc.ServiceDesc for UserRoleService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserRoleService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "entpb.UserRoleService",
+	HandlerType: (*UserRoleServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _UserRoleService_Create_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _UserRoleService_Get_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _UserRoleService_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _UserRoleService_Delete_Handler,
+		},
+		{
+			MethodName: "List",
+			Handler:    _UserRoleService_List_Handler,
+		},
+		{
+			MethodName: "BatchCreate",
+			Handler:    _UserRoleService_BatchCreate_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "entpb/entpb.proto",
+}

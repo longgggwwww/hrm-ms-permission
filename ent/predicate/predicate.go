@@ -14,3 +14,6 @@ type PermGroup func(*sql.Selector)
 
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
+
+// UserRole is the predicate function for userrole builders.
+type UserRole func(*sql.Selector)

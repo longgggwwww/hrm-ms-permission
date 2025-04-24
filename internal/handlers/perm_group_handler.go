@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/longgggwww/hrm-ms-permission/ent"
+	"github.com/longgggwwww/hrm-ms-permission/ent"
 )
 
 func GetPermGroupsHandler(client *ent.Client) gin.HandlerFunc {

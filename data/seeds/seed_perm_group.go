@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/longgggwww/hrm-ms-permission/ent"
-	"github.com/longgggwww/hrm-ms-permission/internal/utils"
+	"github.com/longgggwwww/hrm-ms-permission/ent"
+	"github.com/longgggwwww/hrm-ms-permission/internal/utils"
 )
 
 func SeedPermGroups(ctx context.Context, client *ent.Client) error {

@@ -9,9 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"github.com/longgggwww/hrm-ms-permission/ent"
-	"github.com/longgggwww/hrm-ms-permission/ent/proto/entpb"
-	"github.com/longgggwww/hrm-ms-permission/internal/handlers"
+	"github.com/longgggwwww/hrm-ms-permission/ent"
+	"github.com/longgggwwww/hrm-ms-permission/ent/proto/entpb"
+	"github.com/longgggwwww/hrm-ms-permission/internal/handlers"
 	"google.golang.org/grpc"
 )
 
