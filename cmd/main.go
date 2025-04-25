@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 	"github.com/longgggwwww/hrm-ms-permission/ent/proto/entpb"
@@ -40,8 +39,8 @@ func startGRPCServer(client *ent.Client) {
 func startHTTPServer(client *ent.Client) {
 	r := gin.Default()
 
-	r.GET("/perms", handlers.GetPermsHandler(client))
 	r.GET("/perm-groups", handlers.GetPermGroupsHandler(client))
+	r.GET("/perms", handlers.GetPermsHandler(client))
 	r.GET("/roles", handlers.GetRolesHandler(client))
 
 	if err := r.Run(":8080"); err != nil {
@@ -50,13 +49,9 @@ func startHTTPServer(client *ent.Client) {
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
-
 	DB_URL := os.Getenv("DB_URL")
 	if DB_URL == "" {
-		log.Fatalf("DB_URL is not set in the environment variables")
+		log.Fatal("DB_URL environment variable is not set")
 	}
 
 	client, err := ent.Open("postgres", DB_URL)

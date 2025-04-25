@@ -1,77 +1,40 @@
 services:
   app:
-    container_name: hrm-permission
+    container_name: hrm-perm
     build:
-      context: .
-      dockerfile: Dockerfile
+      # dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev # for development
     ports:
       - "8080:8080"
     environment:
-      - DB_URL=jdbc:postgresql://postgre:5432/${DB_NAME}
-    # volumes:
-    #   - .:/app
+      GIN_MODE: ${GIN_MODE}
+      DB_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASS}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+    volumes:
+      - .:/app # for development
     depends_on:
       - postgres
-      - kafka
-      - redis
+    networks:
+      - shared_network
 
   postgres:
     image: postgres:16-alpine
-    container_name: hrm-permission-postgres
+    container_name: hrm-perm-postgres
     restart: always
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-"root"}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS:-"123456"}
+      POSTGRES_DB: ${POSTGRES_DB:-"postgres"}
     volumes:
       - data:/var/lib/postgresql/data
-
-  kafka:
-    image: bitnami/kafka:3.4.0-debian-11-r22
-    container_name: hrm-permission-kafka
-    ports:
-      - "9092:9092"
-    environment:
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_NODE_ID=1
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-    depends_on:
-      - redis
-
-  redis:
-    image: redis:7-alpine
-    container_name: hrm-permission-redis
-    ports:
-      - "6379:6379"
-    command: ["redis-server", "--appendonly", "yes"]
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: hrm-permission-kafka-ui
-    ports:
-      - "8081:8080"
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=hrm-permission-kafka:9092
-    depends_on:
-      - kafka
-
-  adminer:
-    image: adminer:5
-    container_name: hrm-permission-adminer
-    restart: always
-    ports:
-      - "8082:8080"
-    depends_on:
-      - postgres
+    networks:
+      - shared_network
 
 volumes:
   data:
-    name: hrm-permission-data
+    name: hrm-perm-data
+
+networks:
+  shared_network:
+    name: hrm-shared-network
