@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
@@ -28,8 +29,8 @@ func (urc *UserRoleCreate) SetUserID(s string) *UserRoleCreate {
 }
 
 // SetRoleID sets the "role_id" field.
-func (urc *UserRoleCreate) SetRoleID(i int) *UserRoleCreate {
-	urc.mutation.SetRoleID(i)
+func (urc *UserRoleCreate) SetRoleID(u uuid.UUID) *UserRoleCreate {
+	urc.mutation.SetRoleID(u)
 	return urc
 }
 
@@ -110,7 +111,7 @@ func (urc *UserRoleCreate) createSpec() (*UserRole, *sqlgraph.CreateSpec) {
 		_node.UserID = value
 	}
 	if value, ok := urc.mutation.RoleID(); ok {
-		_spec.SetField(userrole.FieldRoleID, field.TypeInt, value)
+		_spec.SetField(userrole.FieldRoleID, field.TypeUUID, value)
 		_node.RoleID = value
 	}
 	return _node, _spec
@@ -178,7 +179,7 @@ func (u *UserRoleUpsert) UpdateUserID() *UserRoleUpsert {
 }
 
 // SetRoleID sets the "role_id" field.
-func (u *UserRoleUpsert) SetRoleID(v int) *UserRoleUpsert {
+func (u *UserRoleUpsert) SetRoleID(v uuid.UUID) *UserRoleUpsert {
 	u.Set(userrole.FieldRoleID, v)
 	return u
 }
@@ -186,12 +187,6 @@ func (u *UserRoleUpsert) SetRoleID(v int) *UserRoleUpsert {
 // UpdateRoleID sets the "role_id" field to the value that was provided on create.
 func (u *UserRoleUpsert) UpdateRoleID() *UserRoleUpsert {
 	u.SetExcluded(userrole.FieldRoleID)
-	return u
-}
-
-// AddRoleID adds v to the "role_id" field.
-func (u *UserRoleUpsert) AddRoleID(v int) *UserRoleUpsert {
-	u.Add(userrole.FieldRoleID, v)
 	return u
 }
 
@@ -250,16 +245,9 @@ func (u *UserRoleUpsertOne) UpdateUserID() *UserRoleUpsertOne {
 }
 
 // SetRoleID sets the "role_id" field.
-func (u *UserRoleUpsertOne) SetRoleID(v int) *UserRoleUpsertOne {
+func (u *UserRoleUpsertOne) SetRoleID(v uuid.UUID) *UserRoleUpsertOne {
 	return u.Update(func(s *UserRoleUpsert) {
 		s.SetRoleID(v)
-	})
-}
-
-// AddRoleID adds v to the "role_id" field.
-func (u *UserRoleUpsertOne) AddRoleID(v int) *UserRoleUpsertOne {
-	return u.Update(func(s *UserRoleUpsert) {
-		s.AddRoleID(v)
 	})
 }
 
@@ -488,16 +476,9 @@ func (u *UserRoleUpsertBulk) UpdateUserID() *UserRoleUpsertBulk {
 }
 
 // SetRoleID sets the "role_id" field.
-func (u *UserRoleUpsertBulk) SetRoleID(v int) *UserRoleUpsertBulk {
+func (u *UserRoleUpsertBulk) SetRoleID(v uuid.UUID) *UserRoleUpsertBulk {
 	return u.Update(func(s *UserRoleUpsert) {
 		s.SetRoleID(v)
-	})
-}
-
-// AddRoleID adds v to the "role_id" field.
-func (u *UserRoleUpsertBulk) AddRoleID(v int) *UserRoleUpsertBulk {
-	return u.Update(func(s *UserRoleUpsert) {
-		s.AddRoleID(v)
 	})
 }
 

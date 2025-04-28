@@ -7,6 +7,7 @@ import (
 	entproto "entgo.io/contrib/entproto"
 	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	fmt "fmt"
+	uuid "github.com/google/uuid"
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
 	userrole "github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 	codes "google.golang.org/grpc/codes"
@@ -33,7 +34,10 @@ func toProtoUserRole(e *ent.UserRole) (*UserRole, error) {
 	v := &UserRole{}
 	id := int64(e.ID)
 	v.Id = id
-	role_id := int64(e.RoleID)
+	role_id, err := e.RoleID.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
 	v.RoleId = role_id
 	user_id := e.UserID
 	v.UserId = user_id
@@ -111,7 +115,10 @@ func (svc *UserRoleService) Update(ctx context.Context, req *UpdateUserRoleReque
 	userrole := req.GetUserRole()
 	userroleID := int(userrole.GetId())
 	m := svc.client.UserRole.UpdateOneID(userroleID)
-	userroleRoleID := int(userrole.GetRoleId())
+	var userroleRoleID uuid.UUID
+	if err := (&userroleRoleID).UnmarshalBinary(userrole.GetRoleId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	m.SetRoleID(userroleRoleID)
 	userroleUserID := userrole.GetUserId()
 	m.SetUserID(userroleUserID)
@@ -246,7 +253,10 @@ func (svc *UserRoleService) BatchCreate(ctx context.Context, req *BatchCreateUse
 
 func (svc *UserRoleService) createBuilder(userrole *UserRole) (*ent.UserRoleCreate, error) {
 	m := svc.client.UserRole.Create()
-	userroleRoleID := int(userrole.GetRoleId())
+	var userroleRoleID uuid.UUID
+	if err := (&userroleRoleID).UnmarshalBinary(userrole.GetRoleId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	m.SetRoleID(userroleRoleID)
 	userroleUserID := userrole.GetUserId()
 	m.SetUserID(userroleUserID)

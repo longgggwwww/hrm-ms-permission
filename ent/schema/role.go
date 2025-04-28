@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // Role holds the schema definition for the Role entity.
@@ -16,6 +17,7 @@ type Role struct {
 // Fields of the Role.
 func (Role) Fields() []ent.Field {
 	return []ent.Field{
+		field.UUID("id", uuid.UUID{}).Default(uuid.New).Annotations(entproto.Field(1)),
 		field.String("code").Unique().Annotations(entproto.Field(2)),
 		field.String("name").NotEmpty().Annotations(entproto.Field(3)),
 		field.String("color").Optional().Annotations(entproto.Field(4)),

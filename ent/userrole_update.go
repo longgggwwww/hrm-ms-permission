@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
@@ -42,23 +43,16 @@ func (uru *UserRoleUpdate) SetNillableUserID(s *string) *UserRoleUpdate {
 }
 
 // SetRoleID sets the "role_id" field.
-func (uru *UserRoleUpdate) SetRoleID(i int) *UserRoleUpdate {
-	uru.mutation.ResetRoleID()
-	uru.mutation.SetRoleID(i)
+func (uru *UserRoleUpdate) SetRoleID(u uuid.UUID) *UserRoleUpdate {
+	uru.mutation.SetRoleID(u)
 	return uru
 }
 
 // SetNillableRoleID sets the "role_id" field if the given value is not nil.
-func (uru *UserRoleUpdate) SetNillableRoleID(i *int) *UserRoleUpdate {
-	if i != nil {
-		uru.SetRoleID(*i)
+func (uru *UserRoleUpdate) SetNillableRoleID(u *uuid.UUID) *UserRoleUpdate {
+	if u != nil {
+		uru.SetRoleID(*u)
 	}
-	return uru
-}
-
-// AddRoleID adds i to the "role_id" field.
-func (uru *UserRoleUpdate) AddRoleID(i int) *UserRoleUpdate {
-	uru.mutation.AddRoleID(i)
 	return uru
 }
 
@@ -120,10 +114,7 @@ func (uru *UserRoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(userrole.FieldUserID, field.TypeString, value)
 	}
 	if value, ok := uru.mutation.RoleID(); ok {
-		_spec.SetField(userrole.FieldRoleID, field.TypeInt, value)
-	}
-	if value, ok := uru.mutation.AddedRoleID(); ok {
-		_spec.AddField(userrole.FieldRoleID, field.TypeInt, value)
+		_spec.SetField(userrole.FieldRoleID, field.TypeUUID, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -160,23 +151,16 @@ func (uruo *UserRoleUpdateOne) SetNillableUserID(s *string) *UserRoleUpdateOne {
 }
 
 // SetRoleID sets the "role_id" field.
-func (uruo *UserRoleUpdateOne) SetRoleID(i int) *UserRoleUpdateOne {
-	uruo.mutation.ResetRoleID()
-	uruo.mutation.SetRoleID(i)
+func (uruo *UserRoleUpdateOne) SetRoleID(u uuid.UUID) *UserRoleUpdateOne {
+	uruo.mutation.SetRoleID(u)
 	return uruo
 }
 
 // SetNillableRoleID sets the "role_id" field if the given value is not nil.
-func (uruo *UserRoleUpdateOne) SetNillableRoleID(i *int) *UserRoleUpdateOne {
-	if i != nil {
-		uruo.SetRoleID(*i)
+func (uruo *UserRoleUpdateOne) SetNillableRoleID(u *uuid.UUID) *UserRoleUpdateOne {
+	if u != nil {
+		uruo.SetRoleID(*u)
 	}
-	return uruo
-}
-
-// AddRoleID adds i to the "role_id" field.
-func (uruo *UserRoleUpdateOne) AddRoleID(i int) *UserRoleUpdateOne {
-	uruo.mutation.AddRoleID(i)
 	return uruo
 }
 
@@ -268,10 +252,7 @@ func (uruo *UserRoleUpdateOne) sqlSave(ctx context.Context) (_node *UserRole, er
 		_spec.SetField(userrole.FieldUserID, field.TypeString, value)
 	}
 	if value, ok := uruo.mutation.RoleID(); ok {
-		_spec.SetField(userrole.FieldRoleID, field.TypeInt, value)
-	}
-	if value, ok := uruo.mutation.AddedRoleID(); ok {
-		_spec.AddField(userrole.FieldRoleID, field.TypeInt, value)
+		_spec.SetField(userrole.FieldRoleID, field.TypeUUID, value)
 	}
 	_node = &UserRole{config: uruo.config}
 	_spec.Assign = _node.assignValues

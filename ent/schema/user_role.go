@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/google/uuid"
 )
 
 // UserRole holds the schema definition for the UserRole entity.
@@ -17,7 +18,7 @@ type UserRole struct {
 func (UserRole) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("user_id").NotEmpty().Annotations(entproto.Field(2)),
-		field.Int("role_id").Annotations(entproto.Field(3)),
+		field.UUID("role_id", uuid.UUID{}).Annotations(entproto.Field(3)),
 	}
 }
 

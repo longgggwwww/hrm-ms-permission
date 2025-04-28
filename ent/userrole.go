@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
@@ -19,7 +20,7 @@ type UserRole struct {
 	// UserID holds the value of the "user_id" field.
 	UserID string `json:"user_id,omitempty"`
 	// RoleID holds the value of the "role_id" field.
-	RoleID       int `json:"role_id,omitempty"`
+	RoleID       uuid.UUID `json:"role_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -28,10 +29,12 @@ func (*UserRole) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userrole.FieldID, userrole.FieldRoleID:
+		case userrole.FieldID:
 			values[i] = new(sql.NullInt64)
 		case userrole.FieldUserID:
 			values[i] = new(sql.NullString)
+		case userrole.FieldRoleID:
+			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -60,10 +63,10 @@ func (ur *UserRole) assignValues(columns []string, values []any) error {
 				ur.UserID = value.String
 			}
 		case userrole.FieldRoleID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field role_id", values[i])
-			} else if value.Valid {
-				ur.RoleID = int(value.Int64)
+			} else if value != nil {
+				ur.RoleID = *value
 			}
 		default:
 			ur.selectValues.Set(columns[i], values[i])

@@ -1,17 +1,16 @@
 services:
   app:
-    container_name: hrm-perm
+    container_name: hrm-perm-dev
     build:
-      # dockerfile: Dockerfile
-      dockerfile: Dockerfile.dev # for development
+      dockerfile: Dockerfile.dev
     ports:
+      - "5000:5000" # GRPC
       - "8080:8080"
-      - "5000:5000"
     environment:
       GIN_MODE: ${GIN_MODE}
-      DB_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASS}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+      DB_URL: ${DB_URL:-postgres://${POSTGRES_USER}:${POSTGRES_PASS}@{$POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable}
     volumes:
-      - .:/app # for development
+      - .:/app
     depends_on:
       - postgres
     networks:
@@ -19,14 +18,14 @@ services:
 
   postgres:
     image: postgres:16-alpine
-    container_name: hrm-perm-postgres
+    container_name: hrm-perm-postgres-dev
     restart: always
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-"root"}
-      POSTGRES_PASSWORD: ${POSTGRES_PASS:-"123456"}
-      POSTGRES_DB: ${POSTGRES_DB:-"postgres"}
+      POSTGRES_USER: ${DB_USER:-"root"}
+      POSTGRES_PASSWORD: ${DB_PASS:-"123456"}
+      POSTGRES_DB: ${DB_NAME:-"postgres"}
     volumes:
       - data:/var/lib/postgresql/data
     networks:
@@ -34,8 +33,8 @@ services:
 
 volumes:
   data:
-    name: hrm-perm-data
+    name: hrm-perm-data-dev
 
 networks:
   shared_network:
-    name: hrm-shared-network
+    name: hrm-shared-network-dev

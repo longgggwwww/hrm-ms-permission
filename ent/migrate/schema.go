@@ -10,11 +10,11 @@ import (
 var (
 	// PermsColumns holds the columns for the "perms" table.
 	PermsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUUID},
 		{Name: "code", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "perm_group", Type: field.TypeInt, Nullable: true},
+		{Name: "perm_group", Type: field.TypeUUID, Nullable: true},
 	}
 	// PermsTable holds the schema information for the "perms" table.
 	PermsTable = &schema.Table{
@@ -32,7 +32,7 @@ var (
 	}
 	// PermGroupsColumns holds the columns for the "perm_groups" table.
 	PermGroupsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUUID},
 		{Name: "code", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString},
 	}
@@ -44,7 +44,7 @@ var (
 	}
 	// RolesColumns holds the columns for the "roles" table.
 	RolesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUUID},
 		{Name: "code", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "color", Type: field.TypeString, Nullable: true},
@@ -60,7 +60,7 @@ var (
 	UserRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "user_id", Type: field.TypeString},
-		{Name: "role_id", Type: field.TypeInt},
+		{Name: "role_id", Type: field.TypeUUID},
 	}
 	// UserRolesTable holds the schema information for the "user_roles" table.
 	UserRolesTable = &schema.Table{
@@ -77,8 +77,8 @@ var (
 	}
 	// RolePermsColumns holds the columns for the "role_perms" table.
 	RolePermsColumns = []*schema.Column{
-		{Name: "role_id", Type: field.TypeInt},
-		{Name: "perm_id", Type: field.TypeInt},
+		{Name: "role_id", Type: field.TypeUUID},
+		{Name: "perm_id", Type: field.TypeUUID},
 	}
 	// RolePermsTable holds the schema information for the "role_perms" table.
 	RolePermsTable = &schema.Table{

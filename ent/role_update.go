@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
@@ -97,14 +98,14 @@ func (ru *RoleUpdate) ClearDescription() *RoleUpdate {
 }
 
 // AddPermIDs adds the "perms" edge to the Perm entity by IDs.
-func (ru *RoleUpdate) AddPermIDs(ids ...int) *RoleUpdate {
+func (ru *RoleUpdate) AddPermIDs(ids ...uuid.UUID) *RoleUpdate {
 	ru.mutation.AddPermIDs(ids...)
 	return ru
 }
 
 // AddPerms adds the "perms" edges to the Perm entity.
 func (ru *RoleUpdate) AddPerms(p ...*Perm) *RoleUpdate {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -123,14 +124,14 @@ func (ru *RoleUpdate) ClearPerms() *RoleUpdate {
 }
 
 // RemovePermIDs removes the "perms" edge to Perm entities by IDs.
-func (ru *RoleUpdate) RemovePermIDs(ids ...int) *RoleUpdate {
+func (ru *RoleUpdate) RemovePermIDs(ids ...uuid.UUID) *RoleUpdate {
 	ru.mutation.RemovePermIDs(ids...)
 	return ru
 }
 
 // RemovePerms removes "perms" edges to Perm entities.
 func (ru *RoleUpdate) RemovePerms(p ...*Perm) *RoleUpdate {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -178,7 +179,7 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ru.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(role.Table, role.Columns, sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(role.Table, role.Columns, sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID))
 	if ps := ru.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -212,7 +213,7 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: role.PermsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -225,7 +226,7 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: role.PermsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -241,7 +242,7 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: role.PermsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -338,14 +339,14 @@ func (ruo *RoleUpdateOne) ClearDescription() *RoleUpdateOne {
 }
 
 // AddPermIDs adds the "perms" edge to the Perm entity by IDs.
-func (ruo *RoleUpdateOne) AddPermIDs(ids ...int) *RoleUpdateOne {
+func (ruo *RoleUpdateOne) AddPermIDs(ids ...uuid.UUID) *RoleUpdateOne {
 	ruo.mutation.AddPermIDs(ids...)
 	return ruo
 }
 
 // AddPerms adds the "perms" edges to the Perm entity.
 func (ruo *RoleUpdateOne) AddPerms(p ...*Perm) *RoleUpdateOne {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -364,14 +365,14 @@ func (ruo *RoleUpdateOne) ClearPerms() *RoleUpdateOne {
 }
 
 // RemovePermIDs removes the "perms" edge to Perm entities by IDs.
-func (ruo *RoleUpdateOne) RemovePermIDs(ids ...int) *RoleUpdateOne {
+func (ruo *RoleUpdateOne) RemovePermIDs(ids ...uuid.UUID) *RoleUpdateOne {
 	ruo.mutation.RemovePermIDs(ids...)
 	return ruo
 }
 
 // RemovePerms removes "perms" edges to Perm entities.
 func (ruo *RoleUpdateOne) RemovePerms(p ...*Perm) *RoleUpdateOne {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -432,7 +433,7 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 	if err := ruo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(role.Table, role.Columns, sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(role.Table, role.Columns, sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID))
 	id, ok := ruo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Role.id" for update`)}
@@ -483,7 +484,7 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 			Columns: role.PermsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -496,7 +497,7 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 			Columns: role.PermsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -512,7 +513,7 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 			Columns: role.PermsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 )
@@ -16,7 +17,7 @@ import (
 type Perm struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// Code holds the value of the "code" field.
 	Code string `json:"code,omitempty"`
 	// Name holds the value of the "name" field.
@@ -26,7 +27,7 @@ type Perm struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PermQuery when eager-loading is set.
 	Edges        PermEdges `json:"edges"`
-	perm_group   *int
+	perm_group   *uuid.UUID
 	selectValues sql.SelectValues
 }
 
@@ -66,12 +67,12 @@ func (*Perm) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case perm.FieldID:
-			values[i] = new(sql.NullInt64)
 		case perm.FieldCode, perm.FieldName, perm.FieldDescription:
 			values[i] = new(sql.NullString)
+		case perm.FieldID:
+			values[i] = new(uuid.UUID)
 		case perm.ForeignKeys[0]: // perm_group
-			values[i] = new(sql.NullInt64)
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -88,11 +89,11 @@ func (pe *Perm) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case perm.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				pe.ID = *value
 			}
-			pe.ID = int(value.Int64)
 		case perm.FieldCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field code", values[i])
@@ -112,11 +113,11 @@ func (pe *Perm) assignValues(columns []string, values []any) error {
 				pe.Description = value.String
 			}
 		case perm.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field perm_group", value)
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field perm_group", values[i])
 			} else if value.Valid {
-				pe.perm_group = new(int)
-				*pe.perm_group = int(value.Int64)
+				pe.perm_group = new(uuid.UUID)
+				*pe.perm_group = *value.S.(*uuid.UUID)
 			}
 		default:
 			pe.selectValues.Set(columns[i], values[i])

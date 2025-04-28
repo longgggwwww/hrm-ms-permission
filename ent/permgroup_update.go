@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
@@ -57,14 +58,14 @@ func (pgu *PermGroupUpdate) SetNillableName(s *string) *PermGroupUpdate {
 }
 
 // AddPermIDs adds the "perms" edge to the Perm entity by IDs.
-func (pgu *PermGroupUpdate) AddPermIDs(ids ...int) *PermGroupUpdate {
+func (pgu *PermGroupUpdate) AddPermIDs(ids ...uuid.UUID) *PermGroupUpdate {
 	pgu.mutation.AddPermIDs(ids...)
 	return pgu
 }
 
 // AddPerms adds the "perms" edges to the Perm entity.
 func (pgu *PermGroupUpdate) AddPerms(p ...*Perm) *PermGroupUpdate {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -83,14 +84,14 @@ func (pgu *PermGroupUpdate) ClearPerms() *PermGroupUpdate {
 }
 
 // RemovePermIDs removes the "perms" edge to Perm entities by IDs.
-func (pgu *PermGroupUpdate) RemovePermIDs(ids ...int) *PermGroupUpdate {
+func (pgu *PermGroupUpdate) RemovePermIDs(ids ...uuid.UUID) *PermGroupUpdate {
 	pgu.mutation.RemovePermIDs(ids...)
 	return pgu
 }
 
 // RemovePerms removes "perms" edges to Perm entities.
 func (pgu *PermGroupUpdate) RemovePerms(p ...*Perm) *PermGroupUpdate {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -138,7 +139,7 @@ func (pgu *PermGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := pgu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(permgroup.Table, permgroup.Columns, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(permgroup.Table, permgroup.Columns, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeUUID))
 	if ps := pgu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -160,7 +161,7 @@ func (pgu *PermGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{permgroup.PermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -173,7 +174,7 @@ func (pgu *PermGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{permgroup.PermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -189,7 +190,7 @@ func (pgu *PermGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{permgroup.PermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -246,14 +247,14 @@ func (pguo *PermGroupUpdateOne) SetNillableName(s *string) *PermGroupUpdateOne {
 }
 
 // AddPermIDs adds the "perms" edge to the Perm entity by IDs.
-func (pguo *PermGroupUpdateOne) AddPermIDs(ids ...int) *PermGroupUpdateOne {
+func (pguo *PermGroupUpdateOne) AddPermIDs(ids ...uuid.UUID) *PermGroupUpdateOne {
 	pguo.mutation.AddPermIDs(ids...)
 	return pguo
 }
 
 // AddPerms adds the "perms" edges to the Perm entity.
 func (pguo *PermGroupUpdateOne) AddPerms(p ...*Perm) *PermGroupUpdateOne {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -272,14 +273,14 @@ func (pguo *PermGroupUpdateOne) ClearPerms() *PermGroupUpdateOne {
 }
 
 // RemovePermIDs removes the "perms" edge to Perm entities by IDs.
-func (pguo *PermGroupUpdateOne) RemovePermIDs(ids ...int) *PermGroupUpdateOne {
+func (pguo *PermGroupUpdateOne) RemovePermIDs(ids ...uuid.UUID) *PermGroupUpdateOne {
 	pguo.mutation.RemovePermIDs(ids...)
 	return pguo
 }
 
 // RemovePerms removes "perms" edges to Perm entities.
 func (pguo *PermGroupUpdateOne) RemovePerms(p ...*Perm) *PermGroupUpdateOne {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -340,7 +341,7 @@ func (pguo *PermGroupUpdateOne) sqlSave(ctx context.Context) (_node *PermGroup, 
 	if err := pguo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(permgroup.Table, permgroup.Columns, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(permgroup.Table, permgroup.Columns, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeUUID))
 	id, ok := pguo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PermGroup.id" for update`)}
@@ -379,7 +380,7 @@ func (pguo *PermGroupUpdateOne) sqlSave(ctx context.Context) (_node *PermGroup, 
 			Columns: []string{permgroup.PermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -392,7 +393,7 @@ func (pguo *PermGroupUpdateOne) sqlSave(ctx context.Context) (_node *PermGroup, 
 			Columns: []string{permgroup.PermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -408,7 +409,7 @@ func (pguo *PermGroupUpdateOne) sqlSave(ctx context.Context) (_node *PermGroup, 
 			Columns: []string{permgroup.PermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

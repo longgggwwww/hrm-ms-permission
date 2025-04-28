@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 )
 
@@ -43,11 +43,13 @@ func (h *PermHandler) CreatePerm(c *gin.Context) {
 }
 
 func (h *PermHandler) UpdatePerm(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	// Parse the UUID from the URL parameter
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid permission ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
 		return
 	}
+
 	var input struct {
 		Name *string `json:"name"`
 	}
@@ -71,11 +73,13 @@ func (h *PermHandler) UpdatePerm(c *gin.Context) {
 }
 
 func (h *PermHandler) DeletePerm(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	// Parse the UUID from the URL parameter
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid permission ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
 		return
 	}
+
 	if err := h.Client.Perm.DeleteOneID(id).Exec(context.Background()); err != nil {
 		if ent.IsNotFound(err) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Permission not found"})

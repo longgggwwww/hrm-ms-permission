@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 )
 
@@ -43,11 +43,13 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 }
 
 func (h *RoleHandler) UpdateRole(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	// Parse the UUID from the URL parameter
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
 		return
 	}
+
 	var input struct {
 		Name *string `json:"name"`
 	}
@@ -71,11 +73,13 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 }
 
 func (h *RoleHandler) DeleteRole(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	// Parse the UUID from the URL parameter
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
 		return
 	}
+
 	if err := h.Client.Role.DeleteOneID(id).Exec(context.Background()); err != nil {
 		if ent.IsNotFound(err) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Role not found"})

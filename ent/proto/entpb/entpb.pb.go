@@ -419,7 +419,7 @@ func (ListUserRoleRequest_View) EnumDescriptor() ([]byte, []int) {
 
 type Perm struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Code          string                  `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
 	Name          string                  `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *wrapperspb.StringValue `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
@@ -459,11 +459,11 @@ func (*Perm) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Perm) GetId() int64 {
+func (x *Perm) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 func (x *Perm) GetCode() string {
@@ -547,7 +547,7 @@ func (x *CreatePermRequest) GetPerm() *Perm {
 
 type GetPermRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	View          GetPermRequest_View    `protobuf:"varint,2,opt,name=view,proto3,enum=entpb.GetPermRequest_View" json:"view,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -583,11 +583,11 @@ func (*GetPermRequest) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetPermRequest) GetId() int64 {
+func (x *GetPermRequest) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 func (x *GetPermRequest) GetView() GetPermRequest_View {
@@ -643,7 +643,7 @@ func (x *UpdatePermRequest) GetPerm() *Perm {
 
 type DeletePermRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -678,11 +678,11 @@ func (*DeletePermRequest) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DeletePermRequest) GetId() int64 {
+func (x *DeletePermRequest) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 type ListPermRequest struct {
@@ -887,7 +887,7 @@ func (x *BatchCreatePermsResponse) GetPerms() []*Perm {
 
 type PermGroup struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Perms         []*Perm                `protobuf:"bytes,4,rep,name=perms,proto3" json:"perms,omitempty"`
@@ -925,11 +925,11 @@ func (*PermGroup) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *PermGroup) GetId() int64 {
+func (x *PermGroup) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 func (x *PermGroup) GetCode() string {
@@ -999,7 +999,7 @@ func (x *CreatePermGroupRequest) GetPermGroup() *PermGroup {
 
 type GetPermGroupRequest struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
-	Id            int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	View          GetPermGroupRequest_View `protobuf:"varint,2,opt,name=view,proto3,enum=entpb.GetPermGroupRequest_View" json:"view,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1035,11 +1035,11 @@ func (*GetPermGroupRequest) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *GetPermGroupRequest) GetId() int64 {
+func (x *GetPermGroupRequest) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 func (x *GetPermGroupRequest) GetView() GetPermGroupRequest_View {
@@ -1095,7 +1095,7 @@ func (x *UpdatePermGroupRequest) GetPermGroup() *PermGroup {
 
 type DeletePermGroupRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1130,11 +1130,11 @@ func (*DeletePermGroupRequest) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *DeletePermGroupRequest) GetId() int64 {
+func (x *DeletePermGroupRequest) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 type ListPermGroupRequest struct {
@@ -1339,7 +1339,7 @@ func (x *BatchCreatePermGroupsResponse) GetPermGroups() []*PermGroup {
 
 type Role struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Code          string                  `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
 	Name          string                  `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Color         *wrapperspb.StringValue `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
@@ -1379,11 +1379,11 @@ func (*Role) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *Role) GetId() int64 {
+func (x *Role) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 func (x *Role) GetCode() string {
@@ -1467,7 +1467,7 @@ func (x *CreateRoleRequest) GetRole() *Role {
 
 type GetRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	View          GetRoleRequest_View    `protobuf:"varint,2,opt,name=view,proto3,enum=entpb.GetRoleRequest_View" json:"view,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1503,11 +1503,11 @@ func (*GetRoleRequest) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *GetRoleRequest) GetId() int64 {
+func (x *GetRoleRequest) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 func (x *GetRoleRequest) GetView() GetRoleRequest_View {
@@ -1563,7 +1563,7 @@ func (x *UpdateRoleRequest) GetRole() *Role {
 
 type DeleteRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1598,11 +1598,11 @@ func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
 	return file_entpb_entpb_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *DeleteRoleRequest) GetId() int64 {
+func (x *DeleteRoleRequest) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return nil
 }
 
 type ListRoleRequest struct {
@@ -1809,7 +1809,7 @@ type UserRole struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	RoleId        []byte                 `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1858,11 +1858,11 @@ func (x *UserRole) GetUserId() string {
 	return ""
 }
 
-func (x *UserRole) GetRoleId() int64 {
+func (x *UserRole) GetRoleId() []byte {
 	if x != nil {
 		return x.RoleId
 	}
-	return 0
+	return nil
 }
 
 type CreateUserRoleRequest struct {
@@ -2255,7 +2255,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\n" +
 	"\x11entpb/entpb.proto\x12\x05entpb\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xc9\x01\n" +
 	"\x04Perm\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12>\n" +
 	"\vdescription\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueR\vdescription\x12&\n" +
@@ -2264,7 +2264,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x11CreatePermRequest\x12\x1f\n" +
 	"\x04perm\x18\x01 \x01(\v2\v.entpb.PermR\x04perm\"\x8c\x01\n" +
 	"\x0eGetPermRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12.\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\x12.\n" +
 	"\x04view\x18\x02 \x01(\x0e2\x1a.entpb.GetPermRequest.ViewR\x04view\":\n" +
 	"\x04View\x12\x14\n" +
 	"\x10VIEW_UNSPECIFIED\x10\x00\x12\t\n" +
@@ -2273,7 +2273,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x11UpdatePermRequest\x12\x1f\n" +
 	"\x04perm\x18\x01 \x01(\v2\v.entpb.PermR\x04perm\"#\n" +
 	"\x11DeletePermRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xba\x01\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\"\xba\x01\n" +
 	"\x0fListPermRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
@@ -2291,7 +2291,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x18BatchCreatePermsResponse\x12!\n" +
 	"\x05perms\x18\x01 \x03(\v2\v.entpb.PermR\x05perms\"f\n" +
 	"\tPermGroup\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12!\n" +
 	"\x05perms\x18\x04 \x03(\v2\v.entpb.PermR\x05perms\"I\n" +
@@ -2299,7 +2299,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\n" +
 	"perm_group\x18\x01 \x01(\v2\x10.entpb.PermGroupR\tpermGroup\"\x96\x01\n" +
 	"\x13GetPermGroupRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x123\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\x123\n" +
 	"\x04view\x18\x02 \x01(\x0e2\x1f.entpb.GetPermGroupRequest.ViewR\x04view\":\n" +
 	"\x04View\x12\x14\n" +
 	"\x10VIEW_UNSPECIFIED\x10\x00\x12\t\n" +
@@ -2309,7 +2309,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\n" +
 	"perm_group\x18\x01 \x01(\v2\x10.entpb.PermGroupR\tpermGroup\"(\n" +
 	"\x16DeletePermGroupRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xc4\x01\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\"\xc4\x01\n" +
 	"\x14ListPermGroupRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
@@ -2328,7 +2328,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\vperm_groups\x18\x01 \x03(\v2\x10.entpb.PermGroupR\n" +
 	"permGroups\"\xd5\x01\n" +
 	"\x04Role\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x122\n" +
 	"\x05color\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueR\x05color\x12>\n" +
@@ -2337,7 +2337,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x11CreateRoleRequest\x12\x1f\n" +
 	"\x04role\x18\x01 \x01(\v2\v.entpb.RoleR\x04role\"\x8c\x01\n" +
 	"\x0eGetRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12.\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\x12.\n" +
 	"\x04view\x18\x02 \x01(\x0e2\x1a.entpb.GetRoleRequest.ViewR\x04view\":\n" +
 	"\x04View\x12\x14\n" +
 	"\x10VIEW_UNSPECIFIED\x10\x00\x12\t\n" +
@@ -2346,7 +2346,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x11UpdateRoleRequest\x12\x1f\n" +
 	"\x04role\x18\x01 \x01(\v2\v.entpb.RoleR\x04role\"#\n" +
 	"\x11DeleteRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xba\x01\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\"\xba\x01\n" +
 	"\x0fListRoleRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
@@ -2366,7 +2366,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\bUserRole\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x17\n" +
-	"\arole_id\x18\x03 \x01(\x03R\x06roleId\"E\n" +
+	"\arole_id\x18\x03 \x01(\fR\x06roleId\"E\n" +
 	"\x15CreateUserRoleRequest\x12,\n" +
 	"\tuser_role\x18\x01 \x01(\v2\x0f.entpb.UserRoleR\buserRole\"\x94\x01\n" +
 	"\x12GetUserRoleRequest\x12\x0e\n" +

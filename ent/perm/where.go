@@ -5,51 +5,52 @@ package perm
 import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.Perm {
+func ID(id uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.Perm {
+func IDEQ(id uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.Perm {
+func IDNEQ(id uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.Perm {
+func IDIn(ids ...uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.Perm {
+func IDNotIn(ids ...uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.Perm {
+func IDGT(id uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.Perm {
+func IDGTE(id uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.Perm {
+func IDLT(id uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.Perm {
+func IDLTE(id uuid.UUID) predicate.Perm {
 	return predicate.Perm(sql.FieldLTE(FieldID, id))
 }
 

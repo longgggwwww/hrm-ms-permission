@@ -9,6 +9,7 @@ import (
 	"log"
 	"reflect"
 
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/migrate"
 
 	"entgo.io/ent"
@@ -288,7 +289,7 @@ func (c *PermClient) UpdateOne(pe *Perm) *PermUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PermClient) UpdateOneID(id int) *PermUpdateOne {
+func (c *PermClient) UpdateOneID(id uuid.UUID) *PermUpdateOne {
 	mutation := newPermMutation(c.config, OpUpdateOne, withPermID(id))
 	return &PermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -305,7 +306,7 @@ func (c *PermClient) DeleteOne(pe *Perm) *PermDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PermClient) DeleteOneID(id int) *PermDeleteOne {
+func (c *PermClient) DeleteOneID(id uuid.UUID) *PermDeleteOne {
 	builder := c.Delete().Where(perm.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -322,12 +323,12 @@ func (c *PermClient) Query() *PermQuery {
 }
 
 // Get returns a Perm entity by its id.
-func (c *PermClient) Get(ctx context.Context, id int) (*Perm, error) {
+func (c *PermClient) Get(ctx context.Context, id uuid.UUID) (*Perm, error) {
 	return c.Query().Where(perm.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PermClient) GetX(ctx context.Context, id int) *Perm {
+func (c *PermClient) GetX(ctx context.Context, id uuid.UUID) *Perm {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -453,7 +454,7 @@ func (c *PermGroupClient) UpdateOne(pg *PermGroup) *PermGroupUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PermGroupClient) UpdateOneID(id int) *PermGroupUpdateOne {
+func (c *PermGroupClient) UpdateOneID(id uuid.UUID) *PermGroupUpdateOne {
 	mutation := newPermGroupMutation(c.config, OpUpdateOne, withPermGroupID(id))
 	return &PermGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -470,7 +471,7 @@ func (c *PermGroupClient) DeleteOne(pg *PermGroup) *PermGroupDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PermGroupClient) DeleteOneID(id int) *PermGroupDeleteOne {
+func (c *PermGroupClient) DeleteOneID(id uuid.UUID) *PermGroupDeleteOne {
 	builder := c.Delete().Where(permgroup.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -487,12 +488,12 @@ func (c *PermGroupClient) Query() *PermGroupQuery {
 }
 
 // Get returns a PermGroup entity by its id.
-func (c *PermGroupClient) Get(ctx context.Context, id int) (*PermGroup, error) {
+func (c *PermGroupClient) Get(ctx context.Context, id uuid.UUID) (*PermGroup, error) {
 	return c.Query().Where(permgroup.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PermGroupClient) GetX(ctx context.Context, id int) *PermGroup {
+func (c *PermGroupClient) GetX(ctx context.Context, id uuid.UUID) *PermGroup {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -602,7 +603,7 @@ func (c *RoleClient) UpdateOne(r *Role) *RoleUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *RoleClient) UpdateOneID(id int) *RoleUpdateOne {
+func (c *RoleClient) UpdateOneID(id uuid.UUID) *RoleUpdateOne {
 	mutation := newRoleMutation(c.config, OpUpdateOne, withRoleID(id))
 	return &RoleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -619,7 +620,7 @@ func (c *RoleClient) DeleteOne(r *Role) *RoleDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *RoleClient) DeleteOneID(id int) *RoleDeleteOne {
+func (c *RoleClient) DeleteOneID(id uuid.UUID) *RoleDeleteOne {
 	builder := c.Delete().Where(role.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -636,12 +637,12 @@ func (c *RoleClient) Query() *RoleQuery {
 }
 
 // Get returns a Role entity by its id.
-func (c *RoleClient) Get(ctx context.Context, id int) (*Role, error) {
+func (c *RoleClient) Get(ctx context.Context, id uuid.UUID) (*Role, error) {
 	return c.Query().Where(role.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *RoleClient) GetX(ctx context.Context, id int) *Role {
+func (c *RoleClient) GetX(ctx context.Context, id uuid.UUID) *Role {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

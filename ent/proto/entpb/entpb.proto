@@ -10,7 +10,7 @@ import "google/protobuf/wrappers.proto";
 option go_package = "github.com/longgggwwww/hrm-ms-permission/ent/proto/entpb";
 
 message Perm {
-  int64 id = 1;
+  bytes id = 1;
 
   string code = 2;
 
@@ -28,7 +28,7 @@ message CreatePermRequest {
 }
 
 message GetPermRequest {
-  int64 id = 1;
+  bytes id = 1;
 
   View view = 2;
 
@@ -46,7 +46,7 @@ message UpdatePermRequest {
 }
 
 message DeletePermRequest {
-  int64 id = 1;
+  bytes id = 1;
 }
 
 message ListPermRequest {
@@ -80,7 +80,7 @@ message BatchCreatePermsResponse {
 }
 
 message PermGroup {
-  int64 id = 1;
+  bytes id = 1;
 
   string code = 2;
 
@@ -94,7 +94,7 @@ message CreatePermGroupRequest {
 }
 
 message GetPermGroupRequest {
-  int64 id = 1;
+  bytes id = 1;
 
   View view = 2;
 
@@ -112,7 +112,7 @@ message UpdatePermGroupRequest {
 }
 
 message DeletePermGroupRequest {
-  int64 id = 1;
+  bytes id = 1;
 }
 
 message ListPermGroupRequest {
@@ -146,7 +146,7 @@ message BatchCreatePermGroupsResponse {
 }
 
 message Role {
-  int64 id = 1;
+  bytes id = 1;
 
   string code = 2;
 
@@ -164,7 +164,7 @@ message CreateRoleRequest {
 }
 
 message GetRoleRequest {
-  int64 id = 1;
+  bytes id = 1;
 
   View view = 2;
 
@@ -182,7 +182,7 @@ message UpdateRoleRequest {
 }
 
 message DeleteRoleRequest {
-  int64 id = 1;
+  bytes id = 1;
 }
 
 message ListRoleRequest {
@@ -220,7 +220,7 @@ message UserRole {
 
   string user_id = 2;
 
-  int64 role_id = 3;
+  bytes role_id = 3;
 }
 
 message CreateUserRoleRequest {

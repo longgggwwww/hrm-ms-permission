@@ -19,6 +19,6 @@ WORKDIR /app
 # Copy the binary from the builder stage
 COPY --from=builder /app/main /app/main
 
-EXPOSE 8080
+EXPOSE 5000 8080
 
 CMD ["/app/main"]

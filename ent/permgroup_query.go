@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
@@ -107,8 +108,8 @@ func (pgq *PermGroupQuery) FirstX(ctx context.Context) *PermGroup {
 
 // FirstID returns the first PermGroup ID from the query.
 // Returns a *NotFoundError when no PermGroup ID was found.
-func (pgq *PermGroupQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (pgq *PermGroupQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = pgq.Limit(1).IDs(setContextOp(ctx, pgq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -120,7 +121,7 @@ func (pgq *PermGroupQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (pgq *PermGroupQuery) FirstIDX(ctx context.Context) int {
+func (pgq *PermGroupQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := pgq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -158,8 +159,8 @@ func (pgq *PermGroupQuery) OnlyX(ctx context.Context) *PermGroup {
 // OnlyID is like Only, but returns the only PermGroup ID in the query.
 // Returns a *NotSingularError when more than one PermGroup ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (pgq *PermGroupQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (pgq *PermGroupQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = pgq.Limit(2).IDs(setContextOp(ctx, pgq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -175,7 +176,7 @@ func (pgq *PermGroupQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (pgq *PermGroupQuery) OnlyIDX(ctx context.Context) int {
+func (pgq *PermGroupQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := pgq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -203,7 +204,7 @@ func (pgq *PermGroupQuery) AllX(ctx context.Context) []*PermGroup {
 }
 
 // IDs executes the query and returns a list of PermGroup IDs.
-func (pgq *PermGroupQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (pgq *PermGroupQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 	if pgq.ctx.Unique == nil && pgq.path != nil {
 		pgq.Unique(true)
 	}
@@ -215,7 +216,7 @@ func (pgq *PermGroupQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (pgq *PermGroupQuery) IDsX(ctx context.Context) []int {
+func (pgq *PermGroupQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := pgq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -405,7 +406,7 @@ func (pgq *PermGroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*P
 
 func (pgq *PermGroupQuery) loadPerms(ctx context.Context, query *PermQuery, nodes []*PermGroup, init func(*PermGroup), assign func(*PermGroup, *Perm)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*PermGroup)
+	nodeids := make(map[uuid.UUID]*PermGroup)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -445,7 +446,7 @@ func (pgq *PermGroupQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (pgq *PermGroupQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(permgroup.Table, permgroup.Columns, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(permgroup.Table, permgroup.Columns, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeUUID))
 	_spec.From = pgq.sql
 	if unique := pgq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

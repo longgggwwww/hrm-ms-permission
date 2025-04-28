@@ -4,6 +4,7 @@ package userrole
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 )
 
@@ -58,7 +59,7 @@ func UserID(v string) predicate.UserRole {
 }
 
 // RoleID applies equality check predicate on the "role_id" field. It's identical to RoleIDEQ.
-func RoleID(v int) predicate.UserRole {
+func RoleID(v uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldEQ(FieldRoleID, v))
 }
 
@@ -128,42 +129,42 @@ func UserIDContainsFold(v string) predicate.UserRole {
 }
 
 // RoleIDEQ applies the EQ predicate on the "role_id" field.
-func RoleIDEQ(v int) predicate.UserRole {
+func RoleIDEQ(v uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldEQ(FieldRoleID, v))
 }
 
 // RoleIDNEQ applies the NEQ predicate on the "role_id" field.
-func RoleIDNEQ(v int) predicate.UserRole {
+func RoleIDNEQ(v uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldNEQ(FieldRoleID, v))
 }
 
 // RoleIDIn applies the In predicate on the "role_id" field.
-func RoleIDIn(vs ...int) predicate.UserRole {
+func RoleIDIn(vs ...uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldIn(FieldRoleID, vs...))
 }
 
 // RoleIDNotIn applies the NotIn predicate on the "role_id" field.
-func RoleIDNotIn(vs ...int) predicate.UserRole {
+func RoleIDNotIn(vs ...uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldNotIn(FieldRoleID, vs...))
 }
 
 // RoleIDGT applies the GT predicate on the "role_id" field.
-func RoleIDGT(v int) predicate.UserRole {
+func RoleIDGT(v uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldGT(FieldRoleID, v))
 }
 
 // RoleIDGTE applies the GTE predicate on the "role_id" field.
-func RoleIDGTE(v int) predicate.UserRole {
+func RoleIDGTE(v uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldGTE(FieldRoleID, v))
 }
 
 // RoleIDLT applies the LT predicate on the "role_id" field.
-func RoleIDLT(v int) predicate.UserRole {
+func RoleIDLT(v uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldLT(FieldRoleID, v))
 }
 
 // RoleIDLTE applies the LTE predicate on the "role_id" field.
-func RoleIDLTE(v int) predicate.UserRole {
+func RoleIDLTE(v uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldLTE(FieldRoleID, v))
 }
 

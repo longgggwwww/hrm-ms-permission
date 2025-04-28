@@ -7,6 +7,7 @@ import (
 	entproto "entgo.io/contrib/entproto"
 	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	fmt "fmt"
+	uuid "github.com/google/uuid"
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
 	perm "github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	permgroup "github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
@@ -15,7 +16,6 @@ import (
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
-	strconv "strconv"
 )
 
 // PermService implements PermServiceServer
@@ -38,18 +38,27 @@ func toProtoPerm(e *ent.Perm) (*Perm, error) {
 	v.Code = code
 	description := wrapperspb.String(e.Description)
 	v.Description = description
-	id := int64(e.ID)
+	id, err := e.ID.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
 	v.Id = id
 	name := e.Name
 	v.Name = name
 	if edg := e.Edges.Group; edg != nil {
-		id := int64(edg.ID)
+		id, err := edg.ID.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
 		v.Group = &PermGroup{
 			Id: id,
 		}
 	}
 	for _, edg := range e.Edges.Roles {
-		id := int64(edg.ID)
+		id, err := edg.ID.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
 		v.Roles = append(v.Roles, &Role{
 			Id: id,
 		})
@@ -101,7 +110,10 @@ func (svc *PermService) Get(ctx context.Context, req *GetPermRequest) (*Perm, er
 		err error
 		get *ent.Perm
 	)
-	id := int(req.GetId())
+	var id uuid.UUID
+	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	switch req.GetView() {
 	case GetPermRequest_VIEW_UNSPECIFIED, GetPermRequest_BASIC:
 		get, err = svc.client.Perm.Get(ctx, id)
@@ -132,7 +144,10 @@ func (svc *PermService) Get(ctx context.Context, req *GetPermRequest) (*Perm, er
 // Update implements PermServiceServer.Update
 func (svc *PermService) Update(ctx context.Context, req *UpdatePermRequest) (*Perm, error) {
 	perm := req.GetPerm()
-	permID := int(perm.GetId())
+	var permID uuid.UUID
+	if err := (&permID).UnmarshalBinary(perm.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	m := svc.client.Perm.UpdateOneID(permID)
 	permCode := perm.GetCode()
 	m.SetCode(permCode)
@@ -143,11 +158,17 @@ func (svc *PermService) Update(ctx context.Context, req *UpdatePermRequest) (*Pe
 	permName := perm.GetName()
 	m.SetName(permName)
 	if perm.GetGroup() != nil {
-		permGroup := int(perm.GetGroup().GetId())
+		var permGroup uuid.UUID
+		if err := (&permGroup).UnmarshalBinary(perm.GetGroup().GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
 		m.SetGroupID(permGroup)
 	}
 	for _, item := range perm.GetRoles() {
-		roles := int(item.GetId())
+		var roles uuid.UUID
+		if err := (&roles).UnmarshalBinary(item.GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
 		m.AddRoleIDs(roles)
 	}
 
@@ -172,7 +193,10 @@ func (svc *PermService) Update(ctx context.Context, req *UpdatePermRequest) (*Pe
 // Delete implements PermServiceServer.Delete
 func (svc *PermService) Delete(ctx context.Context, req *DeletePermRequest) (*emptypb.Empty, error) {
 	var err error
-	id := int(req.GetId())
+	var id uuid.UUID
+	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	err = svc.client.Perm.DeleteOneID(id).Exec(ctx)
 	switch {
 	case err == nil:
@@ -207,11 +231,10 @@ func (svc *PermService) List(ctx context.Context, req *ListPermRequest) (*ListPe
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
 		}
-		token, err := strconv.ParseInt(string(bytes), 10, 32)
+		pageToken, err := uuid.ParseBytes(bytes)
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
 		}
-		pageToken := int(token)
 		listQuery = listQuery.
 			Where(perm.IDLTE(pageToken))
 	}
@@ -296,11 +319,17 @@ func (svc *PermService) createBuilder(perm *Perm) (*ent.PermCreate, error) {
 	permName := perm.GetName()
 	m.SetName(permName)
 	if perm.GetGroup() != nil {
-		permGroup := int(perm.GetGroup().GetId())
+		var permGroup uuid.UUID
+		if err := (&permGroup).UnmarshalBinary(perm.GetGroup().GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
 		m.SetGroupID(permGroup)
 	}
 	for _, item := range perm.GetRoles() {
-		roles := int(item.GetId())
+		var roles uuid.UUID
+		if err := (&roles).UnmarshalBinary(item.GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
 		m.AddRoleIDs(roles)
 	}
 	return m, nil

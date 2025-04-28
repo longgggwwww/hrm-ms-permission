@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
@@ -17,21 +18,33 @@ func init() {
 	permFields := schema.Perm{}.Fields()
 	_ = permFields
 	// permDescName is the schema descriptor for name field.
-	permDescName := permFields[1].Descriptor()
+	permDescName := permFields[2].Descriptor()
 	// perm.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	perm.NameValidator = permDescName.Validators[0].(func(string) error)
+	// permDescID is the schema descriptor for id field.
+	permDescID := permFields[0].Descriptor()
+	// perm.DefaultID holds the default value on creation for the id field.
+	perm.DefaultID = permDescID.Default.(func() uuid.UUID)
 	permgroupFields := schema.PermGroup{}.Fields()
 	_ = permgroupFields
 	// permgroupDescName is the schema descriptor for name field.
-	permgroupDescName := permgroupFields[1].Descriptor()
+	permgroupDescName := permgroupFields[2].Descriptor()
 	// permgroup.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	permgroup.NameValidator = permgroupDescName.Validators[0].(func(string) error)
+	// permgroupDescID is the schema descriptor for id field.
+	permgroupDescID := permgroupFields[0].Descriptor()
+	// permgroup.DefaultID holds the default value on creation for the id field.
+	permgroup.DefaultID = permgroupDescID.Default.(func() uuid.UUID)
 	roleFields := schema.Role{}.Fields()
 	_ = roleFields
 	// roleDescName is the schema descriptor for name field.
-	roleDescName := roleFields[1].Descriptor()
+	roleDescName := roleFields[2].Descriptor()
 	// role.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	role.NameValidator = roleDescName.Validators[0].(func(string) error)
+	// roleDescID is the schema descriptor for id field.
+	roleDescID := roleFields[0].Descriptor()
+	// role.DefaultID holds the default value on creation for the id field.
+	role.DefaultID = roleDescID.Default.(func() uuid.UUID)
 	userroleFields := schema.UserRole{}.Fields()
 	_ = userroleFields
 	// userroleDescUserID is the schema descriptor for user_id field.

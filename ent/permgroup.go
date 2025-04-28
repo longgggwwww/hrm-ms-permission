@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 )
 
@@ -15,7 +16,7 @@ import (
 type PermGroup struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// Code holds the value of the "code" field.
 	Code string `json:"code,omitempty"`
 	// Name holds the value of the "name" field.
@@ -49,10 +50,10 @@ func (*PermGroup) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case permgroup.FieldID:
-			values[i] = new(sql.NullInt64)
 		case permgroup.FieldCode, permgroup.FieldName:
 			values[i] = new(sql.NullString)
+		case permgroup.FieldID:
+			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -69,11 +70,11 @@ func (pg *PermGroup) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case permgroup.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				pg.ID = *value
 			}
-			pg.ID = int(value.Int64)
 		case permgroup.FieldCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field code", values[i])

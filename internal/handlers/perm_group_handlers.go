@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 )
 
@@ -43,11 +43,13 @@ func (h *PermGroupHandler) CreatePermGroup(c *gin.Context) {
 }
 
 func (h *PermGroupHandler) UpdatePermGroup(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id := c.Param("id")
+	uuidID, err := uuid.Parse(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid permission group ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
 		return
 	}
+
 	var input struct {
 		Name *string `json:"name"`
 	}
@@ -56,7 +58,7 @@ func (h *PermGroupHandler) UpdatePermGroup(c *gin.Context) {
 		return
 	}
 
-	update := h.Client.PermGroup.UpdateOneID(id)
+	update := h.Client.PermGroup.UpdateOneID(uuidID)
 	if input.Name != nil {
 		update.SetName(*input.Name)
 	}
@@ -71,12 +73,14 @@ func (h *PermGroupHandler) UpdatePermGroup(c *gin.Context) {
 }
 
 func (h *PermGroupHandler) DeletePermGroup(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id := c.Param("id")
+	uuidID, err := uuid.Parse(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid permission group ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
 		return
 	}
-	if err := h.Client.PermGroup.DeleteOneID(id).Exec(context.Background()); err != nil {
+
+	if err := h.Client.PermGroup.DeleteOneID(uuidID).Exec(context.Background()); err != nil {
 		if ent.IsNotFound(err) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Permission group not found"})
 		} else {

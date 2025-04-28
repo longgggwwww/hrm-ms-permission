@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
@@ -37,15 +38,15 @@ type PermMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *uuid.UUID
 	code          *string
 	name          *string
 	description   *string
 	clearedFields map[string]struct{}
-	group         *int
+	group         *uuid.UUID
 	clearedgroup  bool
-	roles         map[int]struct{}
-	removedroles  map[int]struct{}
+	roles         map[uuid.UUID]struct{}
+	removedroles  map[uuid.UUID]struct{}
 	clearedroles  bool
 	done          bool
 	oldValue      func(context.Context) (*Perm, error)
@@ -72,7 +73,7 @@ func newPermMutation(c config, op Op, opts ...permOption) *PermMutation {
 }
 
 // withPermID sets the ID field of the mutation.
-func withPermID(id int) permOption {
+func withPermID(id uuid.UUID) permOption {
 	return func(m *PermMutation) {
 		var (
 			err   error
@@ -122,9 +123,15 @@ func (m PermMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Perm entities.
+func (m *PermMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *PermMutation) ID() (id int, exists bool) {
+func (m *PermMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -135,12 +142,12 @@ func (m *PermMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *PermMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *PermMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -272,7 +279,7 @@ func (m *PermMutation) ResetDescription() {
 }
 
 // SetGroupID sets the "group" edge to the PermGroup entity by id.
-func (m *PermMutation) SetGroupID(id int) {
+func (m *PermMutation) SetGroupID(id uuid.UUID) {
 	m.group = &id
 }
 
@@ -287,7 +294,7 @@ func (m *PermMutation) GroupCleared() bool {
 }
 
 // GroupID returns the "group" edge ID in the mutation.
-func (m *PermMutation) GroupID() (id int, exists bool) {
+func (m *PermMutation) GroupID() (id uuid.UUID, exists bool) {
 	if m.group != nil {
 		return *m.group, true
 	}
@@ -297,7 +304,7 @@ func (m *PermMutation) GroupID() (id int, exists bool) {
 // GroupIDs returns the "group" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // GroupID instead. It exists only for internal usage by the builders.
-func (m *PermMutation) GroupIDs() (ids []int) {
+func (m *PermMutation) GroupIDs() (ids []uuid.UUID) {
 	if id := m.group; id != nil {
 		ids = append(ids, *id)
 	}
@@ -311,9 +318,9 @@ func (m *PermMutation) ResetGroup() {
 }
 
 // AddRoleIDs adds the "roles" edge to the Role entity by ids.
-func (m *PermMutation) AddRoleIDs(ids ...int) {
+func (m *PermMutation) AddRoleIDs(ids ...uuid.UUID) {
 	if m.roles == nil {
-		m.roles = make(map[int]struct{})
+		m.roles = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.roles[ids[i]] = struct{}{}
@@ -331,9 +338,9 @@ func (m *PermMutation) RolesCleared() bool {
 }
 
 // RemoveRoleIDs removes the "roles" edge to the Role entity by IDs.
-func (m *PermMutation) RemoveRoleIDs(ids ...int) {
+func (m *PermMutation) RemoveRoleIDs(ids ...uuid.UUID) {
 	if m.removedroles == nil {
-		m.removedroles = make(map[int]struct{})
+		m.removedroles = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.roles, ids[i])
@@ -342,7 +349,7 @@ func (m *PermMutation) RemoveRoleIDs(ids ...int) {
 }
 
 // RemovedRoles returns the removed IDs of the "roles" edge to the Role entity.
-func (m *PermMutation) RemovedRolesIDs() (ids []int) {
+func (m *PermMutation) RemovedRolesIDs() (ids []uuid.UUID) {
 	for id := range m.removedroles {
 		ids = append(ids, id)
 	}
@@ -350,7 +357,7 @@ func (m *PermMutation) RemovedRolesIDs() (ids []int) {
 }
 
 // RolesIDs returns the "roles" edge IDs in the mutation.
-func (m *PermMutation) RolesIDs() (ids []int) {
+func (m *PermMutation) RolesIDs() (ids []uuid.UUID) {
 	for id := range m.roles {
 		ids = append(ids, id)
 	}
@@ -645,12 +652,12 @@ type PermGroupMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *uuid.UUID
 	code          *string
 	name          *string
 	clearedFields map[string]struct{}
-	perms         map[int]struct{}
-	removedperms  map[int]struct{}
+	perms         map[uuid.UUID]struct{}
+	removedperms  map[uuid.UUID]struct{}
 	clearedperms  bool
 	done          bool
 	oldValue      func(context.Context) (*PermGroup, error)
@@ -677,7 +684,7 @@ func newPermGroupMutation(c config, op Op, opts ...permgroupOption) *PermGroupMu
 }
 
 // withPermGroupID sets the ID field of the mutation.
-func withPermGroupID(id int) permgroupOption {
+func withPermGroupID(id uuid.UUID) permgroupOption {
 	return func(m *PermGroupMutation) {
 		var (
 			err   error
@@ -727,9 +734,15 @@ func (m PermGroupMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PermGroup entities.
+func (m *PermGroupMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *PermGroupMutation) ID() (id int, exists bool) {
+func (m *PermGroupMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -740,12 +753,12 @@ func (m *PermGroupMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *PermGroupMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *PermGroupMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -828,9 +841,9 @@ func (m *PermGroupMutation) ResetName() {
 }
 
 // AddPermIDs adds the "perms" edge to the Perm entity by ids.
-func (m *PermGroupMutation) AddPermIDs(ids ...int) {
+func (m *PermGroupMutation) AddPermIDs(ids ...uuid.UUID) {
 	if m.perms == nil {
-		m.perms = make(map[int]struct{})
+		m.perms = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.perms[ids[i]] = struct{}{}
@@ -848,9 +861,9 @@ func (m *PermGroupMutation) PermsCleared() bool {
 }
 
 // RemovePermIDs removes the "perms" edge to the Perm entity by IDs.
-func (m *PermGroupMutation) RemovePermIDs(ids ...int) {
+func (m *PermGroupMutation) RemovePermIDs(ids ...uuid.UUID) {
 	if m.removedperms == nil {
-		m.removedperms = make(map[int]struct{})
+		m.removedperms = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.perms, ids[i])
@@ -859,7 +872,7 @@ func (m *PermGroupMutation) RemovePermIDs(ids ...int) {
 }
 
 // RemovedPerms returns the removed IDs of the "perms" edge to the Perm entity.
-func (m *PermGroupMutation) RemovedPermsIDs() (ids []int) {
+func (m *PermGroupMutation) RemovedPermsIDs() (ids []uuid.UUID) {
 	for id := range m.removedperms {
 		ids = append(ids, id)
 	}
@@ -867,7 +880,7 @@ func (m *PermGroupMutation) RemovedPermsIDs() (ids []int) {
 }
 
 // PermsIDs returns the "perms" edge IDs in the mutation.
-func (m *PermGroupMutation) PermsIDs() (ids []int) {
+func (m *PermGroupMutation) PermsIDs() (ids []uuid.UUID) {
 	for id := range m.perms {
 		ids = append(ids, id)
 	}
@@ -1118,14 +1131,14 @@ type RoleMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *uuid.UUID
 	code          *string
 	name          *string
 	color         *string
 	description   *string
 	clearedFields map[string]struct{}
-	perms         map[int]struct{}
-	removedperms  map[int]struct{}
+	perms         map[uuid.UUID]struct{}
+	removedperms  map[uuid.UUID]struct{}
 	clearedperms  bool
 	done          bool
 	oldValue      func(context.Context) (*Role, error)
@@ -1152,7 +1165,7 @@ func newRoleMutation(c config, op Op, opts ...roleOption) *RoleMutation {
 }
 
 // withRoleID sets the ID field of the mutation.
-func withRoleID(id int) roleOption {
+func withRoleID(id uuid.UUID) roleOption {
 	return func(m *RoleMutation) {
 		var (
 			err   error
@@ -1202,9 +1215,15 @@ func (m RoleMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Role entities.
+func (m *RoleMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *RoleMutation) ID() (id int, exists bool) {
+func (m *RoleMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1215,12 +1234,12 @@ func (m *RoleMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *RoleMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *RoleMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1401,9 +1420,9 @@ func (m *RoleMutation) ResetDescription() {
 }
 
 // AddPermIDs adds the "perms" edge to the Perm entity by ids.
-func (m *RoleMutation) AddPermIDs(ids ...int) {
+func (m *RoleMutation) AddPermIDs(ids ...uuid.UUID) {
 	if m.perms == nil {
-		m.perms = make(map[int]struct{})
+		m.perms = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.perms[ids[i]] = struct{}{}
@@ -1421,9 +1440,9 @@ func (m *RoleMutation) PermsCleared() bool {
 }
 
 // RemovePermIDs removes the "perms" edge to the Perm entity by IDs.
-func (m *RoleMutation) RemovePermIDs(ids ...int) {
+func (m *RoleMutation) RemovePermIDs(ids ...uuid.UUID) {
 	if m.removedperms == nil {
-		m.removedperms = make(map[int]struct{})
+		m.removedperms = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.perms, ids[i])
@@ -1432,7 +1451,7 @@ func (m *RoleMutation) RemovePermIDs(ids ...int) {
 }
 
 // RemovedPerms returns the removed IDs of the "perms" edge to the Perm entity.
-func (m *RoleMutation) RemovedPermsIDs() (ids []int) {
+func (m *RoleMutation) RemovedPermsIDs() (ids []uuid.UUID) {
 	for id := range m.removedperms {
 		ids = append(ids, id)
 	}
@@ -1440,7 +1459,7 @@ func (m *RoleMutation) RemovedPermsIDs() (ids []int) {
 }
 
 // PermsIDs returns the "perms" edge IDs in the mutation.
-func (m *RoleMutation) PermsIDs() (ids []int) {
+func (m *RoleMutation) PermsIDs() (ids []uuid.UUID) {
 	for id := range m.perms {
 		ids = append(ids, id)
 	}
@@ -1742,8 +1761,7 @@ type UserRoleMutation struct {
 	typ           string
 	id            *int
 	user_id       *string
-	role_id       *int
-	addrole_id    *int
+	role_id       *uuid.UUID
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*UserRole, error)
@@ -1885,13 +1903,12 @@ func (m *UserRoleMutation) ResetUserID() {
 }
 
 // SetRoleID sets the "role_id" field.
-func (m *UserRoleMutation) SetRoleID(i int) {
-	m.role_id = &i
-	m.addrole_id = nil
+func (m *UserRoleMutation) SetRoleID(u uuid.UUID) {
+	m.role_id = &u
 }
 
 // RoleID returns the value of the "role_id" field in the mutation.
-func (m *UserRoleMutation) RoleID() (r int, exists bool) {
+func (m *UserRoleMutation) RoleID() (r uuid.UUID, exists bool) {
 	v := m.role_id
 	if v == nil {
 		return
@@ -1902,7 +1919,7 @@ func (m *UserRoleMutation) RoleID() (r int, exists bool) {
 // OldRoleID returns the old "role_id" field's value of the UserRole entity.
 // If the UserRole object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserRoleMutation) OldRoleID(ctx context.Context) (v int, err error) {
+func (m *UserRoleMutation) OldRoleID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldRoleID is only allowed on UpdateOne operations")
 	}
@@ -1916,28 +1933,9 @@ func (m *UserRoleMutation) OldRoleID(ctx context.Context) (v int, err error) {
 	return oldValue.RoleID, nil
 }
 
-// AddRoleID adds i to the "role_id" field.
-func (m *UserRoleMutation) AddRoleID(i int) {
-	if m.addrole_id != nil {
-		*m.addrole_id += i
-	} else {
-		m.addrole_id = &i
-	}
-}
-
-// AddedRoleID returns the value that was added to the "role_id" field in this mutation.
-func (m *UserRoleMutation) AddedRoleID() (r int, exists bool) {
-	v := m.addrole_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetRoleID resets all changes to the "role_id" field.
 func (m *UserRoleMutation) ResetRoleID() {
 	m.role_id = nil
-	m.addrole_id = nil
 }
 
 // Where appends a list predicates to the UserRoleMutation builder.
@@ -2023,7 +2021,7 @@ func (m *UserRoleMutation) SetField(name string, value ent.Value) error {
 		m.SetUserID(v)
 		return nil
 	case userrole.FieldRoleID:
-		v, ok := value.(int)
+		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2036,21 +2034,13 @@ func (m *UserRoleMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *UserRoleMutation) AddedFields() []string {
-	var fields []string
-	if m.addrole_id != nil {
-		fields = append(fields, userrole.FieldRoleID)
-	}
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *UserRoleMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case userrole.FieldRoleID:
-		return m.AddedRoleID()
-	}
 	return nil, false
 }
 
@@ -2059,13 +2049,6 @@ func (m *UserRoleMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserRoleMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case userrole.FieldRoleID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddRoleID(v)
-		return nil
 	}
 	return fmt.Errorf("unknown UserRole numeric field %s", name)
 }

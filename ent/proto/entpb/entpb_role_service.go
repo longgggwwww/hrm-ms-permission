@@ -7,6 +7,7 @@ import (
 	entproto "entgo.io/contrib/entproto"
 	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	fmt "fmt"
+	uuid "github.com/google/uuid"
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
 	perm "github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	role "github.com/longgggwwww/hrm-ms-permission/ent/role"
@@ -14,7 +15,6 @@ import (
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
-	strconv "strconv"
 )
 
 // RoleService implements RoleServiceServer
@@ -39,12 +39,18 @@ func toProtoRole(e *ent.Role) (*Role, error) {
 	v.Color = color
 	description := wrapperspb.String(e.Description)
 	v.Description = description
-	id := int64(e.ID)
+	id, err := e.ID.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
 	v.Id = id
 	name := e.Name
 	v.Name = name
 	for _, edg := range e.Edges.Perms {
-		id := int64(edg.ID)
+		id, err := edg.ID.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
 		v.Perms = append(v.Perms, &Perm{
 			Id: id,
 		})
@@ -96,7 +102,10 @@ func (svc *RoleService) Get(ctx context.Context, req *GetRoleRequest) (*Role, er
 		err error
 		get *ent.Role
 	)
-	id := int(req.GetId())
+	var id uuid.UUID
+	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	switch req.GetView() {
 	case GetRoleRequest_VIEW_UNSPECIFIED, GetRoleRequest_BASIC:
 		get, err = svc.client.Role.Get(ctx, id)
@@ -124,7 +133,10 @@ func (svc *RoleService) Get(ctx context.Context, req *GetRoleRequest) (*Role, er
 // Update implements RoleServiceServer.Update
 func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Role, error) {
 	role := req.GetRole()
-	roleID := int(role.GetId())
+	var roleID uuid.UUID
+	if err := (&roleID).UnmarshalBinary(role.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	m := svc.client.Role.UpdateOneID(roleID)
 	roleCode := role.GetCode()
 	m.SetCode(roleCode)
@@ -139,7 +151,10 @@ func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Ro
 	roleName := role.GetName()
 	m.SetName(roleName)
 	for _, item := range role.GetPerms() {
-		perms := int(item.GetId())
+		var perms uuid.UUID
+		if err := (&perms).UnmarshalBinary(item.GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
 		m.AddPermIDs(perms)
 	}
 
@@ -164,7 +179,10 @@ func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Ro
 // Delete implements RoleServiceServer.Delete
 func (svc *RoleService) Delete(ctx context.Context, req *DeleteRoleRequest) (*emptypb.Empty, error) {
 	var err error
-	id := int(req.GetId())
+	var id uuid.UUID
+	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	err = svc.client.Role.DeleteOneID(id).Exec(ctx)
 	switch {
 	case err == nil:
@@ -199,11 +217,10 @@ func (svc *RoleService) List(ctx context.Context, req *ListRoleRequest) (*ListRo
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
 		}
-		token, err := strconv.ParseInt(string(bytes), 10, 32)
+		pageToken, err := uuid.ParseBytes(bytes)
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
 		}
-		pageToken := int(token)
 		listQuery = listQuery.
 			Where(role.IDLTE(pageToken))
 	}
@@ -289,7 +306,10 @@ func (svc *RoleService) createBuilder(role *Role) (*ent.RoleCreate, error) {
 	roleName := role.GetName()
 	m.SetName(roleName)
 	for _, item := range role.GetPerms() {
-		perms := int(item.GetId())
+		var perms uuid.UUID
+		if err := (&perms).UnmarshalBinary(item.GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
 		m.AddPermIDs(perms)
 	}
 	return m, nil

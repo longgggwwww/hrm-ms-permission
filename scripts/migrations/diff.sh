@@ -18,4 +18,4 @@ fi
 atlas migrate diff "$migration_name" \
   --dir "file://ent/migrate/migrations" \
   --to "ent://ent/schema" \
-  --dev-url "docker://postgres/15/test?search_path=public"
+  --dev-url "docker://postgres/15/dev"

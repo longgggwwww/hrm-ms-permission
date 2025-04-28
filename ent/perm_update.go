@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
@@ -78,13 +79,13 @@ func (pu *PermUpdate) ClearDescription() *PermUpdate {
 }
 
 // SetGroupID sets the "group" edge to the PermGroup entity by ID.
-func (pu *PermUpdate) SetGroupID(id int) *PermUpdate {
+func (pu *PermUpdate) SetGroupID(id uuid.UUID) *PermUpdate {
 	pu.mutation.SetGroupID(id)
 	return pu
 }
 
 // SetNillableGroupID sets the "group" edge to the PermGroup entity by ID if the given value is not nil.
-func (pu *PermUpdate) SetNillableGroupID(id *int) *PermUpdate {
+func (pu *PermUpdate) SetNillableGroupID(id *uuid.UUID) *PermUpdate {
 	if id != nil {
 		pu = pu.SetGroupID(*id)
 	}
@@ -97,14 +98,14 @@ func (pu *PermUpdate) SetGroup(p *PermGroup) *PermUpdate {
 }
 
 // AddRoleIDs adds the "roles" edge to the Role entity by IDs.
-func (pu *PermUpdate) AddRoleIDs(ids ...int) *PermUpdate {
+func (pu *PermUpdate) AddRoleIDs(ids ...uuid.UUID) *PermUpdate {
 	pu.mutation.AddRoleIDs(ids...)
 	return pu
 }
 
 // AddRoles adds the "roles" edges to the Role entity.
 func (pu *PermUpdate) AddRoles(r ...*Role) *PermUpdate {
-	ids := make([]int, len(r))
+	ids := make([]uuid.UUID, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
@@ -129,14 +130,14 @@ func (pu *PermUpdate) ClearRoles() *PermUpdate {
 }
 
 // RemoveRoleIDs removes the "roles" edge to Role entities by IDs.
-func (pu *PermUpdate) RemoveRoleIDs(ids ...int) *PermUpdate {
+func (pu *PermUpdate) RemoveRoleIDs(ids ...uuid.UUID) *PermUpdate {
 	pu.mutation.RemoveRoleIDs(ids...)
 	return pu
 }
 
 // RemoveRoles removes "roles" edges to Role entities.
 func (pu *PermUpdate) RemoveRoles(r ...*Role) *PermUpdate {
-	ids := make([]int, len(r))
+	ids := make([]uuid.UUID, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
@@ -184,7 +185,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := pu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(perm.Table, perm.Columns, sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(perm.Table, perm.Columns, sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID))
 	if ps := pu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -212,7 +213,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{perm.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -225,7 +226,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{perm.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -241,7 +242,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: perm.RolesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -254,7 +255,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: perm.RolesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -270,7 +271,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: perm.RolesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -347,13 +348,13 @@ func (puo *PermUpdateOne) ClearDescription() *PermUpdateOne {
 }
 
 // SetGroupID sets the "group" edge to the PermGroup entity by ID.
-func (puo *PermUpdateOne) SetGroupID(id int) *PermUpdateOne {
+func (puo *PermUpdateOne) SetGroupID(id uuid.UUID) *PermUpdateOne {
 	puo.mutation.SetGroupID(id)
 	return puo
 }
 
 // SetNillableGroupID sets the "group" edge to the PermGroup entity by ID if the given value is not nil.
-func (puo *PermUpdateOne) SetNillableGroupID(id *int) *PermUpdateOne {
+func (puo *PermUpdateOne) SetNillableGroupID(id *uuid.UUID) *PermUpdateOne {
 	if id != nil {
 		puo = puo.SetGroupID(*id)
 	}
@@ -366,14 +367,14 @@ func (puo *PermUpdateOne) SetGroup(p *PermGroup) *PermUpdateOne {
 }
 
 // AddRoleIDs adds the "roles" edge to the Role entity by IDs.
-func (puo *PermUpdateOne) AddRoleIDs(ids ...int) *PermUpdateOne {
+func (puo *PermUpdateOne) AddRoleIDs(ids ...uuid.UUID) *PermUpdateOne {
 	puo.mutation.AddRoleIDs(ids...)
 	return puo
 }
 
 // AddRoles adds the "roles" edges to the Role entity.
 func (puo *PermUpdateOne) AddRoles(r ...*Role) *PermUpdateOne {
-	ids := make([]int, len(r))
+	ids := make([]uuid.UUID, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
@@ -398,14 +399,14 @@ func (puo *PermUpdateOne) ClearRoles() *PermUpdateOne {
 }
 
 // RemoveRoleIDs removes the "roles" edge to Role entities by IDs.
-func (puo *PermUpdateOne) RemoveRoleIDs(ids ...int) *PermUpdateOne {
+func (puo *PermUpdateOne) RemoveRoleIDs(ids ...uuid.UUID) *PermUpdateOne {
 	puo.mutation.RemoveRoleIDs(ids...)
 	return puo
 }
 
 // RemoveRoles removes "roles" edges to Role entities.
 func (puo *PermUpdateOne) RemoveRoles(r ...*Role) *PermUpdateOne {
-	ids := make([]int, len(r))
+	ids := make([]uuid.UUID, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
@@ -466,7 +467,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 	if err := puo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(perm.Table, perm.Columns, sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(perm.Table, perm.Columns, sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID))
 	id, ok := puo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Perm.id" for update`)}
@@ -511,7 +512,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Columns: []string{perm.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -524,7 +525,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Columns: []string{perm.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -540,7 +541,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Columns: perm.RolesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -553,7 +554,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Columns: perm.RolesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -569,7 +570,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Columns: perm.RolesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

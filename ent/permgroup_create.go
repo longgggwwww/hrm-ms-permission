@@ -7,9 +7,11 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 )
@@ -34,15 +36,29 @@ func (pgc *PermGroupCreate) SetName(s string) *PermGroupCreate {
 	return pgc
 }
 
+// SetID sets the "id" field.
+func (pgc *PermGroupCreate) SetID(u uuid.UUID) *PermGroupCreate {
+	pgc.mutation.SetID(u)
+	return pgc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (pgc *PermGroupCreate) SetNillableID(u *uuid.UUID) *PermGroupCreate {
+	if u != nil {
+		pgc.SetID(*u)
+	}
+	return pgc
+}
+
 // AddPermIDs adds the "perms" edge to the Perm entity by IDs.
-func (pgc *PermGroupCreate) AddPermIDs(ids ...int) *PermGroupCreate {
+func (pgc *PermGroupCreate) AddPermIDs(ids ...uuid.UUID) *PermGroupCreate {
 	pgc.mutation.AddPermIDs(ids...)
 	return pgc
 }
 
 // AddPerms adds the "perms" edges to the Perm entity.
 func (pgc *PermGroupCreate) AddPerms(p ...*Perm) *PermGroupCreate {
-	ids := make([]int, len(p))
+	ids := make([]uuid.UUID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -56,6 +72,7 @@ func (pgc *PermGroupCreate) Mutation() *PermGroupMutation {
 
 // Save creates the PermGroup in the database.
 func (pgc *PermGroupCreate) Save(ctx context.Context) (*PermGroup, error) {
+	pgc.defaults()
 	return withHooks(ctx, pgc.sqlSave, pgc.mutation, pgc.hooks)
 }
 
@@ -78,6 +95,14 @@ func (pgc *PermGroupCreate) Exec(ctx context.Context) error {
 func (pgc *PermGroupCreate) ExecX(ctx context.Context) {
 	if err := pgc.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (pgc *PermGroupCreate) defaults() {
+	if _, ok := pgc.mutation.ID(); !ok {
+		v := permgroup.DefaultID()
+		pgc.mutation.SetID(v)
 	}
 }
 
@@ -108,8 +133,13 @@ func (pgc *PermGroupCreate) sqlSave(ctx context.Context) (*PermGroup, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
+	}
 	pgc.mutation.id = &_node.ID
 	pgc.mutation.done = true
 	return _node, nil
@@ -118,9 +148,13 @@ func (pgc *PermGroupCreate) sqlSave(ctx context.Context) (*PermGroup, error) {
 func (pgc *PermGroupCreate) createSpec() (*PermGroup, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PermGroup{config: pgc.config}
-		_spec = sqlgraph.NewCreateSpec(permgroup.Table, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(permgroup.Table, sqlgraph.NewFieldSpec(permgroup.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = pgc.conflict
+	if id, ok := pgc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = &id
+	}
 	if value, ok := pgc.mutation.Code(); ok {
 		_spec.SetField(permgroup.FieldCode, field.TypeString, value)
 		_node.Code = value
@@ -137,7 +171,7 @@ func (pgc *PermGroupCreate) createSpec() (*PermGroup, *sqlgraph.CreateSpec) {
 			Columns: []string{permgroup.PermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -221,16 +255,24 @@ func (u *PermGroupUpsert) UpdateName() *PermGroupUpsert {
 	return u
 }
 
-// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.PermGroup.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(permgroup.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 func (u *PermGroupUpsertOne) UpdateNewValues() *PermGroupUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(permgroup.FieldID)
+		}
+	}))
 	return u
 }
 
@@ -305,7 +347,12 @@ func (u *PermGroupUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PermGroupUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *PermGroupUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: PermGroupUpsertOne.ID is not supported by MySQL driver. Use PermGroupUpsertOne.Exec instead")
+	}
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -314,7 +361,7 @@ func (u *PermGroupUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PermGroupUpsertOne) IDX(ctx context.Context) int {
+func (u *PermGroupUpsertOne) IDX(ctx context.Context) uuid.UUID {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -341,6 +388,7 @@ func (pgcb *PermGroupCreateBulk) Save(ctx context.Context) ([]*PermGroup, error)
 	for i := range pgcb.builders {
 		func(i int, root context.Context) {
 			builder := pgcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PermGroupMutation)
 				if !ok {
@@ -368,10 +416,6 @@ func (pgcb *PermGroupCreateBulk) Save(ctx context.Context) ([]*PermGroup, error)
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -458,10 +502,20 @@ type PermGroupUpsertBulk struct {
 //	client.PermGroup.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(permgroup.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 func (u *PermGroupUpsertBulk) UpdateNewValues() *PermGroupUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(permgroup.FieldID)
+			}
+		}
+	}))
 	return u
 }
 
