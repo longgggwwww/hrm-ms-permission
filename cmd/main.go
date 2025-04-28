@@ -14,10 +14,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-func startGRPCServer(client *ent.Client) {
-	perm := entpb.NewPermService(client)
-	permGroup := entpb.NewPermGroupService(client)
-	role := entpb.NewRoleService(client)
+func startGRPCServer(cli *ent.Client) {
+	perm := entpb.NewPermService(cli)
+	permGroup := entpb.NewPermGroupService(cli)
+	role := entpb.NewRoleService(cli)
 
 	server := grpc.NewServer()
 	fmt.Println("Starting gRPC server on port 5000...")
@@ -36,12 +36,17 @@ func startGRPCServer(client *ent.Client) {
 	}
 }
 
-func startHTTPServer(client *ent.Client) {
+func startHTTPServer(cli *ent.Client) {
 	r := gin.Default()
 
-	r.GET("/perm-groups", handlers.GetPermGroupsHandler(client))
-	r.GET("/perms", handlers.GetPermsHandler(client))
-	r.GET("/roles", handlers.GetRolesHandler(client))
+	permGroup := handlers.PermGroupHandler{Client: cli}
+	permGroup.RegisterRoutes(r)
+
+	perm := handlers.PermHandler{Client: cli}
+	perm.RegisterRoutes(r)
+
+	role := handlers.RoleHandler{Client: cli}
+	role.RegisterRoutes(r)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("failed to start server: %v", err)
@@ -54,12 +59,12 @@ func main() {
 		log.Fatal("DB_URL environment variable is not set")
 	}
 
-	client, err := ent.Open("postgres", DB_URL)
+	cli, err := ent.Open("postgres", DB_URL)
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
-	defer client.Close()
+	defer cli.Close()
 
-	go startHTTPServer(client)
-	startGRPCServer(client)
+	go startHTTPServer(cli)
+	startGRPCServer(cli)
 }
