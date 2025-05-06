@@ -9,5 +9,4 @@ fi
 # Apply migrations using Atlas
 atlas migrate apply \
   --dir "file://ent/migrate/migrations" \
-  --url "$DB_URL" \
-  --revisions-schema public
+  --url "$DB_URL"

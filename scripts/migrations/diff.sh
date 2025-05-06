@@ -1,16 +1,11 @@
 #!/bin/bash
 
 # Add an option for migration name
-while getopts n: flag
-  do
-    case "${flag}" in
-        n) migration_name=${OPTARG};;
-    esac
-done
+migration_name=$1
 
 # Check if migration_name is provided
 if [ -z "$migration_name" ]; then
-  echo "Migration name is required. Use -n to specify the migration name."
+  echo "Migration name is required. Provide it as the first argument."
   exit 1
 fi
 
@@ -18,4 +13,4 @@ fi
 atlas migrate diff "$migration_name" \
   --dir "file://ent/migrate/migrations" \
   --to "ent://ent/schema" \
-  --dev-url "docker://postgres/15/dev"
+  --dev-url "docker://postgres/16-alpine/dev"
