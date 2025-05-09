@@ -8,6 +8,7 @@ import (
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
 	"github.com/longgggwwww/hrm-ms-permission/ent/schema"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
@@ -45,6 +46,12 @@ func init() {
 	roleDescID := roleFields[0].Descriptor()
 	// role.DefaultID holds the default value on creation for the id field.
 	role.DefaultID = roleDescID.Default.(func() uuid.UUID)
+	userpermFields := schema.UserPerm{}.Fields()
+	_ = userpermFields
+	// userpermDescUserID is the schema descriptor for user_id field.
+	userpermDescUserID := userpermFields[0].Descriptor()
+	// userperm.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	userperm.UserIDValidator = userpermDescUserID.Validators[0].(func(string) error)
 	userroleFields := schema.UserRole{}.Fields()
 	_ = userroleFields
 	// userroleDescUserID is the schema descriptor for user_id field.

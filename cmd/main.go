@@ -10,6 +10,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 	"github.com/longgggwwww/hrm-ms-permission/ent/proto/entpb"
+	"github.com/longgggwwww/hrm-ms-permission/internal/grpc_clients"
 	"github.com/longgggwwww/hrm-ms-permission/internal/handlers"
 	"google.golang.org/grpc"
 )
@@ -36,7 +37,7 @@ func startGRPCServer(cli *ent.Client) {
 	}
 }
 
-func startHTTPServer(cli *ent.Client) {
+func startHTTPServer(cli *ent.Client, roleHandler *handlers.RoleHandler) {
 	r := gin.Default()
 
 	permGroup := handlers.PermGroupHandler{Client: cli}
@@ -45,8 +46,7 @@ func startHTTPServer(cli *ent.Client) {
 	perm := handlers.PermHandler{Client: cli}
 	perm.RegisterRoutes(r)
 
-	role := handlers.RoleHandler{Client: cli}
-	role.RegisterRoutes(r)
+	roleHandler.RegisterRoutes(r)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("failed to start server: %v", err)
@@ -65,6 +65,15 @@ func main() {
 	}
 	defer cli.Close()
 
-	go startHTTPServer(cli)
+	// Initialize gRPC clients
+	userClient, err := grpc_clients.NewUserClient()
+	if err != nil {
+		log.Fatalf("failed to initialize user client: %v", err)
+	}
+
+	roleHandler := handlers.NewRoleHandler(cli, userClient)
+
+	// Pass roleHandler to HTTP server
+	go startHTTPServer(cli, roleHandler)
 	startGRPCServer(cli)
 }

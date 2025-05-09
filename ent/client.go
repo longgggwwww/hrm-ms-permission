@@ -19,6 +19,7 @@ import (
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
@@ -33,6 +34,8 @@ type Client struct {
 	PermGroup *PermGroupClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
+	// UserPerm is the client for interacting with the UserPerm builders.
+	UserPerm *UserPermClient
 	// UserRole is the client for interacting with the UserRole builders.
 	UserRole *UserRoleClient
 }
@@ -49,6 +52,7 @@ func (c *Client) init() {
 	c.Perm = NewPermClient(c.config)
 	c.PermGroup = NewPermGroupClient(c.config)
 	c.Role = NewRoleClient(c.config)
+	c.UserPerm = NewUserPermClient(c.config)
 	c.UserRole = NewUserRoleClient(c.config)
 }
 
@@ -145,6 +149,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Perm:      NewPermClient(cfg),
 		PermGroup: NewPermGroupClient(cfg),
 		Role:      NewRoleClient(cfg),
+		UserPerm:  NewUserPermClient(cfg),
 		UserRole:  NewUserRoleClient(cfg),
 	}, nil
 }
@@ -168,6 +173,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Perm:      NewPermClient(cfg),
 		PermGroup: NewPermGroupClient(cfg),
 		Role:      NewRoleClient(cfg),
+		UserPerm:  NewUserPermClient(cfg),
 		UserRole:  NewUserRoleClient(cfg),
 	}, nil
 }
@@ -200,6 +206,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Perm.Use(hooks...)
 	c.PermGroup.Use(hooks...)
 	c.Role.Use(hooks...)
+	c.UserPerm.Use(hooks...)
 	c.UserRole.Use(hooks...)
 }
 
@@ -209,6 +216,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Perm.Intercept(interceptors...)
 	c.PermGroup.Intercept(interceptors...)
 	c.Role.Intercept(interceptors...)
+	c.UserPerm.Intercept(interceptors...)
 	c.UserRole.Intercept(interceptors...)
 }
 
@@ -221,6 +229,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PermGroup.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
+	case *UserPermMutation:
+		return c.UserPerm.mutate(ctx, m)
 	case *UserRoleMutation:
 		return c.UserRole.mutate(ctx, m)
 	default:
@@ -691,6 +701,139 @@ func (c *RoleClient) mutate(ctx context.Context, m *RoleMutation) (Value, error)
 	}
 }
 
+// UserPermClient is a client for the UserPerm schema.
+type UserPermClient struct {
+	config
+}
+
+// NewUserPermClient returns a client for the UserPerm from the given config.
+func NewUserPermClient(c config) *UserPermClient {
+	return &UserPermClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userperm.Hooks(f(g(h())))`.
+func (c *UserPermClient) Use(hooks ...Hook) {
+	c.hooks.UserPerm = append(c.hooks.UserPerm, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userperm.Intercept(f(g(h())))`.
+func (c *UserPermClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserPerm = append(c.inters.UserPerm, interceptors...)
+}
+
+// Create returns a builder for creating a UserPerm entity.
+func (c *UserPermClient) Create() *UserPermCreate {
+	mutation := newUserPermMutation(c.config, OpCreate)
+	return &UserPermCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserPerm entities.
+func (c *UserPermClient) CreateBulk(builders ...*UserPermCreate) *UserPermCreateBulk {
+	return &UserPermCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserPermClient) MapCreateBulk(slice any, setFunc func(*UserPermCreate, int)) *UserPermCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserPermCreateBulk{err: fmt.Errorf("calling to UserPermClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserPermCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserPermCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserPerm.
+func (c *UserPermClient) Update() *UserPermUpdate {
+	mutation := newUserPermMutation(c.config, OpUpdate)
+	return &UserPermUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserPermClient) UpdateOne(up *UserPerm) *UserPermUpdateOne {
+	mutation := newUserPermMutation(c.config, OpUpdateOne, withUserPerm(up))
+	return &UserPermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserPermClient) UpdateOneID(id int) *UserPermUpdateOne {
+	mutation := newUserPermMutation(c.config, OpUpdateOne, withUserPermID(id))
+	return &UserPermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserPerm.
+func (c *UserPermClient) Delete() *UserPermDelete {
+	mutation := newUserPermMutation(c.config, OpDelete)
+	return &UserPermDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserPermClient) DeleteOne(up *UserPerm) *UserPermDeleteOne {
+	return c.DeleteOneID(up.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserPermClient) DeleteOneID(id int) *UserPermDeleteOne {
+	builder := c.Delete().Where(userperm.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserPermDeleteOne{builder}
+}
+
+// Query returns a query builder for UserPerm.
+func (c *UserPermClient) Query() *UserPermQuery {
+	return &UserPermQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserPerm},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserPerm entity by its id.
+func (c *UserPermClient) Get(ctx context.Context, id int) (*UserPerm, error) {
+	return c.Query().Where(userperm.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserPermClient) GetX(ctx context.Context, id int) *UserPerm {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserPermClient) Hooks() []Hook {
+	return c.hooks.UserPerm
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserPermClient) Interceptors() []Interceptor {
+	return c.inters.UserPerm
+}
+
+func (c *UserPermClient) mutate(ctx context.Context, m *UserPermMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserPermCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserPermUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserPermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserPermDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserPerm mutation op: %q", m.Op())
+	}
+}
+
 // UserRoleClient is a client for the UserRole schema.
 type UserRoleClient struct {
 	config
@@ -827,9 +970,9 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Perm, PermGroup, Role, UserRole []ent.Hook
+		Perm, PermGroup, Role, UserPerm, UserRole []ent.Hook
 	}
 	inters struct {
-		Perm, PermGroup, Role, UserRole []ent.Interceptor
+		Perm, PermGroup, Role, UserPerm, UserRole []ent.Interceptor
 	}
 )

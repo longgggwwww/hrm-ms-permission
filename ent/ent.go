@@ -15,6 +15,7 @@ import (
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
@@ -79,6 +80,7 @@ func checkColumn(table, column string) error {
 			perm.Table:      perm.ValidColumn,
 			permgroup.Table: permgroup.ValidColumn,
 			role.Table:      role.ValidColumn,
+			userperm.Table:  userperm.ValidColumn,
 			userrole.Table:  userrole.ValidColumn,
 		})
 	})

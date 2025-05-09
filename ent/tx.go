@@ -18,6 +18,8 @@ type Tx struct {
 	PermGroup *PermGroupClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
+	// UserPerm is the client for interacting with the UserPerm builders.
+	UserPerm *UserPermClient
 	// UserRole is the client for interacting with the UserRole builders.
 	UserRole *UserRoleClient
 
@@ -154,6 +156,7 @@ func (tx *Tx) init() {
 	tx.Perm = NewPermClient(tx.config)
 	tx.PermGroup = NewPermGroupClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
+	tx.UserPerm = NewUserPermClient(tx.config)
 	tx.UserRole = NewUserRoleClient(tx.config)
 }
 

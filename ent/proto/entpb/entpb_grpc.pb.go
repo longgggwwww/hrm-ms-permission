@@ -898,6 +898,298 @@ var RoleService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	UserPermService_Create_FullMethodName      = "/entpb.UserPermService/Create"
+	UserPermService_Get_FullMethodName         = "/entpb.UserPermService/Get"
+	UserPermService_Update_FullMethodName      = "/entpb.UserPermService/Update"
+	UserPermService_Delete_FullMethodName      = "/entpb.UserPermService/Delete"
+	UserPermService_List_FullMethodName        = "/entpb.UserPermService/List"
+	UserPermService_BatchCreate_FullMethodName = "/entpb.UserPermService/BatchCreate"
+)
+
+// UserPermServiceClient is the client API for UserPermService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserPermServiceClient interface {
+	Create(ctx context.Context, in *CreateUserPermRequest, opts ...grpc.CallOption) (*UserPerm, error)
+	Get(ctx context.Context, in *GetUserPermRequest, opts ...grpc.CallOption) (*UserPerm, error)
+	Update(ctx context.Context, in *UpdateUserPermRequest, opts ...grpc.CallOption) (*UserPerm, error)
+	Delete(ctx context.Context, in *DeleteUserPermRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	List(ctx context.Context, in *ListUserPermRequest, opts ...grpc.CallOption) (*ListUserPermResponse, error)
+	BatchCreate(ctx context.Context, in *BatchCreateUserPermsRequest, opts ...grpc.CallOption) (*BatchCreateUserPermsResponse, error)
+}
+
+type userPermServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserPermServiceClient(cc grpc.ClientConnInterface) UserPermServiceClient {
+	return &userPermServiceClient{cc}
+}
+
+func (c *userPermServiceClient) Create(ctx context.Context, in *CreateUserPermRequest, opts ...grpc.CallOption) (*UserPerm, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserPerm)
+	err := c.cc.Invoke(ctx, UserPermService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userPermServiceClient) Get(ctx context.Context, in *GetUserPermRequest, opts ...grpc.CallOption) (*UserPerm, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserPerm)
+	err := c.cc.Invoke(ctx, UserPermService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userPermServiceClient) Update(ctx context.Context, in *UpdateUserPermRequest, opts ...grpc.CallOption) (*UserPerm, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserPerm)
+	err := c.cc.Invoke(ctx, UserPermService_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userPermServiceClient) Delete(ctx context.Context, in *DeleteUserPermRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserPermService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userPermServiceClient) List(ctx context.Context, in *ListUserPermRequest, opts ...grpc.CallOption) (*ListUserPermResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserPermResponse)
+	err := c.cc.Invoke(ctx, UserPermService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userPermServiceClient) BatchCreate(ctx context.Context, in *BatchCreateUserPermsRequest, opts ...grpc.CallOption) (*BatchCreateUserPermsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BatchCreateUserPermsResponse)
+	err := c.cc.Invoke(ctx, UserPermService_BatchCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserPermServiceServer is the server API for UserPermService service.
+// All implementations must embed UnimplementedUserPermServiceServer
+// for forward compatibility.
+type UserPermServiceServer interface {
+	Create(context.Context, *CreateUserPermRequest) (*UserPerm, error)
+	Get(context.Context, *GetUserPermRequest) (*UserPerm, error)
+	Update(context.Context, *UpdateUserPermRequest) (*UserPerm, error)
+	Delete(context.Context, *DeleteUserPermRequest) (*emptypb.Empty, error)
+	List(context.Context, *ListUserPermRequest) (*ListUserPermResponse, error)
+	BatchCreate(context.Context, *BatchCreateUserPermsRequest) (*BatchCreateUserPermsResponse, error)
+	mustEmbedUnimplementedUserPermServiceServer()
+}
+
+// UnimplementedUserPermServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedUserPermServiceServer struct{}
+
+func (UnimplementedUserPermServiceServer) Create(context.Context, *CreateUserPermRequest) (*UserPerm, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedUserPermServiceServer) Get(context.Context, *GetUserPermRequest) (*UserPerm, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedUserPermServiceServer) Update(context.Context, *UpdateUserPermRequest) (*UserPerm, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedUserPermServiceServer) Delete(context.Context, *DeleteUserPermRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedUserPermServiceServer) List(context.Context, *ListUserPermRequest) (*ListUserPermResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedUserPermServiceServer) BatchCreate(context.Context, *BatchCreateUserPermsRequest) (*BatchCreateUserPermsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchCreate not implemented")
+}
+func (UnimplementedUserPermServiceServer) mustEmbedUnimplementedUserPermServiceServer() {}
+func (UnimplementedUserPermServiceServer) testEmbeddedByValue()                         {}
+
+// UnsafeUserPermServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserPermServiceServer will
+// result in compilation errors.
+type UnsafeUserPermServiceServer interface {
+	mustEmbedUnimplementedUserPermServiceServer()
+}
+
+func RegisterUserPermServiceServer(s grpc.ServiceRegistrar, srv UserPermServiceServer) {
+	// If the following call pancis, it indicates UnimplementedUserPermServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&UserPermService_ServiceDesc, srv)
+}
+
+func _UserPermService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserPermRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserPermServiceServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserPermService_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserPermServiceServer).Create(ctx, req.(*CreateUserPermRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserPermService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserPermRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserPermServiceServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserPermService_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserPermServiceServer).Get(ctx, req.(*GetUserPermRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserPermService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserPermRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserPermServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserPermService_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserPermServiceServer).Update(ctx, req.(*UpdateUserPermRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserPermService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserPermRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserPermServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserPermService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserPermServiceServer).Delete(ctx, req.(*DeleteUserPermRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserPermService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserPermRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserPermServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserPermService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserPermServiceServer).List(ctx, req.(*ListUserPermRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserPermService_BatchCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchCreateUserPermsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserPermServiceServer).BatchCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserPermService_BatchCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserPermServiceServer).BatchCreate(ctx, req.(*BatchCreateUserPermsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserPermService_ServiceDesc is the grpc.ServiceDesc for UserPermService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserPermService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "entpb.UserPermService",
+	HandlerType: (*UserPermServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _UserPermService_Create_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _UserPermService_Get_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _UserPermService_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _UserPermService_Delete_Handler,
+		},
+		{
+			MethodName: "List",
+			Handler:    _UserPermService_List_Handler,
+		},
+		{
+			MethodName: "BatchCreate",
+			Handler:    _UserPermService_BatchCreate_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "entpb/entpb.proto",
+}
+
+const (
 	UserRoleService_Create_FullMethodName      = "/entpb.UserRoleService/Create"
 	UserRoleService_Get_FullMethodName         = "/entpb.UserRoleService/Get"
 	UserRoleService_Update_FullMethodName      = "/entpb.UserRoleService/Update"

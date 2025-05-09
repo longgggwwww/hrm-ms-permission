@@ -56,6 +56,25 @@ var (
 		Columns:    RolesColumns,
 		PrimaryKey: []*schema.Column{RolesColumns[0]},
 	}
+	// UserPermsColumns holds the columns for the "user_perms" table.
+	UserPermsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "perm_id", Type: field.TypeUUID},
+	}
+	// UserPermsTable holds the schema information for the "user_perms" table.
+	UserPermsTable = &schema.Table{
+		Name:       "user_perms",
+		Columns:    UserPermsColumns,
+		PrimaryKey: []*schema.Column{UserPermsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "userperm_perm_id_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{UserPermsColumns[2], UserPermsColumns[1]},
+			},
+		},
+	}
 	// UserRolesColumns holds the columns for the "user_roles" table.
 	UserRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -105,6 +124,7 @@ var (
 		PermsTable,
 		PermGroupsTable,
 		RolesTable,
+		UserPermsTable,
 		UserRolesTable,
 		RolePermsTable,
 	}

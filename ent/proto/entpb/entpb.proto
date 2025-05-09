@@ -215,6 +215,70 @@ message BatchCreateRolesResponse {
   repeated Role roles = 1;
 }
 
+message UserPerm {
+  int64 id = 1;
+
+  string user_id = 2;
+
+  bytes perm_id = 3;
+}
+
+message CreateUserPermRequest {
+  UserPerm user_perm = 1;
+}
+
+message GetUserPermRequest {
+  int64 id = 1;
+
+  View view = 2;
+
+  enum View {
+    VIEW_UNSPECIFIED = 0;
+
+    BASIC = 1;
+
+    WITH_EDGE_IDS = 2;
+  }
+}
+
+message UpdateUserPermRequest {
+  UserPerm user_perm = 1;
+}
+
+message DeleteUserPermRequest {
+  int64 id = 1;
+}
+
+message ListUserPermRequest {
+  int32 page_size = 1;
+
+  string page_token = 2;
+
+  View view = 3;
+
+  enum View {
+    VIEW_UNSPECIFIED = 0;
+
+    BASIC = 1;
+
+    WITH_EDGE_IDS = 2;
+  }
+}
+
+message ListUserPermResponse {
+  repeated UserPerm user_perm_list = 1;
+
+  string next_page_token = 2;
+}
+
+message BatchCreateUserPermsRequest {
+  repeated CreateUserPermRequest requests = 1;
+}
+
+message BatchCreateUserPermsResponse {
+  repeated UserPerm user_perms = 1;
+}
+
 message UserRole {
   int64 id = 1;
 
@@ -319,6 +383,20 @@ service RoleService {
   rpc List ( ListRoleRequest ) returns ( ListRoleResponse );
 
   rpc BatchCreate ( BatchCreateRolesRequest ) returns ( BatchCreateRolesResponse );
+}
+
+service UserPermService {
+  rpc Create ( CreateUserPermRequest ) returns ( UserPerm );
+
+  rpc Get ( GetUserPermRequest ) returns ( UserPerm );
+
+  rpc Update ( UpdateUserPermRequest ) returns ( UserPerm );
+
+  rpc Delete ( DeleteUserPermRequest ) returns ( google.protobuf.Empty );
+
+  rpc List ( ListUserPermRequest ) returns ( ListUserPermResponse );
+
+  rpc BatchCreate ( BatchCreateUserPermsRequest ) returns ( BatchCreateUserPermsResponse );
 }
 
 service UserRoleService {
