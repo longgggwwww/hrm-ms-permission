@@ -256,6 +256,26 @@ func (h *RoleHandler) GetRolesByUser(c *gin.Context) {
 	c.JSON(http.StatusOK, roles)
 }
 
+func (h *RoleHandler) GetRoleByID(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		h.handleError(c, http.StatusBadRequest, "Invalid UUID format for role ID")
+		return
+	}
+
+	role, err := h.Client.Role.Query().Where(role.IDEQ(id)).Only(context.Background())
+	if err != nil {
+		if ent.IsNotFound(err) {
+			h.handleError(c, http.StatusNotFound, "Role not found")
+		} else {
+			h.handleError(c, http.StatusInternalServerError, "Failed to fetch role")
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, role)
+}
+
 func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
 	gr := r.Group("/roles")
 	{
@@ -265,6 +285,7 @@ func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
 		gr.DELETE(":id", h.DeleteRole)
 		gr.POST(":id/assign", h.AssignRoleToUsers)
 		gr.GET(":id/users", h.GetUsersByRole)
+		gr.GET(":id", h.GetRoleByID)
 	}
 
 	ur := r.Group("/users")
