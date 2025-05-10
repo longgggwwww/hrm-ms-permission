@@ -263,7 +263,7 @@ func (h *RoleHandler) GetRoleByID(c *gin.Context) {
 		return
 	}
 
-	role, err := h.Client.Role.Query().Where(role.IDEQ(id)).Only(context.Background())
+	role, err := h.Client.Role.Query().Where(role.IDEQ(id)).WithPerms().Only(context.Background())
 	if err != nil {
 		if ent.IsNotFound(err) {
 			h.handleError(c, http.StatusNotFound, "Role not found")
