@@ -157,6 +157,8 @@ message Role {
   google.protobuf.StringValue description = 5;
 
   repeated Perm perms = 6;
+
+  repeated UserRole user_roles = 7;
 }
 
 message CreateRoleRequest {
@@ -280,11 +282,13 @@ message BatchCreateUserPermsResponse {
 }
 
 message UserRole {
-  int64 id = 1;
+  bytes id = 1;
 
   string user_id = 2;
 
   bytes role_id = 3;
+
+  Role role = 4;
 }
 
 message CreateUserRoleRequest {
@@ -292,7 +296,7 @@ message CreateUserRoleRequest {
 }
 
 message GetUserRoleRequest {
-  int64 id = 1;
+  bytes id = 1;
 
   View view = 2;
 
@@ -310,7 +314,7 @@ message UpdateUserRoleRequest {
 }
 
 message DeleteUserRoleRequest {
-  int64 id = 1;
+  bytes id = 1;
 }
 
 message ListUserRoleRequest {

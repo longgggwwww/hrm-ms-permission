@@ -4,52 +4,53 @@ package userrole
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.UserRole {
+func ID(id uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.UserRole {
+func IDEQ(id uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.UserRole {
+func IDNEQ(id uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.UserRole {
+func IDIn(ids ...uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.UserRole {
+func IDNotIn(ids ...uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.UserRole {
+func IDGT(id uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.UserRole {
+func IDGTE(id uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.UserRole {
+func IDLT(id uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.UserRole {
+func IDLTE(id uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldLTE(FieldID, id))
 }
 
@@ -148,24 +149,27 @@ func RoleIDNotIn(vs ...uuid.UUID) predicate.UserRole {
 	return predicate.UserRole(sql.FieldNotIn(FieldRoleID, vs...))
 }
 
-// RoleIDGT applies the GT predicate on the "role_id" field.
-func RoleIDGT(v uuid.UUID) predicate.UserRole {
-	return predicate.UserRole(sql.FieldGT(FieldRoleID, v))
+// HasRole applies the HasEdge predicate on the "role" edge.
+func HasRole() predicate.UserRole {
+	return predicate.UserRole(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, RoleTable, RoleColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
 }
 
-// RoleIDGTE applies the GTE predicate on the "role_id" field.
-func RoleIDGTE(v uuid.UUID) predicate.UserRole {
-	return predicate.UserRole(sql.FieldGTE(FieldRoleID, v))
-}
-
-// RoleIDLT applies the LT predicate on the "role_id" field.
-func RoleIDLT(v uuid.UUID) predicate.UserRole {
-	return predicate.UserRole(sql.FieldLT(FieldRoleID, v))
-}
-
-// RoleIDLTE applies the LTE predicate on the "role_id" field.
-func RoleIDLTE(v uuid.UUID) predicate.UserRole {
-	return predicate.UserRole(sql.FieldLTE(FieldRoleID, v))
+// HasRoleWith applies the HasEdge predicate on the "role" edge with a given conditions (other predicates).
+func HasRoleWith(preds ...predicate.Role) predicate.UserRole {
+	return predicate.UserRole(func(s *sql.Selector) {
+		step := newRoleStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

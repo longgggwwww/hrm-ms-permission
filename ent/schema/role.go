@@ -29,6 +29,7 @@ func (Role) Fields() []ent.Field {
 func (Role) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("perms", Perm.Type).Annotations(entproto.Field(6)),
+		edge.To("user_roles", UserRole.Type).Annotations(entproto.Field(7)),
 	}
 }
 

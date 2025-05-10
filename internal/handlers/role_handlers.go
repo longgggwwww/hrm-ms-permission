@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"net/http"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	pb "github.com/huynhthanhthao/hrm_user_service/generated"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
+	"github.com/longgggwwww/hrm-ms-permission/internal/utils"
 )
 
 type RoleHandler struct {
@@ -114,21 +117,53 @@ func (h *RoleHandler) DeleteRole(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+func (h *RoleHandler) checkUserIDsExist(userIDs []string, users *pb.ListUsersResponse) error {
+	userIDsMap := make(map[string]bool)
+	for _, user := range users.Users {
+		userIDsMap[user.Id] = true
+	}
+	for _, userID := range userIDs {
+		if _, exists := userIDsMap[userID]; !exists {
+			return fmt.Errorf("user ID %s does not exist", userID)
+		}
+	}
+	return nil
+}
+
+func (h *RoleHandler) assignRoleToUsers(roleID uuid.UUID, userIDs []string) error {
+	for _, userID := range userIDs {
+		err := h.Client.UserRole.Create().
+			SetRoleID(roleID).
+			SetUserID(userID).
+			OnConflict(sql.ConflictColumns("role_id", "user_id")).
+			UpdateNewValues().
+			Exec(context.Background())
+
+		if err != nil {
+			return fmt.Errorf("failed to assign role to user %s: %v", userID, err)
+		}
+	}
+	return nil
+}
+
+func (h *RoleHandler) handleError(c *gin.Context, statusCode int, message string) {
+	utils.RespondWithError(c, statusCode, fmt.Errorf("%s", message))
+}
+
 func (h *RoleHandler) AssignRoleToUsers(c *gin.Context) {
-	// Parse the UUID from the URL parameter
 	roleID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format for role ID"})
+		h.handleError(c, http.StatusBadRequest, "Invalid UUID format for role ID")
 		return
 	}
 
 	exists, err := h.Client.Role.Query().Where(role.IDEQ(roleID)).Exist(context.Background())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check role existence"})
+		h.handleError(c, http.StatusInternalServerError, "Failed to check role existence")
 		return
 	}
 	if !exists {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Role not found"})
+		h.handleError(c, http.StatusNotFound, "Role not found")
 		return
 	}
 
@@ -136,45 +171,79 @@ func (h *RoleHandler) AssignRoleToUsers(c *gin.Context) {
 		UserIDs []string `json:"user_ids" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		h.handleError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	users, err := (*h.UserClient).ListUsers(context.Background(), &pb.ListUsersRequest{})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+		h.handleError(c, http.StatusInternalServerError, "Failed to fetch users")
 		return
 	}
-	fmt.Println("Fetched users:", users)
 
-	// Check if user IDs exist
-	userIDsMap := make(map[string]bool)
-	for _, user := range users.Users {
-		userIDsMap[user.Id] = true
-	}
-	for _, userID := range input.UserIDs {
-		if _, exists := userIDsMap[userID]; !exists {
-			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("User ID %s does not exist", userID)})
-			return
-		}
+	if err := h.checkUserIDsExist(input.UserIDs, users); err != nil {
+		h.handleError(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
-	// Print userIDsMap for debugging
-	fmt.Println("User IDs map:", userIDsMap)
-
-	// // Assign role to users
-	// for _, userID := range input.UserIDs {
-	// 	_, err := h.Client.UserRole.Create().
-	// 		SetRoleID(roleID).
-	// 		SetUserID(userID).Save(context.Background())
-
-	// 	if err != nil {
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to assign role to user %s: %v", userID, err)})
-	// 		return
-	// 	}
-	// }
+	if err := h.assignRoleToUsers(roleID, input.UserIDs); err != nil {
+		h.handleError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Role assigned to users successfully"})
+}
+
+func (h *RoleHandler) GetUsersByRole(c *gin.Context) {
+	roleID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		h.handleError(c, http.StatusBadRequest, "Invalid UUID format for role ID")
+		return
+	}
+	fmt.Println("RoleID", roleID)
+
+	exists, err := h.Client.Role.Query().Where(role.IDEQ(roleID)).Exist(context.Background())
+	if err != nil {
+		h.handleError(c, http.StatusInternalServerError, "Failed to check role existence")
+		return
+	}
+	if !exists {
+		h.handleError(c, http.StatusNotFound, "Role not found")
+		return
+	}
+
+	// userRoles, err := h.Client.UserRole.Query().Where(ent.UserRoleRoleIDEQ(roleID)).All(context.Background())
+	// if err != nil {
+	// 	h.handleError(c, http.StatusInternalServerError, "Failed to fetch users for the role")
+	// 	return
+	// }
+
+	// c.JSON(http.StatusOK, userRoles)
+	c.JSON(http.StatusOK, gin.H{"message": "Get users by role successfully"})
+}
+
+func (h *RoleHandler) GetRolesByUser(c *gin.Context) {
+	userID := c.Param("user_id")
+	if userID == "" {
+		h.handleError(c, http.StatusBadRequest, "User ID is required")
+		return
+	}
+
+	userRoles, err := h.Client.UserRole.Query().Where(userrole.UserIDEQ(userID)).All(context.Background())
+	if err != nil {
+		h.handleError(c, http.StatusInternalServerError, "Failed to fetch roles for the user")
+		return
+	}
+
+	fmt.Println("UserID", userID)
+	fmt.Println("UserRoles", userRoles)
+
+	// roles := make([]*ent.Role, len(userRoles))
+	// for i, userRole := range userRoles {
+	// 	roles[i] = userRole.Edges.Role
+	// }
+
+	// c.JSON(http.StatusOK, roles)
 }
 
 func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
@@ -185,5 +254,11 @@ func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
 		gr.PUT(":id", h.UpdateRole)
 		gr.DELETE(":id", h.DeleteRole)
 		gr.POST(":id/assign", h.AssignRoleToUsers)
+		gr.GET(":id/users", h.GetUsersByRole)
+	}
+
+	ur := r.Group("/users")
+	{
+		ur.GET(":user_id/roles", h.GetRolesByUser)
 	}
 }

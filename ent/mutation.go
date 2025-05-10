@@ -1131,20 +1131,23 @@ func (m *PermGroupMutation) ResetEdge(name string) error {
 // RoleMutation represents an operation that mutates the Role nodes in the graph.
 type RoleMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	code          *string
-	name          *string
-	color         *string
-	description   *string
-	clearedFields map[string]struct{}
-	perms         map[uuid.UUID]struct{}
-	removedperms  map[uuid.UUID]struct{}
-	clearedperms  bool
-	done          bool
-	oldValue      func(context.Context) (*Role, error)
-	predicates    []predicate.Role
+	op                Op
+	typ               string
+	id                *uuid.UUID
+	code              *string
+	name              *string
+	color             *string
+	description       *string
+	clearedFields     map[string]struct{}
+	perms             map[uuid.UUID]struct{}
+	removedperms      map[uuid.UUID]struct{}
+	clearedperms      bool
+	user_roles        map[uuid.UUID]struct{}
+	removeduser_roles map[uuid.UUID]struct{}
+	cleareduser_roles bool
+	done              bool
+	oldValue          func(context.Context) (*Role, error)
+	predicates        []predicate.Role
 }
 
 var _ ent.Mutation = (*RoleMutation)(nil)
@@ -1475,6 +1478,60 @@ func (m *RoleMutation) ResetPerms() {
 	m.removedperms = nil
 }
 
+// AddUserRoleIDs adds the "user_roles" edge to the UserRole entity by ids.
+func (m *RoleMutation) AddUserRoleIDs(ids ...uuid.UUID) {
+	if m.user_roles == nil {
+		m.user_roles = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.user_roles[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUserRoles clears the "user_roles" edge to the UserRole entity.
+func (m *RoleMutation) ClearUserRoles() {
+	m.cleareduser_roles = true
+}
+
+// UserRolesCleared reports if the "user_roles" edge to the UserRole entity was cleared.
+func (m *RoleMutation) UserRolesCleared() bool {
+	return m.cleareduser_roles
+}
+
+// RemoveUserRoleIDs removes the "user_roles" edge to the UserRole entity by IDs.
+func (m *RoleMutation) RemoveUserRoleIDs(ids ...uuid.UUID) {
+	if m.removeduser_roles == nil {
+		m.removeduser_roles = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.user_roles, ids[i])
+		m.removeduser_roles[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUserRoles returns the removed IDs of the "user_roles" edge to the UserRole entity.
+func (m *RoleMutation) RemovedUserRolesIDs() (ids []uuid.UUID) {
+	for id := range m.removeduser_roles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UserRolesIDs returns the "user_roles" edge IDs in the mutation.
+func (m *RoleMutation) UserRolesIDs() (ids []uuid.UUID) {
+	for id := range m.user_roles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUserRoles resets all changes to the "user_roles" edge.
+func (m *RoleMutation) ResetUserRoles() {
+	m.user_roles = nil
+	m.cleareduser_roles = false
+	m.removeduser_roles = nil
+}
+
 // Where appends a list predicates to the RoleMutation builder.
 func (m *RoleMutation) Where(ps ...predicate.Role) {
 	m.predicates = append(m.predicates, ps...)
@@ -1674,9 +1731,12 @@ func (m *RoleMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RoleMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.perms != nil {
 		edges = append(edges, role.EdgePerms)
+	}
+	if m.user_roles != nil {
+		edges = append(edges, role.EdgeUserRoles)
 	}
 	return edges
 }
@@ -1691,15 +1751,24 @@ func (m *RoleMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case role.EdgeUserRoles:
+		ids := make([]ent.Value, 0, len(m.user_roles))
+		for id := range m.user_roles {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RoleMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedperms != nil {
 		edges = append(edges, role.EdgePerms)
+	}
+	if m.removeduser_roles != nil {
+		edges = append(edges, role.EdgeUserRoles)
 	}
 	return edges
 }
@@ -1714,15 +1783,24 @@ func (m *RoleMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case role.EdgeUserRoles:
+		ids := make([]ent.Value, 0, len(m.removeduser_roles))
+		for id := range m.removeduser_roles {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RoleMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedperms {
 		edges = append(edges, role.EdgePerms)
+	}
+	if m.cleareduser_roles {
+		edges = append(edges, role.EdgeUserRoles)
 	}
 	return edges
 }
@@ -1733,6 +1811,8 @@ func (m *RoleMutation) EdgeCleared(name string) bool {
 	switch name {
 	case role.EdgePerms:
 		return m.clearedperms
+	case role.EdgeUserRoles:
+		return m.cleareduser_roles
 	}
 	return false
 }
@@ -1751,6 +1831,9 @@ func (m *RoleMutation) ResetEdge(name string) error {
 	switch name {
 	case role.EdgePerms:
 		m.ResetPerms()
+		return nil
+	case role.EdgeUserRoles:
+		m.ResetUserRoles()
 		return nil
 	}
 	return fmt.Errorf("unknown Role edge %s", name)
@@ -2141,10 +2224,11 @@ type UserRoleMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *uuid.UUID
 	user_id       *string
-	role_id       *uuid.UUID
 	clearedFields map[string]struct{}
+	role          *uuid.UUID
+	clearedrole   bool
 	done          bool
 	oldValue      func(context.Context) (*UserRole, error)
 	predicates    []predicate.UserRole
@@ -2170,7 +2254,7 @@ func newUserRoleMutation(c config, op Op, opts ...userroleOption) *UserRoleMutat
 }
 
 // withUserRoleID sets the ID field of the mutation.
-func withUserRoleID(id int) userroleOption {
+func withUserRoleID(id uuid.UUID) userroleOption {
 	return func(m *UserRoleMutation) {
 		var (
 			err   error
@@ -2220,9 +2304,15 @@ func (m UserRoleMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of UserRole entities.
+func (m *UserRoleMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserRoleMutation) ID() (id int, exists bool) {
+func (m *UserRoleMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2233,12 +2323,12 @@ func (m *UserRoleMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserRoleMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *UserRoleMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -2286,12 +2376,12 @@ func (m *UserRoleMutation) ResetUserID() {
 
 // SetRoleID sets the "role_id" field.
 func (m *UserRoleMutation) SetRoleID(u uuid.UUID) {
-	m.role_id = &u
+	m.role = &u
 }
 
 // RoleID returns the value of the "role_id" field in the mutation.
 func (m *UserRoleMutation) RoleID() (r uuid.UUID, exists bool) {
-	v := m.role_id
+	v := m.role
 	if v == nil {
 		return
 	}
@@ -2317,7 +2407,34 @@ func (m *UserRoleMutation) OldRoleID(ctx context.Context) (v uuid.UUID, err erro
 
 // ResetRoleID resets all changes to the "role_id" field.
 func (m *UserRoleMutation) ResetRoleID() {
-	m.role_id = nil
+	m.role = nil
+}
+
+// ClearRole clears the "role" edge to the Role entity.
+func (m *UserRoleMutation) ClearRole() {
+	m.clearedrole = true
+	m.clearedFields[userrole.FieldRoleID] = struct{}{}
+}
+
+// RoleCleared reports if the "role" edge to the Role entity was cleared.
+func (m *UserRoleMutation) RoleCleared() bool {
+	return m.clearedrole
+}
+
+// RoleIDs returns the "role" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// RoleID instead. It exists only for internal usage by the builders.
+func (m *UserRoleMutation) RoleIDs() (ids []uuid.UUID) {
+	if id := m.role; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRole resets all changes to the "role" edge.
+func (m *UserRoleMutation) ResetRole() {
+	m.role = nil
+	m.clearedrole = false
 }
 
 // Where appends a list predicates to the UserRoleMutation builder.
@@ -2358,7 +2475,7 @@ func (m *UserRoleMutation) Fields() []string {
 	if m.user_id != nil {
 		fields = append(fields, userrole.FieldUserID)
 	}
-	if m.role_id != nil {
+	if m.role != nil {
 		fields = append(fields, userrole.FieldRoleID)
 	}
 	return fields
@@ -2470,19 +2587,28 @@ func (m *UserRoleMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserRoleMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.role != nil {
+		edges = append(edges, userrole.EdgeRole)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *UserRoleMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case userrole.EdgeRole:
+		if id := m.role; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserRoleMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -2494,24 +2620,41 @@ func (m *UserRoleMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserRoleMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedrole {
+		edges = append(edges, userrole.EdgeRole)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *UserRoleMutation) EdgeCleared(name string) bool {
+	switch name {
+	case userrole.EdgeRole:
+		return m.clearedrole
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *UserRoleMutation) ClearEdge(name string) error {
+	switch name {
+	case userrole.EdgeRole:
+		m.ClearRole()
+		return nil
+	}
 	return fmt.Errorf("unknown UserRole unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *UserRoleMutation) ResetEdge(name string) error {
+	switch name {
+	case userrole.EdgeRole:
+		m.ResetRole()
+		return nil
+	}
 	return fmt.Errorf("unknown UserRole edge %s", name)
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
 // RoleCreate is the builder for creating a Role entity.
@@ -91,6 +92,21 @@ func (rc *RoleCreate) AddPerms(p ...*Perm) *RoleCreate {
 		ids[i] = p[i].ID
 	}
 	return rc.AddPermIDs(ids...)
+}
+
+// AddUserRoleIDs adds the "user_roles" edge to the UserRole entity by IDs.
+func (rc *RoleCreate) AddUserRoleIDs(ids ...uuid.UUID) *RoleCreate {
+	rc.mutation.AddUserRoleIDs(ids...)
+	return rc
+}
+
+// AddUserRoles adds the "user_roles" edges to the UserRole entity.
+func (rc *RoleCreate) AddUserRoles(u ...*UserRole) *RoleCreate {
+	ids := make([]uuid.UUID, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return rc.AddUserRoleIDs(ids...)
 }
 
 // Mutation returns the RoleMutation object of the builder.
@@ -208,6 +224,22 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.UserRolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   role.UserRolesTable,
+			Columns: []string{role.UserRolesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userrole.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

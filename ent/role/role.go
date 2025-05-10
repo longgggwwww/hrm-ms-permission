@@ -23,6 +23,8 @@ const (
 	FieldDescription = "description"
 	// EdgePerms holds the string denoting the perms edge name in mutations.
 	EdgePerms = "perms"
+	// EdgeUserRoles holds the string denoting the user_roles edge name in mutations.
+	EdgeUserRoles = "user_roles"
 	// Table holds the table name of the role in the database.
 	Table = "roles"
 	// PermsTable is the table that holds the perms relation/edge. The primary key declared below.
@@ -30,6 +32,13 @@ const (
 	// PermsInverseTable is the table name for the Perm entity.
 	// It exists in this package in order to avoid circular dependency with the "perm" package.
 	PermsInverseTable = "perms"
+	// UserRolesTable is the table that holds the user_roles relation/edge.
+	UserRolesTable = "user_roles"
+	// UserRolesInverseTable is the table name for the UserRole entity.
+	// It exists in this package in order to avoid circular dependency with the "userrole" package.
+	UserRolesInverseTable = "user_roles"
+	// UserRolesColumn is the table column denoting the user_roles relation/edge.
+	UserRolesColumn = "role_id"
 )
 
 // Columns holds all SQL columns for role fields.
@@ -105,10 +114,31 @@ func ByPerms(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newPermsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUserRolesCount orders the results by user_roles count.
+func ByUserRolesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserRolesStep(), opts...)
+	}
+}
+
+// ByUserRoles orders the results by user_roles terms.
+func ByUserRoles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserRolesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newPermsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PermsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, PermsTable, PermsPrimaryKey...),
+	)
+}
+func newUserRolesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserRolesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UserRolesTable, UserRolesColumn),
 	)
 }

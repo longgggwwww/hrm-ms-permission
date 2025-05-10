@@ -11,7 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
+	"github.com/longgggwwww/hrm-ms-permission/ent/role"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 )
 
@@ -22,6 +24,7 @@ type UserRoleQuery struct {
 	order      []userrole.OrderOption
 	inters     []Interceptor
 	predicates []predicate.UserRole
+	withRole   *RoleQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,6 +61,28 @@ func (urq *UserRoleQuery) Order(o ...userrole.OrderOption) *UserRoleQuery {
 	return urq
 }
 
+// QueryRole chains the current query on the "role" edge.
+func (urq *UserRoleQuery) QueryRole() *RoleQuery {
+	query := (&RoleClient{config: urq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := urq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := urq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userrole.Table, userrole.FieldID, selector),
+			sqlgraph.To(role.Table, role.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, userrole.RoleTable, userrole.RoleColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(urq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first UserRole entity from the query.
 // Returns a *NotFoundError when no UserRole was found.
 func (urq *UserRoleQuery) First(ctx context.Context) (*UserRole, error) {
@@ -82,8 +107,8 @@ func (urq *UserRoleQuery) FirstX(ctx context.Context) *UserRole {
 
 // FirstID returns the first UserRole ID from the query.
 // Returns a *NotFoundError when no UserRole ID was found.
-func (urq *UserRoleQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (urq *UserRoleQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = urq.Limit(1).IDs(setContextOp(ctx, urq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -95,7 +120,7 @@ func (urq *UserRoleQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (urq *UserRoleQuery) FirstIDX(ctx context.Context) int {
+func (urq *UserRoleQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := urq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -133,8 +158,8 @@ func (urq *UserRoleQuery) OnlyX(ctx context.Context) *UserRole {
 // OnlyID is like Only, but returns the only UserRole ID in the query.
 // Returns a *NotSingularError when more than one UserRole ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (urq *UserRoleQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (urq *UserRoleQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = urq.Limit(2).IDs(setContextOp(ctx, urq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -150,7 +175,7 @@ func (urq *UserRoleQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (urq *UserRoleQuery) OnlyIDX(ctx context.Context) int {
+func (urq *UserRoleQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := urq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,7 +203,7 @@ func (urq *UserRoleQuery) AllX(ctx context.Context) []*UserRole {
 }
 
 // IDs executes the query and returns a list of UserRole IDs.
-func (urq *UserRoleQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (urq *UserRoleQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 	if urq.ctx.Unique == nil && urq.path != nil {
 		urq.Unique(true)
 	}
@@ -190,7 +215,7 @@ func (urq *UserRoleQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (urq *UserRoleQuery) IDsX(ctx context.Context) []int {
+func (urq *UserRoleQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := urq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -250,10 +275,22 @@ func (urq *UserRoleQuery) Clone() *UserRoleQuery {
 		order:      append([]userrole.OrderOption{}, urq.order...),
 		inters:     append([]Interceptor{}, urq.inters...),
 		predicates: append([]predicate.UserRole{}, urq.predicates...),
+		withRole:   urq.withRole.Clone(),
 		// clone intermediate query.
 		sql:  urq.sql.Clone(),
 		path: urq.path,
 	}
+}
+
+// WithRole tells the query-builder to eager-load the nodes that are connected to
+// the "role" edge. The optional arguments are used to configure the query builder of the edge.
+func (urq *UserRoleQuery) WithRole(opts ...func(*RoleQuery)) *UserRoleQuery {
+	query := (&RoleClient{config: urq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	urq.withRole = query
+	return urq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -332,8 +369,11 @@ func (urq *UserRoleQuery) prepareQuery(ctx context.Context) error {
 
 func (urq *UserRoleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*UserRole, error) {
 	var (
-		nodes = []*UserRole{}
-		_spec = urq.querySpec()
+		nodes       = []*UserRole{}
+		_spec       = urq.querySpec()
+		loadedTypes = [1]bool{
+			urq.withRole != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*UserRole).scanValues(nil, columns)
@@ -341,6 +381,7 @@ func (urq *UserRoleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Us
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &UserRole{config: urq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -352,7 +393,43 @@ func (urq *UserRoleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Us
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := urq.withRole; query != nil {
+		if err := urq.loadRole(ctx, query, nodes, nil,
+			func(n *UserRole, e *Role) { n.Edges.Role = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (urq *UserRoleQuery) loadRole(ctx context.Context, query *RoleQuery, nodes []*UserRole, init func(*UserRole), assign func(*UserRole, *Role)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*UserRole)
+	for i := range nodes {
+		fk := nodes[i].RoleID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(role.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "role_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (urq *UserRoleQuery) sqlCount(ctx context.Context) (int, error) {
@@ -365,7 +442,7 @@ func (urq *UserRoleQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (urq *UserRoleQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(userrole.Table, userrole.Columns, sqlgraph.NewFieldSpec(userrole.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(userrole.Table, userrole.Columns, sqlgraph.NewFieldSpec(userrole.FieldID, field.TypeUUID))
 	_spec.From = urq.sql
 	if unique := urq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -379,6 +456,9 @@ func (urq *UserRoleQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != userrole.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if urq.withRole != nil {
+			_spec.Node.AddColumnOnce(userrole.FieldRoleID)
 		}
 	}
 	if ps := urq.predicates; len(ps) > 0 {

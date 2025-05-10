@@ -11,6 +11,7 @@ import (
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
 	perm "github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	role "github.com/longgggwwww/hrm-ms-permission/ent/role"
+	userrole "github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -52,6 +53,15 @@ func toProtoRole(e *ent.Role) (*Role, error) {
 			return nil, err
 		}
 		v.Perms = append(v.Perms, &Perm{
+			Id: id,
+		})
+	}
+	for _, edg := range e.Edges.UserRoles {
+		id, err := edg.ID.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
+		v.UserRoles = append(v.UserRoles, &UserRole{
 			Id: id,
 		})
 	}
@@ -115,6 +125,9 @@ func (svc *RoleService) Get(ctx context.Context, req *GetRoleRequest) (*Role, er
 			WithPerms(func(query *ent.PermQuery) {
 				query.Select(perm.FieldID)
 			}).
+			WithUserRoles(func(query *ent.UserRoleQuery) {
+				query.Select(userrole.FieldID)
+			}).
 			Only(ctx)
 	default:
 		return nil, status.Error(codes.InvalidArgument, "invalid argument: unknown view")
@@ -156,6 +169,13 @@ func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Ro
 			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
 		}
 		m.AddPermIDs(perms)
+	}
+	for _, item := range role.GetUserRoles() {
+		var userroles uuid.UUID
+		if err := (&userroles).UnmarshalBinary(item.GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
+		m.AddUserRoleIDs(userroles)
 	}
 
 	res, err := m.Save(ctx)
@@ -231,6 +251,9 @@ func (svc *RoleService) List(ctx context.Context, req *ListRoleRequest) (*ListRo
 		entList, err = listQuery.
 			WithPerms(func(query *ent.PermQuery) {
 				query.Select(perm.FieldID)
+			}).
+			WithUserRoles(func(query *ent.UserRoleQuery) {
+				query.Select(userrole.FieldID)
 			}).
 			All(ctx)
 	}
@@ -311,6 +334,13 @@ func (svc *RoleService) createBuilder(role *Role) (*ent.RoleCreate, error) {
 			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
 		}
 		m.AddPermIDs(perms)
+	}
+	for _, item := range role.GetUserRoles() {
+		var userroles uuid.UUID
+		if err := (&userroles).UnmarshalBinary(item.GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
+		m.AddUserRoleIDs(userroles)
 	}
 	return m, nil
 }

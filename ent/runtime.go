@@ -55,7 +55,11 @@ func init() {
 	userroleFields := schema.UserRole{}.Fields()
 	_ = userroleFields
 	// userroleDescUserID is the schema descriptor for user_id field.
-	userroleDescUserID := userroleFields[0].Descriptor()
+	userroleDescUserID := userroleFields[1].Descriptor()
 	// userrole.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	userrole.UserIDValidator = userroleDescUserID.Validators[0].(func(string) error)
+	// userroleDescID is the schema descriptor for id field.
+	userroleDescID := userroleFields[0].Descriptor()
+	// userrole.DefaultID holds the default value on creation for the id field.
+	userrole.DefaultID = userroleDescID.Default.(func() uuid.UUID)
 }

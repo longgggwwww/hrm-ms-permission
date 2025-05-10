@@ -35,9 +35,11 @@ type Role struct {
 type RoleEdges struct {
 	// Perms holds the value of the perms edge.
 	Perms []*Perm `json:"perms,omitempty"`
+	// UserRoles holds the value of the user_roles edge.
+	UserRoles []*UserRole `json:"user_roles,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // PermsOrErr returns the Perms value or an error if the edge
@@ -47,6 +49,15 @@ func (e RoleEdges) PermsOrErr() ([]*Perm, error) {
 		return e.Perms, nil
 	}
 	return nil, &NotLoadedError{edge: "perms"}
+}
+
+// UserRolesOrErr returns the UserRoles value or an error if the edge
+// was not loaded in eager-loading.
+func (e RoleEdges) UserRolesOrErr() ([]*UserRole, error) {
+	if e.loadedTypes[1] {
+		return e.UserRoles, nil
+	}
+	return nil, &NotLoadedError{edge: "user_roles"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -119,6 +130,11 @@ func (r *Role) Value(name string) (ent.Value, error) {
 // QueryPerms queries the "perms" edge of the Role entity.
 func (r *Role) QueryPerms() *PermQuery {
 	return NewRoleClient(r.config).QueryPerms(r)
+}
+
+// QueryUserRoles queries the "user_roles" edge of the Role entity.
+func (r *Role) QueryUserRoles() *UserRoleQuery {
+	return NewRoleClient(r.config).QueryUserRoles(r)
 }
 
 // Update returns a builder for updating this Role.

@@ -9,11 +9,11 @@ import (
 	fmt "fmt"
 	uuid "github.com/google/uuid"
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
+	role "github.com/longgggwwww/hrm-ms-permission/ent/role"
 	userrole "github.com/longgggwwww/hrm-ms-permission/ent/userrole"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	strconv "strconv"
 )
 
 // UserRoleService implements UserRoleServiceServer
@@ -32,15 +32,27 @@ func NewUserRoleService(client *ent.Client) *UserRoleService {
 // toProtoUserRole transforms the ent type to the pb type
 func toProtoUserRole(e *ent.UserRole) (*UserRole, error) {
 	v := &UserRole{}
-	id := int64(e.ID)
-	v.Id = id
-	role_id, err := e.RoleID.MarshalBinary()
+	id, err := e.ID.MarshalBinary()
 	if err != nil {
 		return nil, err
 	}
-	v.RoleId = role_id
+	v.Id = id
+	role, err := e.RoleID.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+	v.RoleId = role
 	user_id := e.UserID
 	v.UserId = user_id
+	if edg := e.Edges.Role; edg != nil {
+		id, err := edg.ID.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
+		v.Role = &Role{
+			Id: id,
+		}
+	}
 	return v, nil
 }
 
@@ -88,13 +100,19 @@ func (svc *UserRoleService) Get(ctx context.Context, req *GetUserRoleRequest) (*
 		err error
 		get *ent.UserRole
 	)
-	id := int(req.GetId())
+	var id uuid.UUID
+	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	switch req.GetView() {
 	case GetUserRoleRequest_VIEW_UNSPECIFIED, GetUserRoleRequest_BASIC:
 		get, err = svc.client.UserRole.Get(ctx, id)
 	case GetUserRoleRequest_WITH_EDGE_IDS:
 		get, err = svc.client.UserRole.Query().
 			Where(userrole.ID(id)).
+			WithRole(func(query *ent.RoleQuery) {
+				query.Select(role.FieldID)
+			}).
 			Only(ctx)
 	default:
 		return nil, status.Error(codes.InvalidArgument, "invalid argument: unknown view")
@@ -113,7 +131,10 @@ func (svc *UserRoleService) Get(ctx context.Context, req *GetUserRoleRequest) (*
 // Update implements UserRoleServiceServer.Update
 func (svc *UserRoleService) Update(ctx context.Context, req *UpdateUserRoleRequest) (*UserRole, error) {
 	userrole := req.GetUserRole()
-	userroleID := int(userrole.GetId())
+	var userroleID uuid.UUID
+	if err := (&userroleID).UnmarshalBinary(userrole.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	m := svc.client.UserRole.UpdateOneID(userroleID)
 	var userroleRoleID uuid.UUID
 	if err := (&userroleRoleID).UnmarshalBinary(userrole.GetRoleId()); err != nil {
@@ -122,6 +143,13 @@ func (svc *UserRoleService) Update(ctx context.Context, req *UpdateUserRoleReque
 	m.SetRoleID(userroleRoleID)
 	userroleUserID := userrole.GetUserId()
 	m.SetUserID(userroleUserID)
+	if userrole.GetRole() != nil {
+		var userroleRole uuid.UUID
+		if err := (&userroleRole).UnmarshalBinary(userrole.GetRole().GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
+		m.SetRoleID(userroleRole)
+	}
 
 	res, err := m.Save(ctx)
 	switch {
@@ -144,7 +172,10 @@ func (svc *UserRoleService) Update(ctx context.Context, req *UpdateUserRoleReque
 // Delete implements UserRoleServiceServer.Delete
 func (svc *UserRoleService) Delete(ctx context.Context, req *DeleteUserRoleRequest) (*emptypb.Empty, error) {
 	var err error
-	id := int(req.GetId())
+	var id uuid.UUID
+	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	err = svc.client.UserRole.DeleteOneID(id).Exec(ctx)
 	switch {
 	case err == nil:
@@ -179,11 +210,10 @@ func (svc *UserRoleService) List(ctx context.Context, req *ListUserRoleRequest) 
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
 		}
-		token, err := strconv.ParseInt(string(bytes), 10, 32)
+		pageToken, err := uuid.ParseBytes(bytes)
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
 		}
-		pageToken := int(token)
 		listQuery = listQuery.
 			Where(userrole.IDLTE(pageToken))
 	}
@@ -192,6 +222,9 @@ func (svc *UserRoleService) List(ctx context.Context, req *ListUserRoleRequest) 
 		entList, err = listQuery.All(ctx)
 	case ListUserRoleRequest_WITH_EDGE_IDS:
 		entList, err = listQuery.
+			WithRole(func(query *ent.RoleQuery) {
+				query.Select(role.FieldID)
+			}).
 			All(ctx)
 	}
 	switch {
@@ -260,5 +293,12 @@ func (svc *UserRoleService) createBuilder(userrole *UserRole) (*ent.UserRoleCrea
 	m.SetRoleID(userroleRoleID)
 	userroleUserID := userrole.GetUserId()
 	m.SetUserID(userroleUserID)
+	if userrole.GetRole() != nil {
+		var userroleRole uuid.UUID
+		if err := (&userroleRole).UnmarshalBinary(userrole.GetRole().GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
+		m.SetRoleID(userroleRole)
+	}
 	return m, nil
 }
