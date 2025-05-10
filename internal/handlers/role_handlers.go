@@ -200,26 +200,34 @@ func (h *RoleHandler) GetUsersByRole(c *gin.Context) {
 		h.handleError(c, http.StatusBadRequest, "Invalid UUID format for role ID")
 		return
 	}
-	fmt.Println("RoleID", roleID)
 
-	exists, err := h.Client.Role.Query().Where(role.IDEQ(roleID)).Exist(context.Background())
+	users, err := (*h.UserClient).ListUsers(context.Background(), &pb.ListUsersRequest{})
 	if err != nil {
-		h.handleError(c, http.StatusInternalServerError, "Failed to check role existence")
-		return
-	}
-	if !exists {
-		h.handleError(c, http.StatusNotFound, "Role not found")
+		h.handleError(c, http.StatusInternalServerError, "Failed to fetch users")
 		return
 	}
 
-	// userRoles, err := h.Client.UserRole.Query().Where(ent.UserRoleRoleIDEQ(roleID)).All(context.Background())
-	// if err != nil {
-	// 	h.handleError(c, http.StatusInternalServerError, "Failed to fetch users for the role")
-	// 	return
-	// }
+	userRoles, err := h.Client.UserRole.Query().Where(userrole.RoleIDEQ(roleID)).All(context.Background())
+	if err != nil {
+		h.handleError(c, http.StatusInternalServerError, "Failed to fetch users by role")
+		return
+	}
 
-	// c.JSON(http.StatusOK, userRoles)
-	c.JSON(http.StatusOK, gin.H{"message": "Get users by role successfully"})
+	// Filter users by role
+	var filteredUsers []*pb.User
+	for _, userRole := range userRoles {
+		for _, user := range users.Users {
+			if userRole.UserID == user.Id {
+				filteredUsers = append(filteredUsers, user)
+			}
+		}
+	}
+	if len(filteredUsers) == 0 {
+		h.handleError(c, http.StatusNotFound, "No users found for the given role")
+		return
+	}
+
+	c.JSON(http.StatusOK, filteredUsers)
 }
 
 func (h *RoleHandler) GetRolesByUser(c *gin.Context) {
@@ -229,21 +237,23 @@ func (h *RoleHandler) GetRolesByUser(c *gin.Context) {
 		return
 	}
 
-	userRoles, err := h.Client.UserRole.Query().Where(userrole.UserIDEQ(userID)).All(context.Background())
+	userRoles, err := h.Client.UserRole.Query().Where(userrole.UserIDEQ(userID)).WithRole().All(context.Background())
 	if err != nil {
 		h.handleError(c, http.StatusInternalServerError, "Failed to fetch roles for the user")
 		return
 	}
 
-	fmt.Println("UserID", userID)
-	fmt.Println("UserRoles", userRoles)
+	var roles []*ent.Role
+	for _, userRole := range userRoles {
+		role := userRole.Edges.Role
+		if role == nil {
+			h.handleError(c, http.StatusInternalServerError, "Role not found for user role")
+			return
+		}
+		roles = append(roles, role)
+	}
 
-	// roles := make([]*ent.Role, len(userRoles))
-	// for i, userRole := range userRoles {
-	// 	roles[i] = userRole.Edges.Role
-	// }
-
-	// c.JSON(http.StatusOK, roles)
+	c.JSON(http.StatusOK, roles)
 }
 
 func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
