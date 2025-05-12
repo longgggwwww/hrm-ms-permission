@@ -46,7 +46,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/hcl/v2 v2.23.0 // indirect
-	github.com/huynhthanhthao/hrm_user_service v0.0.0-20250508080307-7b520d86663a
+	github.com/huynhthanhthao/hrm_user_service v0.0.0-20250512021640-7bae166a16ca
 	github.com/jhump/protoreflect v1.17.0 // indirect
 	github.com/lib/pq v1.10.9
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect

@@ -76,7 +76,10 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 	}
 
 	var input struct {
-		Name *string `json:"name"`
+		Name        *string      `json:"name"`
+		Color       *string      `json:"color"`
+		Description *string      `json:"description"`
+		PermIDs     []*uuid.UUID `json:"perm_ids"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -87,14 +90,32 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 	if input.Name != nil {
 		update.SetName(*input.Name)
 	}
+	if input.Color != nil {
+		update.SetColor(*input.Color)
+	}
+	if input.Description != nil {
+		update.SetDescription(*input.Description)
+	}
+	if len(input.PermIDs) > 0 {
+		update.ClearPerms()
+		for _, permID := range input.PermIDs {
+			update.AddPermIDs(*permID)
+		}
+	}
 
-	role, err := update.Save(context.Background())
+	updated, err := update.Save(context.Background())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, role)
+	updatedRole, err := h.Client.Role.Query().Where(role.IDEQ(updated.ID)).WithPerms().Only(context.Background())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated role with permissions"})
+		return
+	}
+
+	c.JSON(http.StatusOK, updatedRole)
 }
 
 func (h *RoleHandler) DeleteRole(c *gin.Context) {
@@ -111,6 +132,46 @@ func (h *RoleHandler) DeleteRole(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+func (h *RoleHandler) DeleteMultipleRoles(c *gin.Context) {
+	var input struct {
+		IDs []uuid.UUID `json:"ids" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		h.handleError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if len(input.IDs) == 0 {
+		h.handleError(c, http.StatusBadRequest, "No role IDs provided")
+		return
+	}
+
+	tx, err := h.Client.Tx(context.Background())
+	if err != nil {
+		h.handleError(c, http.StatusInternalServerError, "Failed to start transaction")
+		return
+	}
+
+	for _, id := range input.IDs {
+		if err := tx.Role.DeleteOneID(id).Exec(context.Background()); err != nil {
+			tx.Rollback()
+			if ent.IsNotFound(err) {
+				h.handleError(c, http.StatusNotFound, fmt.Sprintf("Role with ID %s not found", id))
+			} else {
+				h.handleError(c, http.StatusInternalServerError, err.Error())
+			}
+			return
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		h.handleError(c, http.StatusInternalServerError, "Failed to commit transaction")
 		return
 	}
 
@@ -281,8 +342,9 @@ func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
 	{
 		gr.GET("", h.GetRoles)
 		gr.POST("", h.CreateRole)
-		gr.PUT(":id", h.UpdateRole)
+		gr.PATCH(":id", h.UpdateRole)
 		gr.DELETE(":id", h.DeleteRole)
+		gr.DELETE("", h.DeleteMultipleRoles)
 		gr.POST(":id/assign", h.AssignRoleToUsers)
 		gr.GET(":id/users", h.GetUsersByRole)
 		gr.GET(":id", h.GetRoleByID)
