@@ -9,6 +9,7 @@ services:
     environment:
       GIN_MODE: ${GIN_MODE:-debug}
       DB_URL: ${DB_URL:-postgres://${DB_USER}:${DB_PASS}@perm_postgres:5432/${DB_NAME}?sslmode=disable}
+      USER_SERVICE: ${USER_SERVICE:-user_app:8080}
     volumes:
       - .:/app
     depends_on:
