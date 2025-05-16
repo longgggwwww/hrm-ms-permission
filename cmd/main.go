@@ -26,6 +26,7 @@ func startGRPCServer(cli *ent.Client) {
 	entpb.RegisterPermServiceServer(server, perm)
 	entpb.RegisterPermGroupServiceServer(server, permGroup)
 	entpb.RegisterRoleServiceServer(server, role)
+	entpb.RegisterExtServiceServer(server, entpb.NewExtService(cli))
 
 	lis, err := net.Listen("tcp", ":5000")
 	if err != nil {

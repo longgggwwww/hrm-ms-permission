@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package entpb;
+
+option go_package = "github.com/longgggwwww/hr-ms-permission/ent/proto/entpb";
+
+import "google/protobuf/empty.proto";
+
+
+service ExtService {
+  // Delete all UserPerms by user_id
+  rpc DeleteUserPermsByUserID (DeleteUserPermsByUserIDRequest) returns (google.protobuf.Empty);
+  // Delete all UserRoles by user_id
+  rpc DeleteUserRolesByUserID (DeleteUserRolesByUserIDRequest) returns (google.protobuf.Empty);
+}
+
+// Request message for deleting user perms by user_id
+message DeleteUserPermsByUserIDRequest {
+  string user_id = 1;
+}
+
+// Request message for deleting user roles by user_id
+message DeleteUserRolesByUserIDRequest {
+  string user_id = 1;
+}
