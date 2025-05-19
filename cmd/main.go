@@ -19,6 +19,8 @@ func startGRPCServer(cli *ent.Client) {
 	perm := entpb.NewPermService(cli)
 	permGroup := entpb.NewPermGroupService(cli)
 	role := entpb.NewRoleService(cli)
+	userRole := entpb.NewUserRoleService(cli)
+	userPerm := entpb.NewUserPermService(cli)
 
 	server := grpc.NewServer()
 	fmt.Println("Starting gRPC server on port 5000...")
@@ -26,6 +28,8 @@ func startGRPCServer(cli *ent.Client) {
 	entpb.RegisterPermServiceServer(server, perm)
 	entpb.RegisterPermGroupServiceServer(server, permGroup)
 	entpb.RegisterRoleServiceServer(server, role)
+	entpb.RegisterUserRoleServiceServer(server, userRole)
+	entpb.RegisterUserPermServiceServer(server, userPerm)
 	entpb.RegisterExtServiceServer(server, entpb.NewExtService(cli))
 
 	lis, err := net.Listen("tcp", ":5000")
