@@ -6,12 +6,16 @@ option go_package = "github.com/longgggwwww/hr-ms-permission/ent/proto/entpb";
 
 import "google/protobuf/empty.proto";
 
-
+// ExtService defines operations for managing user permissions and roles
 service ExtService {
   // Delete all UserPerms by user_id
   rpc DeleteUserPermsByUserID (DeleteUserPermsByUserIDRequest) returns (google.protobuf.Empty);
   // Delete all UserRoles by user_id
   rpc DeleteUserRolesByUserID (DeleteUserRolesByUserIDRequest) returns (google.protobuf.Empty);
+  // Update UserPerms by deleting existing ones and creating new ones
+  rpc UpdateUserPerms (UpdateUserPermsRequest) returns (UpdateUserPermsResponse);
+  // Update UserRoles by deleting existing ones and creating new ones
+  rpc UpdateUserRoles (UpdateUserRolesRequest) returns (UpdateUserRolesResponse);
 }
 
 // Request message for deleting user perms by user_id
@@ -22,4 +26,28 @@ message DeleteUserPermsByUserIDRequest {
 // Request message for deleting user roles by user_id
 message DeleteUserRolesByUserIDRequest {
   string user_id = 1;
+}
+
+// Request message for updating user permissions
+message UpdateUserPermsRequest {
+  string user_id = 1;
+  repeated string perm_ids = 2; // Hex-encoded permission IDs
+}
+
+// Response message for updating user permissions
+message UpdateUserPermsResponse {
+  // Placeholder for potential response fields
+  bool success = 1;
+}
+
+// Request message for updating user roles
+message UpdateUserRolesRequest {
+  string user_id = 1;
+  repeated string role_ids = 2;
+}
+
+// Response message for updating user roles
+message UpdateUserRolesResponse {
+  // Placeholder for potential response fields
+  bool success = 1;
 }

@@ -112,6 +112,204 @@ func (x *DeleteUserRolesByUserIDRequest) GetUserId() string {
 	return ""
 }
 
+// Request message for updating user permissions
+type UpdateUserPermsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	PermIds       []string               `protobuf:"bytes,2,rep,name=perm_ids,json=permIds,proto3" json:"perm_ids,omitempty"` // Hex-encoded permission IDs
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserPermsRequest) Reset() {
+	*x = UpdateUserPermsRequest{}
+	mi := &file_entpb_ext_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserPermsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserPermsRequest) ProtoMessage() {}
+
+func (x *UpdateUserPermsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_ext_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserPermsRequest.ProtoReflect.Descriptor instead.
+func (*UpdateUserPermsRequest) Descriptor() ([]byte, []int) {
+	return file_entpb_ext_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UpdateUserPermsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdateUserPermsRequest) GetPermIds() []string {
+	if x != nil {
+		return x.PermIds
+	}
+	return nil
+}
+
+// Response message for updating user permissions
+type UpdateUserPermsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Placeholder for potential response fields
+	Success       bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserPermsResponse) Reset() {
+	*x = UpdateUserPermsResponse{}
+	mi := &file_entpb_ext_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserPermsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserPermsResponse) ProtoMessage() {}
+
+func (x *UpdateUserPermsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_ext_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserPermsResponse.ProtoReflect.Descriptor instead.
+func (*UpdateUserPermsResponse) Descriptor() ([]byte, []int) {
+	return file_entpb_ext_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *UpdateUserPermsResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+// Request message for updating user roles
+type UpdateUserRolesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleIds       []string               `protobuf:"bytes,2,rep,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserRolesRequest) Reset() {
+	*x = UpdateUserRolesRequest{}
+	mi := &file_entpb_ext_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserRolesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserRolesRequest) ProtoMessage() {}
+
+func (x *UpdateUserRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_ext_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserRolesRequest.ProtoReflect.Descriptor instead.
+func (*UpdateUserRolesRequest) Descriptor() ([]byte, []int) {
+	return file_entpb_ext_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UpdateUserRolesRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdateUserRolesRequest) GetRoleIds() []string {
+	if x != nil {
+		return x.RoleIds
+	}
+	return nil
+}
+
+// Response message for updating user roles
+type UpdateUserRolesResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Placeholder for potential response fields
+	Success       bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserRolesResponse) Reset() {
+	*x = UpdateUserRolesResponse{}
+	mi := &file_entpb_ext_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserRolesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserRolesResponse) ProtoMessage() {}
+
+func (x *UpdateUserRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_entpb_ext_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserRolesResponse.ProtoReflect.Descriptor instead.
+func (*UpdateUserRolesResponse) Descriptor() ([]byte, []int) {
+	return file_entpb_ext_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UpdateUserRolesResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_entpb_ext_proto protoreflect.FileDescriptor
 
 const file_entpb_ext_proto_rawDesc = "" +
@@ -120,11 +318,23 @@ const file_entpb_ext_proto_rawDesc = "" +
 	"\x1eDeleteUserPermsByUserIDRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"9\n" +
 	"\x1eDeleteUserRolesByUserIDRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId2\xc0\x01\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"L\n" +
+	"\x16UpdateUserPermsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
+	"\bperm_ids\x18\x02 \x03(\tR\apermIds\"3\n" +
+	"\x17UpdateUserPermsResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"L\n" +
+	"\x16UpdateUserRolesRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
+	"\brole_ids\x18\x02 \x03(\tR\aroleIds\"3\n" +
+	"\x17UpdateUserRolesResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xe4\x02\n" +
 	"\n" +
 	"ExtService\x12X\n" +
 	"\x17DeleteUserPermsByUserID\x12%.entpb.DeleteUserPermsByUserIDRequest\x1a\x16.google.protobuf.Empty\x12X\n" +
-	"\x17DeleteUserRolesByUserID\x12%.entpb.DeleteUserRolesByUserIDRequest\x1a\x16.google.protobuf.EmptyB9Z7github.com/longgggwwww/hr-ms-permission/ent/proto/entpbb\x06proto3"
+	"\x17DeleteUserRolesByUserID\x12%.entpb.DeleteUserRolesByUserIDRequest\x1a\x16.google.protobuf.Empty\x12P\n" +
+	"\x0fUpdateUserPerms\x12\x1d.entpb.UpdateUserPermsRequest\x1a\x1e.entpb.UpdateUserPermsResponse\x12P\n" +
+	"\x0fUpdateUserRoles\x12\x1d.entpb.UpdateUserRolesRequest\x1a\x1e.entpb.UpdateUserRolesResponseB9Z7github.com/longgggwwww/hr-ms-permission/ent/proto/entpbb\x06proto3"
 
 var (
 	file_entpb_ext_proto_rawDescOnce sync.Once
@@ -138,19 +348,27 @@ func file_entpb_ext_proto_rawDescGZIP() []byte {
 	return file_entpb_ext_proto_rawDescData
 }
 
-var file_entpb_ext_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_entpb_ext_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_entpb_ext_proto_goTypes = []any{
 	(*DeleteUserPermsByUserIDRequest)(nil), // 0: entpb.DeleteUserPermsByUserIDRequest
 	(*DeleteUserRolesByUserIDRequest)(nil), // 1: entpb.DeleteUserRolesByUserIDRequest
-	(*emptypb.Empty)(nil),                  // 2: google.protobuf.Empty
+	(*UpdateUserPermsRequest)(nil),         // 2: entpb.UpdateUserPermsRequest
+	(*UpdateUserPermsResponse)(nil),        // 3: entpb.UpdateUserPermsResponse
+	(*UpdateUserRolesRequest)(nil),         // 4: entpb.UpdateUserRolesRequest
+	(*UpdateUserRolesResponse)(nil),        // 5: entpb.UpdateUserRolesResponse
+	(*emptypb.Empty)(nil),                  // 6: google.protobuf.Empty
 }
 var file_entpb_ext_proto_depIdxs = []int32{
 	0, // 0: entpb.ExtService.DeleteUserPermsByUserID:input_type -> entpb.DeleteUserPermsByUserIDRequest
 	1, // 1: entpb.ExtService.DeleteUserRolesByUserID:input_type -> entpb.DeleteUserRolesByUserIDRequest
-	2, // 2: entpb.ExtService.DeleteUserPermsByUserID:output_type -> google.protobuf.Empty
-	2, // 3: entpb.ExtService.DeleteUserRolesByUserID:output_type -> google.protobuf.Empty
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	2, // 2: entpb.ExtService.UpdateUserPerms:input_type -> entpb.UpdateUserPermsRequest
+	4, // 3: entpb.ExtService.UpdateUserRoles:input_type -> entpb.UpdateUserRolesRequest
+	6, // 4: entpb.ExtService.DeleteUserPermsByUserID:output_type -> google.protobuf.Empty
+	6, // 5: entpb.ExtService.DeleteUserRolesByUserID:output_type -> google.protobuf.Empty
+	3, // 6: entpb.ExtService.UpdateUserPerms:output_type -> entpb.UpdateUserPermsResponse
+	5, // 7: entpb.ExtService.UpdateUserRoles:output_type -> entpb.UpdateUserRolesResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -167,7 +385,7 @@ func file_entpb_ext_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_entpb_ext_proto_rawDesc), len(file_entpb_ext_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

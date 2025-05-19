@@ -51,7 +51,6 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/rotemtam/ent-grpc-example v0.0.0-20230216211830-b6d08af965ad
 	github.com/zclconf/go-cty v1.16.2 // indirect
 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect

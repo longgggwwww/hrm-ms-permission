@@ -22,16 +22,24 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	ExtService_DeleteUserPermsByUserID_FullMethodName = "/entpb.ExtService/DeleteUserPermsByUserID"
 	ExtService_DeleteUserRolesByUserID_FullMethodName = "/entpb.ExtService/DeleteUserRolesByUserID"
+	ExtService_UpdateUserPerms_FullMethodName         = "/entpb.ExtService/UpdateUserPerms"
+	ExtService_UpdateUserRoles_FullMethodName         = "/entpb.ExtService/UpdateUserRoles"
 )
 
 // ExtServiceClient is the client API for ExtService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// ExtService defines operations for managing user permissions and roles
 type ExtServiceClient interface {
 	// Delete all UserPerms by user_id
 	DeleteUserPermsByUserID(ctx context.Context, in *DeleteUserPermsByUserIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Delete all UserRoles by user_id
 	DeleteUserRolesByUserID(ctx context.Context, in *DeleteUserRolesByUserIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Update UserPerms by deleting existing ones and creating new ones
+	UpdateUserPerms(ctx context.Context, in *UpdateUserPermsRequest, opts ...grpc.CallOption) (*UpdateUserPermsResponse, error)
+	// Update UserRoles by deleting existing ones and creating new ones
+	UpdateUserRoles(ctx context.Context, in *UpdateUserRolesRequest, opts ...grpc.CallOption) (*UpdateUserRolesResponse, error)
 }
 
 type extServiceClient struct {
@@ -62,14 +70,40 @@ func (c *extServiceClient) DeleteUserRolesByUserID(ctx context.Context, in *Dele
 	return out, nil
 }
 
+func (c *extServiceClient) UpdateUserPerms(ctx context.Context, in *UpdateUserPermsRequest, opts ...grpc.CallOption) (*UpdateUserPermsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserPermsResponse)
+	err := c.cc.Invoke(ctx, ExtService_UpdateUserPerms_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *extServiceClient) UpdateUserRoles(ctx context.Context, in *UpdateUserRolesRequest, opts ...grpc.CallOption) (*UpdateUserRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserRolesResponse)
+	err := c.cc.Invoke(ctx, ExtService_UpdateUserRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ExtServiceServer is the server API for ExtService service.
 // All implementations must embed UnimplementedExtServiceServer
 // for forward compatibility.
+//
+// ExtService defines operations for managing user permissions and roles
 type ExtServiceServer interface {
 	// Delete all UserPerms by user_id
 	DeleteUserPermsByUserID(context.Context, *DeleteUserPermsByUserIDRequest) (*emptypb.Empty, error)
 	// Delete all UserRoles by user_id
 	DeleteUserRolesByUserID(context.Context, *DeleteUserRolesByUserIDRequest) (*emptypb.Empty, error)
+	// Update UserPerms by deleting existing ones and creating new ones
+	UpdateUserPerms(context.Context, *UpdateUserPermsRequest) (*UpdateUserPermsResponse, error)
+	// Update UserRoles by deleting existing ones and creating new ones
+	UpdateUserRoles(context.Context, *UpdateUserRolesRequest) (*UpdateUserRolesResponse, error)
 	mustEmbedUnimplementedExtServiceServer()
 }
 
@@ -85,6 +119,12 @@ func (UnimplementedExtServiceServer) DeleteUserPermsByUserID(context.Context, *D
 }
 func (UnimplementedExtServiceServer) DeleteUserRolesByUserID(context.Context, *DeleteUserRolesByUserIDRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserRolesByUserID not implemented")
+}
+func (UnimplementedExtServiceServer) UpdateUserPerms(context.Context, *UpdateUserPermsRequest) (*UpdateUserPermsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserPerms not implemented")
+}
+func (UnimplementedExtServiceServer) UpdateUserRoles(context.Context, *UpdateUserRolesRequest) (*UpdateUserRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserRoles not implemented")
 }
 func (UnimplementedExtServiceServer) mustEmbedUnimplementedExtServiceServer() {}
 func (UnimplementedExtServiceServer) testEmbeddedByValue()                    {}
@@ -143,6 +183,42 @@ func _ExtService_DeleteUserRolesByUserID_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ExtService_UpdateUserPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserPermsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExtServiceServer).UpdateUserPerms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExtService_UpdateUserPerms_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExtServiceServer).UpdateUserPerms(ctx, req.(*UpdateUserPermsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ExtService_UpdateUserRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExtServiceServer).UpdateUserRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExtService_UpdateUserRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExtServiceServer).UpdateUserRoles(ctx, req.(*UpdateUserRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ExtService_ServiceDesc is the grpc.ServiceDesc for ExtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -157,6 +233,14 @@ var ExtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUserRolesByUserID",
 			Handler:    _ExtService_DeleteUserRolesByUserID_Handler,
+		},
+		{
+			MethodName: "UpdateUserPerms",
+			Handler:    _ExtService_UpdateUserPerms_Handler,
+		},
+		{
+			MethodName: "UpdateUserRoles",
+			Handler:    _ExtService_UpdateUserRoles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
