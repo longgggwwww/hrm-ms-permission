@@ -348,14 +348,14 @@ func (h *RoleHandler) GetRoleByID(c *gin.Context) {
 func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
 	gr := r.Group("/roles")
 	{
-		gr.GET("", h.GetRoles)
-		gr.POST("", h.CreateRole)
-		gr.PATCH(":id", h.UpdateRole)
-		gr.DELETE(":id", h.DeleteRole)
-		gr.DELETE("", h.DeleteMultipleRoles)
-		gr.POST(":id/assign", h.AssignRoleToUsers)
-		gr.GET(":id/users", h.GetUsersByRole)
-		gr.GET(":id", h.GetRoleByID)
+		gr.GET("/", h.GetRoles)
+		gr.POST("/", h.CreateRole)
+		gr.PATCH("/:id", h.UpdateRole)
+		gr.DELETE("/:id", h.DeleteRole)
+		gr.DELETE("/", h.DeleteMultipleRoles)
+		gr.POST("/:id/assign", h.AssignRoleToUsers)
+		gr.GET("/:id/users", h.GetUsersByRole)
+		gr.GET("/:id", h.GetRoleByID)
 	}
 
 	ur := r.Group("/users")

@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -20,7 +21,11 @@ type UserPerm struct {
 	// UserID holds the value of the "user_id" field.
 	UserID string `json:"user_id,omitempty"`
 	// PermID holds the value of the "perm_id" field.
-	PermID       uuid.UUID `json:"perm_id,omitempty"`
+	PermID uuid.UUID `json:"perm_id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -33,6 +38,8 @@ func (*UserPerm) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case userperm.FieldUserID:
 			values[i] = new(sql.NullString)
+		case userperm.FieldCreatedAt, userperm.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		case userperm.FieldPermID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -67,6 +74,18 @@ func (up *UserPerm) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field perm_id", values[i])
 			} else if value != nil {
 				up.PermID = *value
+			}
+		case userperm.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				up.CreatedAt = value.Time
+			}
+		case userperm.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				up.UpdatedAt = value.Time
 			}
 		default:
 			up.selectValues.Set(columns[i], values[i])
@@ -109,6 +128,12 @@ func (up *UserPerm) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("perm_id=")
 	builder.WriteString(fmt.Sprintf("%v", up.PermID))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(up.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(up.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

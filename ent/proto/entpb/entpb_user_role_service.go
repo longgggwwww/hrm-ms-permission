@@ -5,6 +5,7 @@ import (
 	context "context"
 	base64 "encoding/base64"
 	entproto "entgo.io/contrib/entproto"
+	runtime "entgo.io/contrib/entproto/runtime"
 	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	fmt "fmt"
 	uuid "github.com/google/uuid"
@@ -14,6 +15,7 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // UserRoleService implements UserRoleServiceServer
@@ -32,6 +34,8 @@ func NewUserRoleService(client *ent.Client) *UserRoleService {
 // toProtoUserRole transforms the ent type to the pb type
 func toProtoUserRole(e *ent.UserRole) (*UserRole, error) {
 	v := &UserRole{}
+	created_at := timestamppb.New(e.CreatedAt)
+	v.CreatedAt = created_at
 	id, err := e.ID.MarshalBinary()
 	if err != nil {
 		return nil, err
@@ -42,6 +46,8 @@ func toProtoUserRole(e *ent.UserRole) (*UserRole, error) {
 		return nil, err
 	}
 	v.RoleId = role
+	updated_at := timestamppb.New(e.UpdatedAt)
+	v.UpdatedAt = updated_at
 	user_id := e.UserID
 	v.UserId = user_id
 	if edg := e.Edges.Role; edg != nil {
@@ -141,6 +147,8 @@ func (svc *UserRoleService) Update(ctx context.Context, req *UpdateUserRoleReque
 		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
 	}
 	m.SetRoleID(userroleRoleID)
+	userroleUpdatedAt := runtime.ExtractTime(userrole.GetUpdatedAt())
+	m.SetUpdatedAt(userroleUpdatedAt)
 	userroleUserID := userrole.GetUserId()
 	m.SetUserID(userroleUserID)
 	if userrole.GetRole() != nil {
@@ -286,11 +294,15 @@ func (svc *UserRoleService) BatchCreate(ctx context.Context, req *BatchCreateUse
 
 func (svc *UserRoleService) createBuilder(userrole *UserRole) (*ent.UserRoleCreate, error) {
 	m := svc.client.UserRole.Create()
+	userroleCreatedAt := runtime.ExtractTime(userrole.GetCreatedAt())
+	m.SetCreatedAt(userroleCreatedAt)
 	var userroleRoleID uuid.UUID
 	if err := (&userroleRoleID).UnmarshalBinary(userrole.GetRoleId()); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
 	}
 	m.SetRoleID(userroleRoleID)
+	userroleUpdatedAt := runtime.ExtractTime(userrole.GetUpdatedAt())
+	m.SetUpdatedAt(userroleUpdatedAt)
 	userroleUserID := userrole.GetUserId()
 	m.SetUserID(userroleUserID)
 	if userrole.GetRole() != nil {
