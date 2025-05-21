@@ -20,18 +20,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PermExtService_DeleteUserPermsByUserID_FullMethodName = "/entpb.PermExtService/DeleteUserPermsByUserID"
-	PermExtService_DeleteUserRolesByUserID_FullMethodName = "/entpb.PermExtService/DeleteUserRolesByUserID"
-	PermExtService_UpdateUserPerms_FullMethodName         = "/entpb.PermExtService/UpdateUserPerms"
-	PermExtService_UpdateUserRoles_FullMethodName         = "/entpb.PermExtService/UpdateUserRoles"
+	ExtService_DeleteUserPermsByUserID_FullMethodName = "/entpb.ExtService/DeleteUserPermsByUserID"
+	ExtService_DeleteUserRolesByUserID_FullMethodName = "/entpb.ExtService/DeleteUserRolesByUserID"
+	ExtService_UpdateUserPerms_FullMethodName         = "/entpb.ExtService/UpdateUserPerms"
+	ExtService_UpdateUserRoles_FullMethodName         = "/entpb.ExtService/UpdateUserRoles"
 )
 
-// PermExtServiceClient is the client API for PermExtService service.
+// ExtServiceClient is the client API for ExtService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ExtService defines operations for managing user permissions and roles
-type PermExtServiceClient interface {
+type ExtServiceClient interface {
 	// Delete all UserPerms by user_id
 	DeleteUserPermsByUserID(ctx context.Context, in *DeleteUserPermsByUserIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Delete all UserRoles by user_id
@@ -42,60 +42,60 @@ type PermExtServiceClient interface {
 	UpdateUserRoles(ctx context.Context, in *UpdateUserRolesRequest, opts ...grpc.CallOption) (*UpdateUserRolesResponse, error)
 }
 
-type permExtServiceClient struct {
+type extServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPermExtServiceClient(cc grpc.ClientConnInterface) PermExtServiceClient {
-	return &permExtServiceClient{cc}
+func NewExtServiceClient(cc grpc.ClientConnInterface) ExtServiceClient {
+	return &extServiceClient{cc}
 }
 
-func (c *permExtServiceClient) DeleteUserPermsByUserID(ctx context.Context, in *DeleteUserPermsByUserIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *extServiceClient) DeleteUserPermsByUserID(ctx context.Context, in *DeleteUserPermsByUserIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PermExtService_DeleteUserPermsByUserID_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ExtService_DeleteUserPermsByUserID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *permExtServiceClient) DeleteUserRolesByUserID(ctx context.Context, in *DeleteUserRolesByUserIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *extServiceClient) DeleteUserRolesByUserID(ctx context.Context, in *DeleteUserRolesByUserIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PermExtService_DeleteUserRolesByUserID_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ExtService_DeleteUserRolesByUserID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *permExtServiceClient) UpdateUserPerms(ctx context.Context, in *UpdateUserPermsRequest, opts ...grpc.CallOption) (*UpdateUserPermsResponse, error) {
+func (c *extServiceClient) UpdateUserPerms(ctx context.Context, in *UpdateUserPermsRequest, opts ...grpc.CallOption) (*UpdateUserPermsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateUserPermsResponse)
-	err := c.cc.Invoke(ctx, PermExtService_UpdateUserPerms_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ExtService_UpdateUserPerms_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *permExtServiceClient) UpdateUserRoles(ctx context.Context, in *UpdateUserRolesRequest, opts ...grpc.CallOption) (*UpdateUserRolesResponse, error) {
+func (c *extServiceClient) UpdateUserRoles(ctx context.Context, in *UpdateUserRolesRequest, opts ...grpc.CallOption) (*UpdateUserRolesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateUserRolesResponse)
-	err := c.cc.Invoke(ctx, PermExtService_UpdateUserRoles_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ExtService_UpdateUserRoles_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PermExtServiceServer is the server API for PermExtService service.
-// All implementations must embed UnimplementedPermExtServiceServer
+// ExtServiceServer is the server API for ExtService service.
+// All implementations must embed UnimplementedExtServiceServer
 // for forward compatibility.
 //
 // ExtService defines operations for managing user permissions and roles
-type PermExtServiceServer interface {
+type ExtServiceServer interface {
 	// Delete all UserPerms by user_id
 	DeleteUserPermsByUserID(context.Context, *DeleteUserPermsByUserIDRequest) (*emptypb.Empty, error)
 	// Delete all UserRoles by user_id
@@ -104,143 +104,143 @@ type PermExtServiceServer interface {
 	UpdateUserPerms(context.Context, *UpdateUserPermsRequest) (*UpdateUserPermsResponse, error)
 	// Update UserRoles by deleting existing ones and creating new ones
 	UpdateUserRoles(context.Context, *UpdateUserRolesRequest) (*UpdateUserRolesResponse, error)
-	mustEmbedUnimplementedPermExtServiceServer()
+	mustEmbedUnimplementedExtServiceServer()
 }
 
-// UnimplementedPermExtServiceServer must be embedded to have
+// UnimplementedExtServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedPermExtServiceServer struct{}
+type UnimplementedExtServiceServer struct{}
 
-func (UnimplementedPermExtServiceServer) DeleteUserPermsByUserID(context.Context, *DeleteUserPermsByUserIDRequest) (*emptypb.Empty, error) {
+func (UnimplementedExtServiceServer) DeleteUserPermsByUserID(context.Context, *DeleteUserPermsByUserIDRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserPermsByUserID not implemented")
 }
-func (UnimplementedPermExtServiceServer) DeleteUserRolesByUserID(context.Context, *DeleteUserRolesByUserIDRequest) (*emptypb.Empty, error) {
+func (UnimplementedExtServiceServer) DeleteUserRolesByUserID(context.Context, *DeleteUserRolesByUserIDRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserRolesByUserID not implemented")
 }
-func (UnimplementedPermExtServiceServer) UpdateUserPerms(context.Context, *UpdateUserPermsRequest) (*UpdateUserPermsResponse, error) {
+func (UnimplementedExtServiceServer) UpdateUserPerms(context.Context, *UpdateUserPermsRequest) (*UpdateUserPermsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserPerms not implemented")
 }
-func (UnimplementedPermExtServiceServer) UpdateUserRoles(context.Context, *UpdateUserRolesRequest) (*UpdateUserRolesResponse, error) {
+func (UnimplementedExtServiceServer) UpdateUserRoles(context.Context, *UpdateUserRolesRequest) (*UpdateUserRolesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserRoles not implemented")
 }
-func (UnimplementedPermExtServiceServer) mustEmbedUnimplementedPermExtServiceServer() {}
-func (UnimplementedPermExtServiceServer) testEmbeddedByValue()                        {}
+func (UnimplementedExtServiceServer) mustEmbedUnimplementedExtServiceServer() {}
+func (UnimplementedExtServiceServer) testEmbeddedByValue()                    {}
 
-// UnsafePermExtServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PermExtServiceServer will
+// UnsafeExtServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ExtServiceServer will
 // result in compilation errors.
-type UnsafePermExtServiceServer interface {
-	mustEmbedUnimplementedPermExtServiceServer()
+type UnsafeExtServiceServer interface {
+	mustEmbedUnimplementedExtServiceServer()
 }
 
-func RegisterPermExtServiceServer(s grpc.ServiceRegistrar, srv PermExtServiceServer) {
-	// If the following call pancis, it indicates UnimplementedPermExtServiceServer was
+func RegisterExtServiceServer(s grpc.ServiceRegistrar, srv ExtServiceServer) {
+	// If the following call pancis, it indicates UnimplementedExtServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&PermExtService_ServiceDesc, srv)
+	s.RegisterService(&ExtService_ServiceDesc, srv)
 }
 
-func _PermExtService_DeleteUserPermsByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ExtService_DeleteUserPermsByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteUserPermsByUserIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermExtServiceServer).DeleteUserPermsByUserID(ctx, in)
+		return srv.(ExtServiceServer).DeleteUserPermsByUserID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PermExtService_DeleteUserPermsByUserID_FullMethodName,
+		FullMethod: ExtService_DeleteUserPermsByUserID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermExtServiceServer).DeleteUserPermsByUserID(ctx, req.(*DeleteUserPermsByUserIDRequest))
+		return srv.(ExtServiceServer).DeleteUserPermsByUserID(ctx, req.(*DeleteUserPermsByUserIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermExtService_DeleteUserRolesByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ExtService_DeleteUserRolesByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteUserRolesByUserIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermExtServiceServer).DeleteUserRolesByUserID(ctx, in)
+		return srv.(ExtServiceServer).DeleteUserRolesByUserID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PermExtService_DeleteUserRolesByUserID_FullMethodName,
+		FullMethod: ExtService_DeleteUserRolesByUserID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermExtServiceServer).DeleteUserRolesByUserID(ctx, req.(*DeleteUserRolesByUserIDRequest))
+		return srv.(ExtServiceServer).DeleteUserRolesByUserID(ctx, req.(*DeleteUserRolesByUserIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermExtService_UpdateUserPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ExtService_UpdateUserPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserPermsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermExtServiceServer).UpdateUserPerms(ctx, in)
+		return srv.(ExtServiceServer).UpdateUserPerms(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PermExtService_UpdateUserPerms_FullMethodName,
+		FullMethod: ExtService_UpdateUserPerms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermExtServiceServer).UpdateUserPerms(ctx, req.(*UpdateUserPermsRequest))
+		return srv.(ExtServiceServer).UpdateUserPerms(ctx, req.(*UpdateUserPermsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermExtService_UpdateUserRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ExtService_UpdateUserRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserRolesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermExtServiceServer).UpdateUserRoles(ctx, in)
+		return srv.(ExtServiceServer).UpdateUserRoles(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PermExtService_UpdateUserRoles_FullMethodName,
+		FullMethod: ExtService_UpdateUserRoles_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermExtServiceServer).UpdateUserRoles(ctx, req.(*UpdateUserRolesRequest))
+		return srv.(ExtServiceServer).UpdateUserRoles(ctx, req.(*UpdateUserRolesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// PermExtService_ServiceDesc is the grpc.ServiceDesc for PermExtService service.
+// ExtService_ServiceDesc is the grpc.ServiceDesc for ExtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var PermExtService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "entpb.PermExtService",
-	HandlerType: (*PermExtServiceServer)(nil),
+var ExtService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "entpb.ExtService",
+	HandlerType: (*ExtServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "DeleteUserPermsByUserID",
-			Handler:    _PermExtService_DeleteUserPermsByUserID_Handler,
+			Handler:    _ExtService_DeleteUserPermsByUserID_Handler,
 		},
 		{
 			MethodName: "DeleteUserRolesByUserID",
-			Handler:    _PermExtService_DeleteUserRolesByUserID_Handler,
+			Handler:    _ExtService_DeleteUserRolesByUserID_Handler,
 		},
 		{
 			MethodName: "UpdateUserPerms",
-			Handler:    _PermExtService_UpdateUserPerms_Handler,
+			Handler:    _ExtService_UpdateUserPerms_Handler,
 		},
 		{
 			MethodName: "UpdateUserRoles",
-			Handler:    _PermExtService_UpdateUserRoles_Handler,
+			Handler:    _ExtService_UpdateUserRoles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -12,14 +12,14 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-// PermExtService implements ExtServiceServer.
-type PermExtService struct {
+// ExtService implements ExtServiceServer.
+type ExtService struct {
 	client *ent.Client
-	UnimplementedPermExtServiceServer
+	UnimplementedExtServiceServer
 }
 
 // DeleteUserPermsByUserID deletes all UserPerms by user_id.
-func (s *PermExtService) DeleteUserPermsByUserID(ctx context.Context, req *DeleteUserPermsByUserIDRequest) (*emptypb.Empty, error) {
+func (s *ExtService) DeleteUserPermsByUserID(ctx context.Context, req *DeleteUserPermsByUserIDRequest) (*emptypb.Empty, error) {
 	if req.GetUserId() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "#1 DeleteUserPermsByUserID: user_id is required")
 	}
@@ -31,7 +31,7 @@ func (s *PermExtService) DeleteUserPermsByUserID(ctx context.Context, req *Delet
 }
 
 // DeleteUserRolesByUserID deletes all UserRoles by user_id.
-func (s *PermExtService) DeleteUserRolesByUserID(ctx context.Context, req *DeleteUserRolesByUserIDRequest) (*emptypb.Empty, error) {
+func (s *ExtService) DeleteUserRolesByUserID(ctx context.Context, req *DeleteUserRolesByUserIDRequest) (*emptypb.Empty, error) {
 	if req.GetUserId() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "#1 DeleteUserRolesByUserID: user_id is required")
 	}
@@ -43,7 +43,7 @@ func (s *PermExtService) DeleteUserRolesByUserID(ctx context.Context, req *Delet
 }
 
 // UpdateUserPerms updates user permissions by deleting old ones and creating new ones.
-func (s *PermExtService) UpdateUserPerms(ctx context.Context, req *UpdateUserPermsRequest) (*UpdateUserPermsResponse, error) {
+func (s *ExtService) UpdateUserPerms(ctx context.Context, req *UpdateUserPermsRequest) (*UpdateUserPermsResponse, error) {
 	if req.GetUserId() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "#1 UpdateUserPerms: user_id is required")
 	}
@@ -79,7 +79,7 @@ func (s *PermExtService) UpdateUserPerms(ctx context.Context, req *UpdateUserPer
 }
 
 // UpdateUserRoles updates user roles by deleting old ones and creating new ones.
-func (s *PermExtService) UpdateUserRoles(ctx context.Context, req *UpdateUserRolesRequest) (*UpdateUserRolesResponse, error) {
+func (s *ExtService) UpdateUserRoles(ctx context.Context, req *UpdateUserRolesRequest) (*UpdateUserRolesResponse, error) {
 	if req.GetUserId() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "#1 UpdateUserRoles: user_id is required")
 	}
@@ -115,8 +115,8 @@ func (s *PermExtService) UpdateUserRoles(ctx context.Context, req *UpdateUserRol
 }
 
 // NewExtService returns a new ExtService.
-func NewPermExtService(client *ent.Client) *PermExtService {
-	return &PermExtService{
+func NewExtService(client *ent.Client) *ExtService {
+	return &ExtService{
 		client: client,
 	}
 }
