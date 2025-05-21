@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
@@ -52,12 +54,32 @@ func init() {
 	userpermDescUserID := userpermFields[0].Descriptor()
 	// userperm.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	userperm.UserIDValidator = userpermDescUserID.Validators[0].(func(string) error)
+	// userpermDescCreatedAt is the schema descriptor for created_at field.
+	userpermDescCreatedAt := userpermFields[2].Descriptor()
+	// userperm.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userperm.DefaultCreatedAt = userpermDescCreatedAt.Default.(func() time.Time)
+	// userpermDescUpdatedAt is the schema descriptor for updated_at field.
+	userpermDescUpdatedAt := userpermFields[3].Descriptor()
+	// userperm.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	userperm.DefaultUpdatedAt = userpermDescUpdatedAt.Default.(func() time.Time)
+	// userperm.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	userperm.UpdateDefaultUpdatedAt = userpermDescUpdatedAt.UpdateDefault.(func() time.Time)
 	userroleFields := schema.UserRole{}.Fields()
 	_ = userroleFields
 	// userroleDescUserID is the schema descriptor for user_id field.
 	userroleDescUserID := userroleFields[1].Descriptor()
 	// userrole.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	userrole.UserIDValidator = userroleDescUserID.Validators[0].(func(string) error)
+	// userroleDescCreatedAt is the schema descriptor for created_at field.
+	userroleDescCreatedAt := userroleFields[3].Descriptor()
+	// userrole.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userrole.DefaultCreatedAt = userroleDescCreatedAt.Default.(func() time.Time)
+	// userroleDescUpdatedAt is the schema descriptor for updated_at field.
+	userroleDescUpdatedAt := userroleFields[4].Descriptor()
+	// userrole.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	userrole.DefaultUpdatedAt = userroleDescUpdatedAt.Default.(func() time.Time)
+	// userrole.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	userrole.UpdateDefaultUpdatedAt = userroleDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// userroleDescID is the schema descriptor for id field.
 	userroleDescID := userroleFields[0].Descriptor()
 	// userrole.DefaultID holds the default value on creation for the id field.

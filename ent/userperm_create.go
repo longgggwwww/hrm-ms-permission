@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -34,6 +35,34 @@ func (upc *UserPermCreate) SetPermID(u uuid.UUID) *UserPermCreate {
 	return upc
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (upc *UserPermCreate) SetCreatedAt(t time.Time) *UserPermCreate {
+	upc.mutation.SetCreatedAt(t)
+	return upc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (upc *UserPermCreate) SetNillableCreatedAt(t *time.Time) *UserPermCreate {
+	if t != nil {
+		upc.SetCreatedAt(*t)
+	}
+	return upc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (upc *UserPermCreate) SetUpdatedAt(t time.Time) *UserPermCreate {
+	upc.mutation.SetUpdatedAt(t)
+	return upc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (upc *UserPermCreate) SetNillableUpdatedAt(t *time.Time) *UserPermCreate {
+	if t != nil {
+		upc.SetUpdatedAt(*t)
+	}
+	return upc
+}
+
 // Mutation returns the UserPermMutation object of the builder.
 func (upc *UserPermCreate) Mutation() *UserPermMutation {
 	return upc.mutation
@@ -41,6 +70,7 @@ func (upc *UserPermCreate) Mutation() *UserPermMutation {
 
 // Save creates the UserPerm in the database.
 func (upc *UserPermCreate) Save(ctx context.Context) (*UserPerm, error) {
+	upc.defaults()
 	return withHooks(ctx, upc.sqlSave, upc.mutation, upc.hooks)
 }
 
@@ -66,6 +96,18 @@ func (upc *UserPermCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (upc *UserPermCreate) defaults() {
+	if _, ok := upc.mutation.CreatedAt(); !ok {
+		v := userperm.DefaultCreatedAt()
+		upc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := upc.mutation.UpdatedAt(); !ok {
+		v := userperm.DefaultUpdatedAt()
+		upc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (upc *UserPermCreate) check() error {
 	if _, ok := upc.mutation.UserID(); !ok {
@@ -78,6 +120,12 @@ func (upc *UserPermCreate) check() error {
 	}
 	if _, ok := upc.mutation.PermID(); !ok {
 		return &ValidationError{Name: "perm_id", err: errors.New(`ent: missing required field "UserPerm.perm_id"`)}
+	}
+	if _, ok := upc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "UserPerm.created_at"`)}
+	}
+	if _, ok := upc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "UserPerm.updated_at"`)}
 	}
 	return nil
 }
@@ -113,6 +161,14 @@ func (upc *UserPermCreate) createSpec() (*UserPerm, *sqlgraph.CreateSpec) {
 	if value, ok := upc.mutation.PermID(); ok {
 		_spec.SetField(userperm.FieldPermID, field.TypeUUID, value)
 		_node.PermID = value
+	}
+	if value, ok := upc.mutation.CreatedAt(); ok {
+		_spec.SetField(userperm.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := upc.mutation.UpdatedAt(); ok {
+		_spec.SetField(userperm.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	return _node, _spec
 }
@@ -190,6 +246,30 @@ func (u *UserPermUpsert) UpdatePermID() *UserPermUpsert {
 	return u
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (u *UserPermUpsert) SetCreatedAt(v time.Time) *UserPermUpsert {
+	u.Set(userperm.FieldCreatedAt, v)
+	return u
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *UserPermUpsert) UpdateCreatedAt() *UserPermUpsert {
+	u.SetExcluded(userperm.FieldCreatedAt)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserPermUpsert) SetUpdatedAt(v time.Time) *UserPermUpsert {
+	u.Set(userperm.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserPermUpsert) UpdateUpdatedAt() *UserPermUpsert {
+	u.SetExcluded(userperm.FieldUpdatedAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -258,6 +338,34 @@ func (u *UserPermUpsertOne) UpdatePermID() *UserPermUpsertOne {
 	})
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (u *UserPermUpsertOne) SetCreatedAt(v time.Time) *UserPermUpsertOne {
+	return u.Update(func(s *UserPermUpsert) {
+		s.SetCreatedAt(v)
+	})
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *UserPermUpsertOne) UpdateCreatedAt() *UserPermUpsertOne {
+	return u.Update(func(s *UserPermUpsert) {
+		s.UpdateCreatedAt()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserPermUpsertOne) SetUpdatedAt(v time.Time) *UserPermUpsertOne {
+	return u.Update(func(s *UserPermUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserPermUpsertOne) UpdateUpdatedAt() *UserPermUpsertOne {
+	return u.Update(func(s *UserPermUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
 // Exec executes the query.
 func (u *UserPermUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -310,6 +418,7 @@ func (upcb *UserPermCreateBulk) Save(ctx context.Context) ([]*UserPerm, error) {
 	for i := range upcb.builders {
 		func(i int, root context.Context) {
 			builder := upcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*UserPermMutation)
 				if !ok {
@@ -486,6 +595,34 @@ func (u *UserPermUpsertBulk) SetPermID(v uuid.UUID) *UserPermUpsertBulk {
 func (u *UserPermUpsertBulk) UpdatePermID() *UserPermUpsertBulk {
 	return u.Update(func(s *UserPermUpsert) {
 		s.UpdatePermID()
+	})
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (u *UserPermUpsertBulk) SetCreatedAt(v time.Time) *UserPermUpsertBulk {
+	return u.Update(func(s *UserPermUpsert) {
+		s.SetCreatedAt(v)
+	})
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *UserPermUpsertBulk) UpdateCreatedAt() *UserPermUpsertBulk {
+	return u.Update(func(s *UserPermUpsert) {
+		s.UpdateCreatedAt()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserPermUpsertBulk) SetUpdatedAt(v time.Time) *UserPermUpsertBulk {
+	return u.Update(func(s *UserPermUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserPermUpsertBulk) UpdateUpdatedAt() *UserPermUpsertBulk {
+	return u.Update(func(s *UserPermUpsert) {
+		s.UpdateUpdatedAt()
 	})
 }
 

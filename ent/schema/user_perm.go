@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/contrib/entproto"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -19,6 +21,8 @@ func (UserPerm) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("user_id").NotEmpty().Annotations(entproto.Field(2)),
 		field.UUID("perm_id", uuid.UUID{}).Annotations(entproto.Field(3)),
+		field.Time("created_at").Default(time.Now).Annotations(entproto.Field(4)),
+		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now).Annotations(entproto.Field(5)),
 	}
 }
 

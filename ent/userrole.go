@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -22,6 +23,10 @@ type UserRole struct {
 	UserID string `json:"user_id,omitempty"`
 	// RoleID holds the value of the "role_id" field.
 	RoleID uuid.UUID `json:"role_id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserRoleQuery when eager-loading is set.
 	Edges        UserRoleEdges `json:"edges"`
@@ -55,6 +60,8 @@ func (*UserRole) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case userrole.FieldUserID:
 			values[i] = new(sql.NullString)
+		case userrole.FieldCreatedAt, userrole.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		case userrole.FieldID, userrole.FieldRoleID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -89,6 +96,18 @@ func (ur *UserRole) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field role_id", values[i])
 			} else if value != nil {
 				ur.RoleID = *value
+			}
+		case userrole.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				ur.CreatedAt = value.Time
+			}
+		case userrole.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				ur.UpdatedAt = value.Time
 			}
 		default:
 			ur.selectValues.Set(columns[i], values[i])
@@ -136,6 +155,12 @@ func (ur *UserRole) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("role_id=")
 	builder.WriteString(fmt.Sprintf("%v", ur.RoleID))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(ur.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(ur.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

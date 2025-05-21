@@ -61,6 +61,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "user_id", Type: field.TypeString},
 		{Name: "perm_id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 	}
 	// UserPermsTable holds the schema information for the "user_perms" table.
 	UserPermsTable = &schema.Table{
@@ -79,6 +81,8 @@ var (
 	UserRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "user_id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "role_id", Type: field.TypeUUID},
 	}
 	// UserRolesTable holds the schema information for the "user_roles" table.
@@ -89,7 +93,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_roles_roles_user_roles",
-				Columns:    []*schema.Column{UserRolesColumns[2]},
+				Columns:    []*schema.Column{UserRolesColumns[4]},
 				RefColumns: []*schema.Column{RolesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -98,7 +102,7 @@ var (
 			{
 				Name:    "userrole_role_id_user_id",
 				Unique:  true,
-				Columns: []*schema.Column{UserRolesColumns[2], UserRolesColumns[1]},
+				Columns: []*schema.Column{UserRolesColumns[4], UserRolesColumns[1]},
 			},
 		},
 	}

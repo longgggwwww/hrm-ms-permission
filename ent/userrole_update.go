@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -57,6 +58,12 @@ func (uru *UserRoleUpdate) SetNillableRoleID(u *uuid.UUID) *UserRoleUpdate {
 	return uru
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (uru *UserRoleUpdate) SetUpdatedAt(t time.Time) *UserRoleUpdate {
+	uru.mutation.SetUpdatedAt(t)
+	return uru
+}
+
 // SetRole sets the "role" edge to the Role entity.
 func (uru *UserRoleUpdate) SetRole(r *Role) *UserRoleUpdate {
 	return uru.SetRoleID(r.ID)
@@ -75,6 +82,7 @@ func (uru *UserRoleUpdate) ClearRole() *UserRoleUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uru *UserRoleUpdate) Save(ctx context.Context) (int, error) {
+	uru.defaults()
 	return withHooks(ctx, uru.sqlSave, uru.mutation, uru.hooks)
 }
 
@@ -97,6 +105,14 @@ func (uru *UserRoleUpdate) Exec(ctx context.Context) error {
 func (uru *UserRoleUpdate) ExecX(ctx context.Context) {
 	if err := uru.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uru *UserRoleUpdate) defaults() {
+	if _, ok := uru.mutation.UpdatedAt(); !ok {
+		v := userrole.UpdateDefaultUpdatedAt()
+		uru.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -127,6 +143,9 @@ func (uru *UserRoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uru.mutation.UserID(); ok {
 		_spec.SetField(userrole.FieldUserID, field.TypeString, value)
+	}
+	if value, ok := uru.mutation.UpdatedAt(); ok {
+		_spec.SetField(userrole.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if uru.mutation.RoleCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -205,6 +224,12 @@ func (uruo *UserRoleUpdateOne) SetNillableRoleID(u *uuid.UUID) *UserRoleUpdateOn
 	return uruo
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (uruo *UserRoleUpdateOne) SetUpdatedAt(t time.Time) *UserRoleUpdateOne {
+	uruo.mutation.SetUpdatedAt(t)
+	return uruo
+}
+
 // SetRole sets the "role" edge to the Role entity.
 func (uruo *UserRoleUpdateOne) SetRole(r *Role) *UserRoleUpdateOne {
 	return uruo.SetRoleID(r.ID)
@@ -236,6 +261,7 @@ func (uruo *UserRoleUpdateOne) Select(field string, fields ...string) *UserRoleU
 
 // Save executes the query and returns the updated UserRole entity.
 func (uruo *UserRoleUpdateOne) Save(ctx context.Context) (*UserRole, error) {
+	uruo.defaults()
 	return withHooks(ctx, uruo.sqlSave, uruo.mutation, uruo.hooks)
 }
 
@@ -258,6 +284,14 @@ func (uruo *UserRoleUpdateOne) Exec(ctx context.Context) error {
 func (uruo *UserRoleUpdateOne) ExecX(ctx context.Context) {
 	if err := uruo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uruo *UserRoleUpdateOne) defaults() {
+	if _, ok := uruo.mutation.UpdatedAt(); !ok {
+		v := userrole.UpdateDefaultUpdatedAt()
+		uruo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -305,6 +339,9 @@ func (uruo *UserRoleUpdateOne) sqlSave(ctx context.Context) (_node *UserRole, er
 	}
 	if value, ok := uruo.mutation.UserID(); ok {
 		_spec.SetField(userrole.FieldUserID, field.TypeString, value)
+	}
+	if value, ok := uruo.mutation.UpdatedAt(); ok {
+		_spec.SetField(userrole.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if uruo.mutation.RoleCleared() {
 		edge := &sqlgraph.EdgeSpec{

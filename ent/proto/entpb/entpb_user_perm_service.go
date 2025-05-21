@@ -5,6 +5,7 @@ import (
 	context "context"
 	base64 "encoding/base64"
 	entproto "entgo.io/contrib/entproto"
+	runtime "entgo.io/contrib/entproto/runtime"
 	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	fmt "fmt"
 	uuid "github.com/google/uuid"
@@ -13,6 +14,7 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	strconv "strconv"
 )
 
@@ -32,6 +34,8 @@ func NewUserPermService(client *ent.Client) *UserPermService {
 // toProtoUserPerm transforms the ent type to the pb type
 func toProtoUserPerm(e *ent.UserPerm) (*UserPerm, error) {
 	v := &UserPerm{}
+	created_at := timestamppb.New(e.CreatedAt)
+	v.CreatedAt = created_at
 	id := int64(e.ID)
 	v.Id = id
 	perm_id, err := e.PermID.MarshalBinary()
@@ -39,6 +43,8 @@ func toProtoUserPerm(e *ent.UserPerm) (*UserPerm, error) {
 		return nil, err
 	}
 	v.PermId = perm_id
+	updated_at := timestamppb.New(e.UpdatedAt)
+	v.UpdatedAt = updated_at
 	user_id := e.UserID
 	v.UserId = user_id
 	return v, nil
@@ -115,11 +121,15 @@ func (svc *UserPermService) Update(ctx context.Context, req *UpdateUserPermReque
 	userperm := req.GetUserPerm()
 	userpermID := int(userperm.GetId())
 	m := svc.client.UserPerm.UpdateOneID(userpermID)
+	userpermCreatedAt := runtime.ExtractTime(userperm.GetCreatedAt())
+	m.SetCreatedAt(userpermCreatedAt)
 	var userpermPermID uuid.UUID
 	if err := (&userpermPermID).UnmarshalBinary(userperm.GetPermId()); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
 	}
 	m.SetPermID(userpermPermID)
+	userpermUpdatedAt := runtime.ExtractTime(userperm.GetUpdatedAt())
+	m.SetUpdatedAt(userpermUpdatedAt)
 	userpermUserID := userperm.GetUserId()
 	m.SetUserID(userpermUserID)
 
@@ -253,11 +263,15 @@ func (svc *UserPermService) BatchCreate(ctx context.Context, req *BatchCreateUse
 
 func (svc *UserPermService) createBuilder(userperm *UserPerm) (*ent.UserPermCreate, error) {
 	m := svc.client.UserPerm.Create()
+	userpermCreatedAt := runtime.ExtractTime(userperm.GetCreatedAt())
+	m.SetCreatedAt(userpermCreatedAt)
 	var userpermPermID uuid.UUID
 	if err := (&userpermPermID).UnmarshalBinary(userperm.GetPermId()); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
 	}
 	m.SetPermID(userpermPermID)
+	userpermUpdatedAt := runtime.ExtractTime(userperm.GetUpdatedAt())
+	m.SetUpdatedAt(userpermUpdatedAt)
 	userpermUserID := userperm.GetUserId()
 	m.SetUserID(userpermUserID)
 	return m, nil

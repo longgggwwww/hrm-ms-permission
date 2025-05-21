@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -56,6 +57,26 @@ func (upu *UserPermUpdate) SetNillablePermID(u *uuid.UUID) *UserPermUpdate {
 	return upu
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (upu *UserPermUpdate) SetCreatedAt(t time.Time) *UserPermUpdate {
+	upu.mutation.SetCreatedAt(t)
+	return upu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (upu *UserPermUpdate) SetNillableCreatedAt(t *time.Time) *UserPermUpdate {
+	if t != nil {
+		upu.SetCreatedAt(*t)
+	}
+	return upu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (upu *UserPermUpdate) SetUpdatedAt(t time.Time) *UserPermUpdate {
+	upu.mutation.SetUpdatedAt(t)
+	return upu
+}
+
 // Mutation returns the UserPermMutation object of the builder.
 func (upu *UserPermUpdate) Mutation() *UserPermMutation {
 	return upu.mutation
@@ -63,6 +84,7 @@ func (upu *UserPermUpdate) Mutation() *UserPermMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (upu *UserPermUpdate) Save(ctx context.Context) (int, error) {
+	upu.defaults()
 	return withHooks(ctx, upu.sqlSave, upu.mutation, upu.hooks)
 }
 
@@ -85,6 +107,14 @@ func (upu *UserPermUpdate) Exec(ctx context.Context) error {
 func (upu *UserPermUpdate) ExecX(ctx context.Context) {
 	if err := upu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (upu *UserPermUpdate) defaults() {
+	if _, ok := upu.mutation.UpdatedAt(); !ok {
+		v := userperm.UpdateDefaultUpdatedAt()
+		upu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -115,6 +145,12 @@ func (upu *UserPermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := upu.mutation.PermID(); ok {
 		_spec.SetField(userperm.FieldPermID, field.TypeUUID, value)
+	}
+	if value, ok := upu.mutation.CreatedAt(); ok {
+		_spec.SetField(userperm.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := upu.mutation.UpdatedAt(); ok {
+		_spec.SetField(userperm.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, upu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -164,6 +200,26 @@ func (upuo *UserPermUpdateOne) SetNillablePermID(u *uuid.UUID) *UserPermUpdateOn
 	return upuo
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (upuo *UserPermUpdateOne) SetCreatedAt(t time.Time) *UserPermUpdateOne {
+	upuo.mutation.SetCreatedAt(t)
+	return upuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (upuo *UserPermUpdateOne) SetNillableCreatedAt(t *time.Time) *UserPermUpdateOne {
+	if t != nil {
+		upuo.SetCreatedAt(*t)
+	}
+	return upuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (upuo *UserPermUpdateOne) SetUpdatedAt(t time.Time) *UserPermUpdateOne {
+	upuo.mutation.SetUpdatedAt(t)
+	return upuo
+}
+
 // Mutation returns the UserPermMutation object of the builder.
 func (upuo *UserPermUpdateOne) Mutation() *UserPermMutation {
 	return upuo.mutation
@@ -184,6 +240,7 @@ func (upuo *UserPermUpdateOne) Select(field string, fields ...string) *UserPermU
 
 // Save executes the query and returns the updated UserPerm entity.
 func (upuo *UserPermUpdateOne) Save(ctx context.Context) (*UserPerm, error) {
+	upuo.defaults()
 	return withHooks(ctx, upuo.sqlSave, upuo.mutation, upuo.hooks)
 }
 
@@ -206,6 +263,14 @@ func (upuo *UserPermUpdateOne) Exec(ctx context.Context) error {
 func (upuo *UserPermUpdateOne) ExecX(ctx context.Context) {
 	if err := upuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (upuo *UserPermUpdateOne) defaults() {
+	if _, ok := upuo.mutation.UpdatedAt(); !ok {
+		v := userperm.UpdateDefaultUpdatedAt()
+		upuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -253,6 +318,12 @@ func (upuo *UserPermUpdateOne) sqlSave(ctx context.Context) (_node *UserPerm, er
 	}
 	if value, ok := upuo.mutation.PermID(); ok {
 		_spec.SetField(userperm.FieldPermID, field.TypeUUID, value)
+	}
+	if value, ok := upuo.mutation.CreatedAt(); ok {
+		_spec.SetField(userperm.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := upuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(userperm.FieldUpdatedAt, field.TypeTime, value)
 	}
 	_node = &UserPerm{config: upuo.config}
 	_spec.Assign = _node.assignValues
