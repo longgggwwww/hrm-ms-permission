@@ -328,9 +328,8 @@ const file_entpb_ext_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
 	"\brole_ids\x18\x02 \x03(\tR\aroleIds\"3\n" +
 	"\x17UpdateUserRolesResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\xe4\x02\n" +
-	"\n" +
-	"ExtService\x12X\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xe8\x02\n" +
+	"\x0ePermExtService\x12X\n" +
 	"\x17DeleteUserPermsByUserID\x12%.entpb.DeleteUserPermsByUserIDRequest\x1a\x16.google.protobuf.Empty\x12X\n" +
 	"\x17DeleteUserRolesByUserID\x12%.entpb.DeleteUserRolesByUserIDRequest\x1a\x16.google.protobuf.Empty\x12P\n" +
 	"\x0fUpdateUserPerms\x12\x1d.entpb.UpdateUserPermsRequest\x1a\x1e.entpb.UpdateUserPermsResponse\x12P\n" +
@@ -359,14 +358,14 @@ var file_entpb_ext_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),                  // 6: google.protobuf.Empty
 }
 var file_entpb_ext_proto_depIdxs = []int32{
-	0, // 0: entpb.ExtService.DeleteUserPermsByUserID:input_type -> entpb.DeleteUserPermsByUserIDRequest
-	1, // 1: entpb.ExtService.DeleteUserRolesByUserID:input_type -> entpb.DeleteUserRolesByUserIDRequest
-	2, // 2: entpb.ExtService.UpdateUserPerms:input_type -> entpb.UpdateUserPermsRequest
-	4, // 3: entpb.ExtService.UpdateUserRoles:input_type -> entpb.UpdateUserRolesRequest
-	6, // 4: entpb.ExtService.DeleteUserPermsByUserID:output_type -> google.protobuf.Empty
-	6, // 5: entpb.ExtService.DeleteUserRolesByUserID:output_type -> google.protobuf.Empty
-	3, // 6: entpb.ExtService.UpdateUserPerms:output_type -> entpb.UpdateUserPermsResponse
-	5, // 7: entpb.ExtService.UpdateUserRoles:output_type -> entpb.UpdateUserRolesResponse
+	0, // 0: entpb.PermExtService.DeleteUserPermsByUserID:input_type -> entpb.DeleteUserPermsByUserIDRequest
+	1, // 1: entpb.PermExtService.DeleteUserRolesByUserID:input_type -> entpb.DeleteUserRolesByUserIDRequest
+	2, // 2: entpb.PermExtService.UpdateUserPerms:input_type -> entpb.UpdateUserPermsRequest
+	4, // 3: entpb.PermExtService.UpdateUserRoles:input_type -> entpb.UpdateUserRolesRequest
+	6, // 4: entpb.PermExtService.DeleteUserPermsByUserID:output_type -> google.protobuf.Empty
+	6, // 5: entpb.PermExtService.DeleteUserRolesByUserID:output_type -> google.protobuf.Empty
+	3, // 6: entpb.PermExtService.UpdateUserPerms:output_type -> entpb.UpdateUserPermsResponse
+	5, // 7: entpb.PermExtService.UpdateUserRoles:output_type -> entpb.UpdateUserRolesResponse
 	4, // [4:8] is the sub-list for method output_type
 	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

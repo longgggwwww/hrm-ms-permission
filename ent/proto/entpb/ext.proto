@@ -7,7 +7,7 @@ option go_package = "github.com/longgggwwww/hr-ms-permission/ent/proto/entpb";
 import "google/protobuf/empty.proto";
 
 // ExtService defines operations for managing user permissions and roles
-service ExtService {
+service PermExtService {
   // Delete all UserPerms by user_id
   rpc DeleteUserPermsByUserID (DeleteUserPermsByUserIDRequest) returns (google.protobuf.Empty);
   // Delete all UserRoles by user_id

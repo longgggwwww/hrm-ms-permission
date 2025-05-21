@@ -30,7 +30,7 @@ func startGRPCServer(cli *ent.Client) {
 	entpb.RegisterRoleServiceServer(server, role)
 	entpb.RegisterUserRoleServiceServer(server, userRole)
 	entpb.RegisterUserPermServiceServer(server, userPerm)
-	entpb.RegisterExtServiceServer(server, entpb.NewExtService(cli))
+	entpb.RegisterPermExtServiceServer(server, entpb.NewPermExtService(cli))
 
 	lis, err := net.Listen("tcp", ":5000")
 	if err != nil {
