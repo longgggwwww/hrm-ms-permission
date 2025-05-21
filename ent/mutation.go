@@ -39,21 +39,24 @@ const (
 // PermMutation represents an operation that mutates the Perm nodes in the graph.
 type PermMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	code          *string
-	name          *string
-	description   *string
-	clearedFields map[string]struct{}
-	group         *uuid.UUID
-	clearedgroup  bool
-	roles         map[uuid.UUID]struct{}
-	removedroles  map[uuid.UUID]struct{}
-	clearedroles  bool
-	done          bool
-	oldValue      func(context.Context) (*Perm, error)
-	predicates    []predicate.Perm
+	op                Op
+	typ               string
+	id                *uuid.UUID
+	code              *string
+	name              *string
+	description       *string
+	clearedFields     map[string]struct{}
+	group             *uuid.UUID
+	clearedgroup      bool
+	roles             map[uuid.UUID]struct{}
+	removedroles      map[uuid.UUID]struct{}
+	clearedroles      bool
+	user_perms        map[int]struct{}
+	removeduser_perms map[int]struct{}
+	cleareduser_perms bool
+	done              bool
+	oldValue          func(context.Context) (*Perm, error)
+	predicates        []predicate.Perm
 }
 
 var _ ent.Mutation = (*PermMutation)(nil)
@@ -374,6 +377,60 @@ func (m *PermMutation) ResetRoles() {
 	m.removedroles = nil
 }
 
+// AddUserPermIDs adds the "user_perms" edge to the UserPerm entity by ids.
+func (m *PermMutation) AddUserPermIDs(ids ...int) {
+	if m.user_perms == nil {
+		m.user_perms = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.user_perms[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUserPerms clears the "user_perms" edge to the UserPerm entity.
+func (m *PermMutation) ClearUserPerms() {
+	m.cleareduser_perms = true
+}
+
+// UserPermsCleared reports if the "user_perms" edge to the UserPerm entity was cleared.
+func (m *PermMutation) UserPermsCleared() bool {
+	return m.cleareduser_perms
+}
+
+// RemoveUserPermIDs removes the "user_perms" edge to the UserPerm entity by IDs.
+func (m *PermMutation) RemoveUserPermIDs(ids ...int) {
+	if m.removeduser_perms == nil {
+		m.removeduser_perms = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.user_perms, ids[i])
+		m.removeduser_perms[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUserPerms returns the removed IDs of the "user_perms" edge to the UserPerm entity.
+func (m *PermMutation) RemovedUserPermsIDs() (ids []int) {
+	for id := range m.removeduser_perms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UserPermsIDs returns the "user_perms" edge IDs in the mutation.
+func (m *PermMutation) UserPermsIDs() (ids []int) {
+	for id := range m.user_perms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUserPerms resets all changes to the "user_perms" edge.
+func (m *PermMutation) ResetUserPerms() {
+	m.user_perms = nil
+	m.cleareduser_perms = false
+	m.removeduser_perms = nil
+}
+
 // Where appends a list predicates to the PermMutation builder.
 func (m *PermMutation) Where(ps ...predicate.Perm) {
 	m.predicates = append(m.predicates, ps...)
@@ -550,12 +607,15 @@ func (m *PermMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PermMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.group != nil {
 		edges = append(edges, perm.EdgeGroup)
 	}
 	if m.roles != nil {
 		edges = append(edges, perm.EdgeRoles)
+	}
+	if m.user_perms != nil {
+		edges = append(edges, perm.EdgeUserPerms)
 	}
 	return edges
 }
@@ -574,15 +634,24 @@ func (m *PermMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case perm.EdgeUserPerms:
+		ids := make([]ent.Value, 0, len(m.user_perms))
+		for id := range m.user_perms {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PermMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedroles != nil {
 		edges = append(edges, perm.EdgeRoles)
+	}
+	if m.removeduser_perms != nil {
+		edges = append(edges, perm.EdgeUserPerms)
 	}
 	return edges
 }
@@ -597,18 +666,27 @@ func (m *PermMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case perm.EdgeUserPerms:
+		ids := make([]ent.Value, 0, len(m.removeduser_perms))
+		for id := range m.removeduser_perms {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PermMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedgroup {
 		edges = append(edges, perm.EdgeGroup)
 	}
 	if m.clearedroles {
 		edges = append(edges, perm.EdgeRoles)
+	}
+	if m.cleareduser_perms {
+		edges = append(edges, perm.EdgeUserPerms)
 	}
 	return edges
 }
@@ -621,6 +699,8 @@ func (m *PermMutation) EdgeCleared(name string) bool {
 		return m.clearedgroup
 	case perm.EdgeRoles:
 		return m.clearedroles
+	case perm.EdgeUserPerms:
+		return m.cleareduser_perms
 	}
 	return false
 }
@@ -645,6 +725,9 @@ func (m *PermMutation) ResetEdge(name string) error {
 		return nil
 	case perm.EdgeRoles:
 		m.ResetRoles()
+		return nil
+	case perm.EdgeUserPerms:
+		m.ResetUserPerms()
 		return nil
 	}
 	return fmt.Errorf("unknown Perm edge %s", name)
@@ -1847,10 +1930,11 @@ type UserPermMutation struct {
 	typ           string
 	id            *int
 	user_id       *string
-	perm_id       *uuid.UUID
 	created_at    *time.Time
 	updated_at    *time.Time
 	clearedFields map[string]struct{}
+	perm          *uuid.UUID
+	clearedperm   bool
 	done          bool
 	oldValue      func(context.Context) (*UserPerm, error)
 	predicates    []predicate.UserPerm
@@ -1992,12 +2076,12 @@ func (m *UserPermMutation) ResetUserID() {
 
 // SetPermID sets the "perm_id" field.
 func (m *UserPermMutation) SetPermID(u uuid.UUID) {
-	m.perm_id = &u
+	m.perm = &u
 }
 
 // PermID returns the value of the "perm_id" field in the mutation.
 func (m *UserPermMutation) PermID() (r uuid.UUID, exists bool) {
-	v := m.perm_id
+	v := m.perm
 	if v == nil {
 		return
 	}
@@ -2023,7 +2107,7 @@ func (m *UserPermMutation) OldPermID(ctx context.Context) (v uuid.UUID, err erro
 
 // ResetPermID resets all changes to the "perm_id" field.
 func (m *UserPermMutation) ResetPermID() {
-	m.perm_id = nil
+	m.perm = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -2098,6 +2182,33 @@ func (m *UserPermMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
+// ClearPerm clears the "perm" edge to the Perm entity.
+func (m *UserPermMutation) ClearPerm() {
+	m.clearedperm = true
+	m.clearedFields[userperm.FieldPermID] = struct{}{}
+}
+
+// PermCleared reports if the "perm" edge to the Perm entity was cleared.
+func (m *UserPermMutation) PermCleared() bool {
+	return m.clearedperm
+}
+
+// PermIDs returns the "perm" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PermID instead. It exists only for internal usage by the builders.
+func (m *UserPermMutation) PermIDs() (ids []uuid.UUID) {
+	if id := m.perm; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPerm resets all changes to the "perm" edge.
+func (m *UserPermMutation) ResetPerm() {
+	m.perm = nil
+	m.clearedperm = false
+}
+
 // Where appends a list predicates to the UserPermMutation builder.
 func (m *UserPermMutation) Where(ps ...predicate.UserPerm) {
 	m.predicates = append(m.predicates, ps...)
@@ -2136,7 +2247,7 @@ func (m *UserPermMutation) Fields() []string {
 	if m.user_id != nil {
 		fields = append(fields, userperm.FieldUserID)
 	}
-	if m.perm_id != nil {
+	if m.perm != nil {
 		fields = append(fields, userperm.FieldPermID)
 	}
 	if m.created_at != nil {
@@ -2282,19 +2393,28 @@ func (m *UserPermMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserPermMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.perm != nil {
+		edges = append(edges, userperm.EdgePerm)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *UserPermMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case userperm.EdgePerm:
+		if id := m.perm; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserPermMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -2306,25 +2426,42 @@ func (m *UserPermMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserPermMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedperm {
+		edges = append(edges, userperm.EdgePerm)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *UserPermMutation) EdgeCleared(name string) bool {
+	switch name {
+	case userperm.EdgePerm:
+		return m.clearedperm
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *UserPermMutation) ClearEdge(name string) error {
+	switch name {
+	case userperm.EdgePerm:
+		m.ClearPerm()
+		return nil
+	}
 	return fmt.Errorf("unknown UserPerm unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *UserPermMutation) ResetEdge(name string) error {
+	switch name {
+	case userperm.EdgePerm:
+		m.ResetPerm()
+		return nil
+	}
 	return fmt.Errorf("unknown UserPerm edge %s", name)
 }
 

@@ -15,6 +15,7 @@ import (
 	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 )
 
 // PermCreate is the builder for creating a Perm entity.
@@ -97,6 +98,21 @@ func (pc *PermCreate) AddRoles(r ...*Role) *PermCreate {
 		ids[i] = r[i].ID
 	}
 	return pc.AddRoleIDs(ids...)
+}
+
+// AddUserPermIDs adds the "user_perms" edge to the UserPerm entity by IDs.
+func (pc *PermCreate) AddUserPermIDs(ids ...int) *PermCreate {
+	pc.mutation.AddUserPermIDs(ids...)
+	return pc
+}
+
+// AddUserPerms adds the "user_perms" edges to the UserPerm entity.
+func (pc *PermCreate) AddUserPerms(u ...*UserPerm) *PermCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return pc.AddUserPermIDs(ids...)
 }
 
 // Mutation returns the PermMutation object of the builder.
@@ -227,6 +243,22 @@ func (pc *PermCreate) createSpec() (*Perm, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.UserPermsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   perm.UserPermsTable,
+			Columns: []string{perm.UserPermsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -378,6 +378,22 @@ func (c *PermClient) QueryRoles(pe *Perm) *RoleQuery {
 	return query
 }
 
+// QueryUserPerms queries the user_perms edge of a Perm.
+func (c *PermClient) QueryUserPerms(pe *Perm) *UserPermQuery {
+	query := (&UserPermClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pe.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(perm.Table, perm.FieldID, id),
+			sqlgraph.To(userperm.Table, userperm.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, perm.UserPermsTable, perm.UserPermsColumn),
+		)
+		fromV = sqlgraph.Neighbors(pe.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PermClient) Hooks() []Hook {
 	return c.hooks.Perm
@@ -823,6 +839,22 @@ func (c *UserPermClient) GetX(ctx context.Context, id int) *UserPerm {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryPerm queries the perm edge of a UserPerm.
+func (c *UserPermClient) QueryPerm(up *UserPerm) *PermQuery {
+	query := (&PermClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := up.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userperm.Table, userperm.FieldID, id),
+			sqlgraph.To(perm.Table, perm.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, userperm.PermTable, userperm.PermColumn),
+		)
+		fromV = sqlgraph.Neighbors(up.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

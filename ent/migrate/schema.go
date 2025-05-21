@@ -60,20 +60,28 @@ var (
 	UserPermsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "user_id", Type: field.TypeString},
-		{Name: "perm_id", Type: field.TypeUUID},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "perm_id", Type: field.TypeUUID},
 	}
 	// UserPermsTable holds the schema information for the "user_perms" table.
 	UserPermsTable = &schema.Table{
 		Name:       "user_perms",
 		Columns:    UserPermsColumns,
 		PrimaryKey: []*schema.Column{UserPermsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_perms_perms_user_perms",
+				Columns:    []*schema.Column{UserPermsColumns[4]},
+				RefColumns: []*schema.Column{PermsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "userperm_perm_id_user_id",
 				Unique:  true,
-				Columns: []*schema.Column{UserPermsColumns[2], UserPermsColumns[1]},
+				Columns: []*schema.Column{UserPermsColumns[4], UserPermsColumns[1]},
 			},
 		},
 	}
@@ -144,6 +152,7 @@ var (
 
 func init() {
 	PermsTable.ForeignKeys[0].RefTable = PermGroupsTable
+	UserPermsTable.ForeignKeys[0].RefTable = PermsTable
 	UserRolesTable.ForeignKeys[0].RefTable = RolesTable
 	RolePermsTable.ForeignKeys[0].RefTable = RolesTable
 	RolePermsTable.ForeignKeys[1].RefTable = PermsTable

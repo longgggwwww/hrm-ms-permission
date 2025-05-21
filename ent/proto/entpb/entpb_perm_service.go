@@ -12,6 +12,7 @@ import (
 	perm "github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	permgroup "github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	role "github.com/longgggwwww/hrm-ms-permission/ent/role"
+	userperm "github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -60,6 +61,12 @@ func toProtoPerm(e *ent.Perm) (*Perm, error) {
 			return nil, err
 		}
 		v.Roles = append(v.Roles, &Role{
+			Id: id,
+		})
+	}
+	for _, edg := range e.Edges.UserPerms {
+		id := int64(edg.ID)
+		v.UserPerms = append(v.UserPerms, &UserPerm{
 			Id: id,
 		})
 	}
@@ -126,6 +133,9 @@ func (svc *PermService) Get(ctx context.Context, req *GetPermRequest) (*Perm, er
 			WithRoles(func(query *ent.RoleQuery) {
 				query.Select(role.FieldID)
 			}).
+			WithUserPerms(func(query *ent.UserPermQuery) {
+				query.Select(userperm.FieldID)
+			}).
 			Only(ctx)
 	default:
 		return nil, status.Error(codes.InvalidArgument, "invalid argument: unknown view")
@@ -170,6 +180,10 @@ func (svc *PermService) Update(ctx context.Context, req *UpdatePermRequest) (*Pe
 			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
 		}
 		m.AddRoleIDs(roles)
+	}
+	for _, item := range perm.GetUserPerms() {
+		userperms := int(item.GetId())
+		m.AddUserPermIDs(userperms)
 	}
 
 	res, err := m.Save(ctx)
@@ -248,6 +262,9 @@ func (svc *PermService) List(ctx context.Context, req *ListPermRequest) (*ListPe
 			}).
 			WithRoles(func(query *ent.RoleQuery) {
 				query.Select(role.FieldID)
+			}).
+			WithUserPerms(func(query *ent.UserPermQuery) {
+				query.Select(userperm.FieldID)
 			}).
 			All(ctx)
 	}
@@ -331,6 +348,10 @@ func (svc *PermService) createBuilder(perm *Perm) (*ent.PermCreate, error) {
 			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
 		}
 		m.AddRoleIDs(roles)
+	}
+	for _, item := range perm.GetUserPerms() {
+		userperms := int(item.GetId())
+		m.AddUserPermIDs(userperms)
 	}
 	return m, nil
 }

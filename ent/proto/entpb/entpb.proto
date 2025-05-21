@@ -23,6 +23,8 @@ message Perm {
   PermGroup group = 5;
 
   repeated Role roles = 6;
+
+  repeated UserPerm user_perms = 7;
 }
 
 message CreatePermRequest {
@@ -229,6 +231,8 @@ message UserPerm {
   google.protobuf.Timestamp created_at = 4;
 
   google.protobuf.Timestamp updated_at = 5;
+
+  Perm perm = 6;
 }
 
 message CreateUserPermRequest {

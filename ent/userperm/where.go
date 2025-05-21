@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 )
@@ -160,26 +161,6 @@ func PermIDNotIn(vs ...uuid.UUID) predicate.UserPerm {
 	return predicate.UserPerm(sql.FieldNotIn(FieldPermID, vs...))
 }
 
-// PermIDGT applies the GT predicate on the "perm_id" field.
-func PermIDGT(v uuid.UUID) predicate.UserPerm {
-	return predicate.UserPerm(sql.FieldGT(FieldPermID, v))
-}
-
-// PermIDGTE applies the GTE predicate on the "perm_id" field.
-func PermIDGTE(v uuid.UUID) predicate.UserPerm {
-	return predicate.UserPerm(sql.FieldGTE(FieldPermID, v))
-}
-
-// PermIDLT applies the LT predicate on the "perm_id" field.
-func PermIDLT(v uuid.UUID) predicate.UserPerm {
-	return predicate.UserPerm(sql.FieldLT(FieldPermID, v))
-}
-
-// PermIDLTE applies the LTE predicate on the "perm_id" field.
-func PermIDLTE(v uuid.UUID) predicate.UserPerm {
-	return predicate.UserPerm(sql.FieldLTE(FieldPermID, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.UserPerm {
 	return predicate.UserPerm(sql.FieldEQ(FieldCreatedAt, v))
@@ -258,6 +239,29 @@ func UpdatedAtLT(v time.Time) predicate.UserPerm {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.UserPerm {
 	return predicate.UserPerm(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// HasPerm applies the HasEdge predicate on the "perm" edge.
+func HasPerm() predicate.UserPerm {
+	return predicate.UserPerm(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PermTable, PermColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPermWith applies the HasEdge predicate on the "perm" edge with a given conditions (other predicates).
+func HasPermWith(preds ...predicate.Perm) predicate.UserPerm {
+	return predicate.UserPerm(func(s *sql.Selector) {
+		step := newPermStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

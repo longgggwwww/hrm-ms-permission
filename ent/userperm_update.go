@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 )
@@ -77,9 +78,20 @@ func (upu *UserPermUpdate) SetUpdatedAt(t time.Time) *UserPermUpdate {
 	return upu
 }
 
+// SetPerm sets the "perm" edge to the Perm entity.
+func (upu *UserPermUpdate) SetPerm(p *Perm) *UserPermUpdate {
+	return upu.SetPermID(p.ID)
+}
+
 // Mutation returns the UserPermMutation object of the builder.
 func (upu *UserPermUpdate) Mutation() *UserPermMutation {
 	return upu.mutation
+}
+
+// ClearPerm clears the "perm" edge to the Perm entity.
+func (upu *UserPermUpdate) ClearPerm() *UserPermUpdate {
+	upu.mutation.ClearPerm()
+	return upu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -125,6 +137,9 @@ func (upu *UserPermUpdate) check() error {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "UserPerm.user_id": %w`, err)}
 		}
 	}
+	if upu.mutation.PermCleared() && len(upu.mutation.PermIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "UserPerm.perm"`)
+	}
 	return nil
 }
 
@@ -143,14 +158,40 @@ func (upu *UserPermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := upu.mutation.UserID(); ok {
 		_spec.SetField(userperm.FieldUserID, field.TypeString, value)
 	}
-	if value, ok := upu.mutation.PermID(); ok {
-		_spec.SetField(userperm.FieldPermID, field.TypeUUID, value)
-	}
 	if value, ok := upu.mutation.CreatedAt(); ok {
 		_spec.SetField(userperm.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := upu.mutation.UpdatedAt(); ok {
 		_spec.SetField(userperm.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if upu.mutation.PermCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   userperm.PermTable,
+			Columns: []string{userperm.PermColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := upu.mutation.PermIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   userperm.PermTable,
+			Columns: []string{userperm.PermColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, upu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -220,9 +261,20 @@ func (upuo *UserPermUpdateOne) SetUpdatedAt(t time.Time) *UserPermUpdateOne {
 	return upuo
 }
 
+// SetPerm sets the "perm" edge to the Perm entity.
+func (upuo *UserPermUpdateOne) SetPerm(p *Perm) *UserPermUpdateOne {
+	return upuo.SetPermID(p.ID)
+}
+
 // Mutation returns the UserPermMutation object of the builder.
 func (upuo *UserPermUpdateOne) Mutation() *UserPermMutation {
 	return upuo.mutation
+}
+
+// ClearPerm clears the "perm" edge to the Perm entity.
+func (upuo *UserPermUpdateOne) ClearPerm() *UserPermUpdateOne {
+	upuo.mutation.ClearPerm()
+	return upuo
 }
 
 // Where appends a list predicates to the UserPermUpdate builder.
@@ -281,6 +333,9 @@ func (upuo *UserPermUpdateOne) check() error {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "UserPerm.user_id": %w`, err)}
 		}
 	}
+	if upuo.mutation.PermCleared() && len(upuo.mutation.PermIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "UserPerm.perm"`)
+	}
 	return nil
 }
 
@@ -316,14 +371,40 @@ func (upuo *UserPermUpdateOne) sqlSave(ctx context.Context) (_node *UserPerm, er
 	if value, ok := upuo.mutation.UserID(); ok {
 		_spec.SetField(userperm.FieldUserID, field.TypeString, value)
 	}
-	if value, ok := upuo.mutation.PermID(); ok {
-		_spec.SetField(userperm.FieldPermID, field.TypeUUID, value)
-	}
 	if value, ok := upuo.mutation.CreatedAt(); ok {
 		_spec.SetField(userperm.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := upuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(userperm.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if upuo.mutation.PermCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   userperm.PermTable,
+			Columns: []string{userperm.PermColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := upuo.mutation.PermIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   userperm.PermTable,
+			Columns: []string{userperm.PermColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &UserPerm{config: upuo.config}
 	_spec.Assign = _node.assignValues

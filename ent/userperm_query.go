@@ -11,6 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 )
@@ -22,6 +24,7 @@ type UserPermQuery struct {
 	order      []userperm.OrderOption
 	inters     []Interceptor
 	predicates []predicate.UserPerm
+	withPerm   *PermQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,6 +59,28 @@ func (upq *UserPermQuery) Unique(unique bool) *UserPermQuery {
 func (upq *UserPermQuery) Order(o ...userperm.OrderOption) *UserPermQuery {
 	upq.order = append(upq.order, o...)
 	return upq
+}
+
+// QueryPerm chains the current query on the "perm" edge.
+func (upq *UserPermQuery) QueryPerm() *PermQuery {
+	query := (&PermClient{config: upq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := upq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := upq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userperm.Table, userperm.FieldID, selector),
+			sqlgraph.To(perm.Table, perm.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, userperm.PermTable, userperm.PermColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(upq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first UserPerm entity from the query.
@@ -250,10 +275,22 @@ func (upq *UserPermQuery) Clone() *UserPermQuery {
 		order:      append([]userperm.OrderOption{}, upq.order...),
 		inters:     append([]Interceptor{}, upq.inters...),
 		predicates: append([]predicate.UserPerm{}, upq.predicates...),
+		withPerm:   upq.withPerm.Clone(),
 		// clone intermediate query.
 		sql:  upq.sql.Clone(),
 		path: upq.path,
 	}
+}
+
+// WithPerm tells the query-builder to eager-load the nodes that are connected to
+// the "perm" edge. The optional arguments are used to configure the query builder of the edge.
+func (upq *UserPermQuery) WithPerm(opts ...func(*PermQuery)) *UserPermQuery {
+	query := (&PermClient{config: upq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	upq.withPerm = query
+	return upq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -332,8 +369,11 @@ func (upq *UserPermQuery) prepareQuery(ctx context.Context) error {
 
 func (upq *UserPermQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*UserPerm, error) {
 	var (
-		nodes = []*UserPerm{}
-		_spec = upq.querySpec()
+		nodes       = []*UserPerm{}
+		_spec       = upq.querySpec()
+		loadedTypes = [1]bool{
+			upq.withPerm != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*UserPerm).scanValues(nil, columns)
@@ -341,6 +381,7 @@ func (upq *UserPermQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Us
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &UserPerm{config: upq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -352,7 +393,43 @@ func (upq *UserPermQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Us
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := upq.withPerm; query != nil {
+		if err := upq.loadPerm(ctx, query, nodes, nil,
+			func(n *UserPerm, e *Perm) { n.Edges.Perm = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (upq *UserPermQuery) loadPerm(ctx context.Context, query *PermQuery, nodes []*UserPerm, init func(*UserPerm), assign func(*UserPerm, *Perm)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*UserPerm)
+	for i := range nodes {
+		fk := nodes[i].PermID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(perm.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "perm_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (upq *UserPermQuery) sqlCount(ctx context.Context) (int, error) {
@@ -379,6 +456,9 @@ func (upq *UserPermQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != userperm.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if upq.withPerm != nil {
+			_spec.Node.AddColumnOnce(userperm.FieldPermID)
 		}
 	}
 	if ps := upq.predicates; len(ps) > 0 {

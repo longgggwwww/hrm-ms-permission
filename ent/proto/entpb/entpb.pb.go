@@ -524,6 +524,7 @@ type Perm struct {
 	Description   *wrapperspb.StringValue `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	Group         *PermGroup              `protobuf:"bytes,5,opt,name=group,proto3" json:"group,omitempty"`
 	Roles         []*Role                 `protobuf:"bytes,6,rep,name=roles,proto3" json:"roles,omitempty"`
+	UserPerms     []*UserPerm             `protobuf:"bytes,7,rep,name=user_perms,json=userPerms,proto3" json:"user_perms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -596,6 +597,13 @@ func (x *Perm) GetGroup() *PermGroup {
 func (x *Perm) GetRoles() []*Role {
 	if x != nil {
 		return x.Roles
+	}
+	return nil
+}
+
+func (x *Perm) GetUserPerms() []*UserPerm {
+	if x != nil {
+		return x.UserPerms
 	}
 	return nil
 }
@@ -1919,6 +1927,7 @@ type UserPerm struct {
 	PermId        []byte                 `protobuf:"bytes,3,opt,name=perm_id,json=permId,proto3" json:"perm_id,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Perm          *Perm                  `protobuf:"bytes,6,opt,name=perm,proto3" json:"perm,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1984,6 +1993,13 @@ func (x *UserPerm) GetCreatedAt() *timestamppb.Timestamp {
 func (x *UserPerm) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *UserPerm) GetPerm() *Perm {
+	if x != nil {
+		return x.Perm
 	}
 	return nil
 }
@@ -2844,14 +2860,16 @@ var File_entpb_entpb_proto protoreflect.FileDescriptor
 
 const file_entpb_entpb_proto_rawDesc = "" +
 	"\n" +
-	"\x11entpb/entpb.proto\x12\x05entpb\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xc9\x01\n" +
+	"\x11entpb/entpb.proto\x12\x05entpb\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xf9\x01\n" +
 	"\x04Perm\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\fR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12>\n" +
 	"\vdescription\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueR\vdescription\x12&\n" +
 	"\x05group\x18\x05 \x01(\v2\x10.entpb.PermGroupR\x05group\x12!\n" +
-	"\x05roles\x18\x06 \x03(\v2\v.entpb.RoleR\x05roles\"4\n" +
+	"\x05roles\x18\x06 \x03(\v2\v.entpb.RoleR\x05roles\x12.\n" +
+	"\n" +
+	"user_perms\x18\a \x03(\v2\x0f.entpb.UserPermR\tuserPerms\"4\n" +
 	"\x11CreatePermRequest\x12\x1f\n" +
 	"\x04perm\x18\x01 \x01(\v2\v.entpb.PermR\x04perm\"\x8c\x01\n" +
 	"\x0eGetPermRequest\x12\x0e\n" +
@@ -2955,7 +2973,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x17BatchCreateRolesRequest\x124\n" +
 	"\brequests\x18\x01 \x03(\v2\x18.entpb.CreateRoleRequestR\brequests\"=\n" +
 	"\x18BatchCreateRolesResponse\x12!\n" +
-	"\x05roles\x18\x01 \x03(\v2\v.entpb.RoleR\x05roles\"\xc2\x01\n" +
+	"\x05roles\x18\x01 \x03(\v2\v.entpb.RoleR\x05roles\"\xe3\x01\n" +
 	"\bUserPerm\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x17\n" +
@@ -2963,7 +2981,8 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"E\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
+	"\x04perm\x18\x06 \x01(\v2\v.entpb.PermR\x04perm\"E\n" +
 	"\x15CreateUserPermRequest\x12,\n" +
 	"\tuser_perm\x18\x01 \x01(\v2\x0f.entpb.UserPermR\buserPerm\"\x94\x01\n" +
 	"\x12GetUserPermRequest\x12\x0e\n" +
@@ -3147,116 +3166,118 @@ var file_entpb_entpb_proto_depIdxs = []int32{
 	55, // 0: entpb.Perm.description:type_name -> google.protobuf.StringValue
 	19, // 1: entpb.Perm.group:type_name -> entpb.PermGroup
 	28, // 2: entpb.Perm.roles:type_name -> entpb.Role
-	10, // 3: entpb.CreatePermRequest.perm:type_name -> entpb.Perm
-	0,  // 4: entpb.GetPermRequest.view:type_name -> entpb.GetPermRequest.View
-	10, // 5: entpb.UpdatePermRequest.perm:type_name -> entpb.Perm
-	1,  // 6: entpb.ListPermRequest.view:type_name -> entpb.ListPermRequest.View
-	10, // 7: entpb.ListPermResponse.perm_list:type_name -> entpb.Perm
-	11, // 8: entpb.BatchCreatePermsRequest.requests:type_name -> entpb.CreatePermRequest
-	10, // 9: entpb.BatchCreatePermsResponse.perms:type_name -> entpb.Perm
-	10, // 10: entpb.PermGroup.perms:type_name -> entpb.Perm
-	19, // 11: entpb.CreatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
-	2,  // 12: entpb.GetPermGroupRequest.view:type_name -> entpb.GetPermGroupRequest.View
-	19, // 13: entpb.UpdatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
-	3,  // 14: entpb.ListPermGroupRequest.view:type_name -> entpb.ListPermGroupRequest.View
-	19, // 15: entpb.ListPermGroupResponse.perm_group_list:type_name -> entpb.PermGroup
-	20, // 16: entpb.BatchCreatePermGroupsRequest.requests:type_name -> entpb.CreatePermGroupRequest
-	19, // 17: entpb.BatchCreatePermGroupsResponse.perm_groups:type_name -> entpb.PermGroup
-	55, // 18: entpb.Role.color:type_name -> google.protobuf.StringValue
-	55, // 19: entpb.Role.description:type_name -> google.protobuf.StringValue
-	10, // 20: entpb.Role.perms:type_name -> entpb.Perm
-	46, // 21: entpb.Role.user_roles:type_name -> entpb.UserRole
-	28, // 22: entpb.CreateRoleRequest.role:type_name -> entpb.Role
-	4,  // 23: entpb.GetRoleRequest.view:type_name -> entpb.GetRoleRequest.View
-	28, // 24: entpb.UpdateRoleRequest.role:type_name -> entpb.Role
-	5,  // 25: entpb.ListRoleRequest.view:type_name -> entpb.ListRoleRequest.View
-	28, // 26: entpb.ListRoleResponse.role_list:type_name -> entpb.Role
-	29, // 27: entpb.BatchCreateRolesRequest.requests:type_name -> entpb.CreateRoleRequest
-	28, // 28: entpb.BatchCreateRolesResponse.roles:type_name -> entpb.Role
-	56, // 29: entpb.UserPerm.created_at:type_name -> google.protobuf.Timestamp
-	56, // 30: entpb.UserPerm.updated_at:type_name -> google.protobuf.Timestamp
-	37, // 31: entpb.CreateUserPermRequest.user_perm:type_name -> entpb.UserPerm
-	6,  // 32: entpb.GetUserPermRequest.view:type_name -> entpb.GetUserPermRequest.View
-	37, // 33: entpb.UpdateUserPermRequest.user_perm:type_name -> entpb.UserPerm
-	7,  // 34: entpb.ListUserPermRequest.view:type_name -> entpb.ListUserPermRequest.View
-	37, // 35: entpb.ListUserPermResponse.user_perm_list:type_name -> entpb.UserPerm
-	38, // 36: entpb.BatchCreateUserPermsRequest.requests:type_name -> entpb.CreateUserPermRequest
-	37, // 37: entpb.BatchCreateUserPermsResponse.user_perms:type_name -> entpb.UserPerm
-	56, // 38: entpb.UserRole.created_at:type_name -> google.protobuf.Timestamp
-	56, // 39: entpb.UserRole.updated_at:type_name -> google.protobuf.Timestamp
-	28, // 40: entpb.UserRole.role:type_name -> entpb.Role
-	46, // 41: entpb.CreateUserRoleRequest.user_role:type_name -> entpb.UserRole
-	8,  // 42: entpb.GetUserRoleRequest.view:type_name -> entpb.GetUserRoleRequest.View
-	46, // 43: entpb.UpdateUserRoleRequest.user_role:type_name -> entpb.UserRole
-	9,  // 44: entpb.ListUserRoleRequest.view:type_name -> entpb.ListUserRoleRequest.View
-	46, // 45: entpb.ListUserRoleResponse.user_role_list:type_name -> entpb.UserRole
-	47, // 46: entpb.BatchCreateUserRolesRequest.requests:type_name -> entpb.CreateUserRoleRequest
-	46, // 47: entpb.BatchCreateUserRolesResponse.user_roles:type_name -> entpb.UserRole
-	11, // 48: entpb.PermService.Create:input_type -> entpb.CreatePermRequest
-	12, // 49: entpb.PermService.Get:input_type -> entpb.GetPermRequest
-	13, // 50: entpb.PermService.Update:input_type -> entpb.UpdatePermRequest
-	14, // 51: entpb.PermService.Delete:input_type -> entpb.DeletePermRequest
-	15, // 52: entpb.PermService.List:input_type -> entpb.ListPermRequest
-	17, // 53: entpb.PermService.BatchCreate:input_type -> entpb.BatchCreatePermsRequest
-	20, // 54: entpb.PermGroupService.Create:input_type -> entpb.CreatePermGroupRequest
-	21, // 55: entpb.PermGroupService.Get:input_type -> entpb.GetPermGroupRequest
-	22, // 56: entpb.PermGroupService.Update:input_type -> entpb.UpdatePermGroupRequest
-	23, // 57: entpb.PermGroupService.Delete:input_type -> entpb.DeletePermGroupRequest
-	24, // 58: entpb.PermGroupService.List:input_type -> entpb.ListPermGroupRequest
-	26, // 59: entpb.PermGroupService.BatchCreate:input_type -> entpb.BatchCreatePermGroupsRequest
-	29, // 60: entpb.RoleService.Create:input_type -> entpb.CreateRoleRequest
-	30, // 61: entpb.RoleService.Get:input_type -> entpb.GetRoleRequest
-	31, // 62: entpb.RoleService.Update:input_type -> entpb.UpdateRoleRequest
-	32, // 63: entpb.RoleService.Delete:input_type -> entpb.DeleteRoleRequest
-	33, // 64: entpb.RoleService.List:input_type -> entpb.ListRoleRequest
-	35, // 65: entpb.RoleService.BatchCreate:input_type -> entpb.BatchCreateRolesRequest
-	38, // 66: entpb.UserPermService.Create:input_type -> entpb.CreateUserPermRequest
-	39, // 67: entpb.UserPermService.Get:input_type -> entpb.GetUserPermRequest
-	40, // 68: entpb.UserPermService.Update:input_type -> entpb.UpdateUserPermRequest
-	41, // 69: entpb.UserPermService.Delete:input_type -> entpb.DeleteUserPermRequest
-	42, // 70: entpb.UserPermService.List:input_type -> entpb.ListUserPermRequest
-	44, // 71: entpb.UserPermService.BatchCreate:input_type -> entpb.BatchCreateUserPermsRequest
-	47, // 72: entpb.UserRoleService.Create:input_type -> entpb.CreateUserRoleRequest
-	48, // 73: entpb.UserRoleService.Get:input_type -> entpb.GetUserRoleRequest
-	49, // 74: entpb.UserRoleService.Update:input_type -> entpb.UpdateUserRoleRequest
-	50, // 75: entpb.UserRoleService.Delete:input_type -> entpb.DeleteUserRoleRequest
-	51, // 76: entpb.UserRoleService.List:input_type -> entpb.ListUserRoleRequest
-	53, // 77: entpb.UserRoleService.BatchCreate:input_type -> entpb.BatchCreateUserRolesRequest
-	10, // 78: entpb.PermService.Create:output_type -> entpb.Perm
-	10, // 79: entpb.PermService.Get:output_type -> entpb.Perm
-	10, // 80: entpb.PermService.Update:output_type -> entpb.Perm
-	57, // 81: entpb.PermService.Delete:output_type -> google.protobuf.Empty
-	16, // 82: entpb.PermService.List:output_type -> entpb.ListPermResponse
-	18, // 83: entpb.PermService.BatchCreate:output_type -> entpb.BatchCreatePermsResponse
-	19, // 84: entpb.PermGroupService.Create:output_type -> entpb.PermGroup
-	19, // 85: entpb.PermGroupService.Get:output_type -> entpb.PermGroup
-	19, // 86: entpb.PermGroupService.Update:output_type -> entpb.PermGroup
-	57, // 87: entpb.PermGroupService.Delete:output_type -> google.protobuf.Empty
-	25, // 88: entpb.PermGroupService.List:output_type -> entpb.ListPermGroupResponse
-	27, // 89: entpb.PermGroupService.BatchCreate:output_type -> entpb.BatchCreatePermGroupsResponse
-	28, // 90: entpb.RoleService.Create:output_type -> entpb.Role
-	28, // 91: entpb.RoleService.Get:output_type -> entpb.Role
-	28, // 92: entpb.RoleService.Update:output_type -> entpb.Role
-	57, // 93: entpb.RoleService.Delete:output_type -> google.protobuf.Empty
-	34, // 94: entpb.RoleService.List:output_type -> entpb.ListRoleResponse
-	36, // 95: entpb.RoleService.BatchCreate:output_type -> entpb.BatchCreateRolesResponse
-	37, // 96: entpb.UserPermService.Create:output_type -> entpb.UserPerm
-	37, // 97: entpb.UserPermService.Get:output_type -> entpb.UserPerm
-	37, // 98: entpb.UserPermService.Update:output_type -> entpb.UserPerm
-	57, // 99: entpb.UserPermService.Delete:output_type -> google.protobuf.Empty
-	43, // 100: entpb.UserPermService.List:output_type -> entpb.ListUserPermResponse
-	45, // 101: entpb.UserPermService.BatchCreate:output_type -> entpb.BatchCreateUserPermsResponse
-	46, // 102: entpb.UserRoleService.Create:output_type -> entpb.UserRole
-	46, // 103: entpb.UserRoleService.Get:output_type -> entpb.UserRole
-	46, // 104: entpb.UserRoleService.Update:output_type -> entpb.UserRole
-	57, // 105: entpb.UserRoleService.Delete:output_type -> google.protobuf.Empty
-	52, // 106: entpb.UserRoleService.List:output_type -> entpb.ListUserRoleResponse
-	54, // 107: entpb.UserRoleService.BatchCreate:output_type -> entpb.BatchCreateUserRolesResponse
-	78, // [78:108] is the sub-list for method output_type
-	48, // [48:78] is the sub-list for method input_type
-	48, // [48:48] is the sub-list for extension type_name
-	48, // [48:48] is the sub-list for extension extendee
-	0,  // [0:48] is the sub-list for field type_name
+	37, // 3: entpb.Perm.user_perms:type_name -> entpb.UserPerm
+	10, // 4: entpb.CreatePermRequest.perm:type_name -> entpb.Perm
+	0,  // 5: entpb.GetPermRequest.view:type_name -> entpb.GetPermRequest.View
+	10, // 6: entpb.UpdatePermRequest.perm:type_name -> entpb.Perm
+	1,  // 7: entpb.ListPermRequest.view:type_name -> entpb.ListPermRequest.View
+	10, // 8: entpb.ListPermResponse.perm_list:type_name -> entpb.Perm
+	11, // 9: entpb.BatchCreatePermsRequest.requests:type_name -> entpb.CreatePermRequest
+	10, // 10: entpb.BatchCreatePermsResponse.perms:type_name -> entpb.Perm
+	10, // 11: entpb.PermGroup.perms:type_name -> entpb.Perm
+	19, // 12: entpb.CreatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
+	2,  // 13: entpb.GetPermGroupRequest.view:type_name -> entpb.GetPermGroupRequest.View
+	19, // 14: entpb.UpdatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
+	3,  // 15: entpb.ListPermGroupRequest.view:type_name -> entpb.ListPermGroupRequest.View
+	19, // 16: entpb.ListPermGroupResponse.perm_group_list:type_name -> entpb.PermGroup
+	20, // 17: entpb.BatchCreatePermGroupsRequest.requests:type_name -> entpb.CreatePermGroupRequest
+	19, // 18: entpb.BatchCreatePermGroupsResponse.perm_groups:type_name -> entpb.PermGroup
+	55, // 19: entpb.Role.color:type_name -> google.protobuf.StringValue
+	55, // 20: entpb.Role.description:type_name -> google.protobuf.StringValue
+	10, // 21: entpb.Role.perms:type_name -> entpb.Perm
+	46, // 22: entpb.Role.user_roles:type_name -> entpb.UserRole
+	28, // 23: entpb.CreateRoleRequest.role:type_name -> entpb.Role
+	4,  // 24: entpb.GetRoleRequest.view:type_name -> entpb.GetRoleRequest.View
+	28, // 25: entpb.UpdateRoleRequest.role:type_name -> entpb.Role
+	5,  // 26: entpb.ListRoleRequest.view:type_name -> entpb.ListRoleRequest.View
+	28, // 27: entpb.ListRoleResponse.role_list:type_name -> entpb.Role
+	29, // 28: entpb.BatchCreateRolesRequest.requests:type_name -> entpb.CreateRoleRequest
+	28, // 29: entpb.BatchCreateRolesResponse.roles:type_name -> entpb.Role
+	56, // 30: entpb.UserPerm.created_at:type_name -> google.protobuf.Timestamp
+	56, // 31: entpb.UserPerm.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 32: entpb.UserPerm.perm:type_name -> entpb.Perm
+	37, // 33: entpb.CreateUserPermRequest.user_perm:type_name -> entpb.UserPerm
+	6,  // 34: entpb.GetUserPermRequest.view:type_name -> entpb.GetUserPermRequest.View
+	37, // 35: entpb.UpdateUserPermRequest.user_perm:type_name -> entpb.UserPerm
+	7,  // 36: entpb.ListUserPermRequest.view:type_name -> entpb.ListUserPermRequest.View
+	37, // 37: entpb.ListUserPermResponse.user_perm_list:type_name -> entpb.UserPerm
+	38, // 38: entpb.BatchCreateUserPermsRequest.requests:type_name -> entpb.CreateUserPermRequest
+	37, // 39: entpb.BatchCreateUserPermsResponse.user_perms:type_name -> entpb.UserPerm
+	56, // 40: entpb.UserRole.created_at:type_name -> google.protobuf.Timestamp
+	56, // 41: entpb.UserRole.updated_at:type_name -> google.protobuf.Timestamp
+	28, // 42: entpb.UserRole.role:type_name -> entpb.Role
+	46, // 43: entpb.CreateUserRoleRequest.user_role:type_name -> entpb.UserRole
+	8,  // 44: entpb.GetUserRoleRequest.view:type_name -> entpb.GetUserRoleRequest.View
+	46, // 45: entpb.UpdateUserRoleRequest.user_role:type_name -> entpb.UserRole
+	9,  // 46: entpb.ListUserRoleRequest.view:type_name -> entpb.ListUserRoleRequest.View
+	46, // 47: entpb.ListUserRoleResponse.user_role_list:type_name -> entpb.UserRole
+	47, // 48: entpb.BatchCreateUserRolesRequest.requests:type_name -> entpb.CreateUserRoleRequest
+	46, // 49: entpb.BatchCreateUserRolesResponse.user_roles:type_name -> entpb.UserRole
+	11, // 50: entpb.PermService.Create:input_type -> entpb.CreatePermRequest
+	12, // 51: entpb.PermService.Get:input_type -> entpb.GetPermRequest
+	13, // 52: entpb.PermService.Update:input_type -> entpb.UpdatePermRequest
+	14, // 53: entpb.PermService.Delete:input_type -> entpb.DeletePermRequest
+	15, // 54: entpb.PermService.List:input_type -> entpb.ListPermRequest
+	17, // 55: entpb.PermService.BatchCreate:input_type -> entpb.BatchCreatePermsRequest
+	20, // 56: entpb.PermGroupService.Create:input_type -> entpb.CreatePermGroupRequest
+	21, // 57: entpb.PermGroupService.Get:input_type -> entpb.GetPermGroupRequest
+	22, // 58: entpb.PermGroupService.Update:input_type -> entpb.UpdatePermGroupRequest
+	23, // 59: entpb.PermGroupService.Delete:input_type -> entpb.DeletePermGroupRequest
+	24, // 60: entpb.PermGroupService.List:input_type -> entpb.ListPermGroupRequest
+	26, // 61: entpb.PermGroupService.BatchCreate:input_type -> entpb.BatchCreatePermGroupsRequest
+	29, // 62: entpb.RoleService.Create:input_type -> entpb.CreateRoleRequest
+	30, // 63: entpb.RoleService.Get:input_type -> entpb.GetRoleRequest
+	31, // 64: entpb.RoleService.Update:input_type -> entpb.UpdateRoleRequest
+	32, // 65: entpb.RoleService.Delete:input_type -> entpb.DeleteRoleRequest
+	33, // 66: entpb.RoleService.List:input_type -> entpb.ListRoleRequest
+	35, // 67: entpb.RoleService.BatchCreate:input_type -> entpb.BatchCreateRolesRequest
+	38, // 68: entpb.UserPermService.Create:input_type -> entpb.CreateUserPermRequest
+	39, // 69: entpb.UserPermService.Get:input_type -> entpb.GetUserPermRequest
+	40, // 70: entpb.UserPermService.Update:input_type -> entpb.UpdateUserPermRequest
+	41, // 71: entpb.UserPermService.Delete:input_type -> entpb.DeleteUserPermRequest
+	42, // 72: entpb.UserPermService.List:input_type -> entpb.ListUserPermRequest
+	44, // 73: entpb.UserPermService.BatchCreate:input_type -> entpb.BatchCreateUserPermsRequest
+	47, // 74: entpb.UserRoleService.Create:input_type -> entpb.CreateUserRoleRequest
+	48, // 75: entpb.UserRoleService.Get:input_type -> entpb.GetUserRoleRequest
+	49, // 76: entpb.UserRoleService.Update:input_type -> entpb.UpdateUserRoleRequest
+	50, // 77: entpb.UserRoleService.Delete:input_type -> entpb.DeleteUserRoleRequest
+	51, // 78: entpb.UserRoleService.List:input_type -> entpb.ListUserRoleRequest
+	53, // 79: entpb.UserRoleService.BatchCreate:input_type -> entpb.BatchCreateUserRolesRequest
+	10, // 80: entpb.PermService.Create:output_type -> entpb.Perm
+	10, // 81: entpb.PermService.Get:output_type -> entpb.Perm
+	10, // 82: entpb.PermService.Update:output_type -> entpb.Perm
+	57, // 83: entpb.PermService.Delete:output_type -> google.protobuf.Empty
+	16, // 84: entpb.PermService.List:output_type -> entpb.ListPermResponse
+	18, // 85: entpb.PermService.BatchCreate:output_type -> entpb.BatchCreatePermsResponse
+	19, // 86: entpb.PermGroupService.Create:output_type -> entpb.PermGroup
+	19, // 87: entpb.PermGroupService.Get:output_type -> entpb.PermGroup
+	19, // 88: entpb.PermGroupService.Update:output_type -> entpb.PermGroup
+	57, // 89: entpb.PermGroupService.Delete:output_type -> google.protobuf.Empty
+	25, // 90: entpb.PermGroupService.List:output_type -> entpb.ListPermGroupResponse
+	27, // 91: entpb.PermGroupService.BatchCreate:output_type -> entpb.BatchCreatePermGroupsResponse
+	28, // 92: entpb.RoleService.Create:output_type -> entpb.Role
+	28, // 93: entpb.RoleService.Get:output_type -> entpb.Role
+	28, // 94: entpb.RoleService.Update:output_type -> entpb.Role
+	57, // 95: entpb.RoleService.Delete:output_type -> google.protobuf.Empty
+	34, // 96: entpb.RoleService.List:output_type -> entpb.ListRoleResponse
+	36, // 97: entpb.RoleService.BatchCreate:output_type -> entpb.BatchCreateRolesResponse
+	37, // 98: entpb.UserPermService.Create:output_type -> entpb.UserPerm
+	37, // 99: entpb.UserPermService.Get:output_type -> entpb.UserPerm
+	37, // 100: entpb.UserPermService.Update:output_type -> entpb.UserPerm
+	57, // 101: entpb.UserPermService.Delete:output_type -> google.protobuf.Empty
+	43, // 102: entpb.UserPermService.List:output_type -> entpb.ListUserPermResponse
+	45, // 103: entpb.UserPermService.BatchCreate:output_type -> entpb.BatchCreateUserPermsResponse
+	46, // 104: entpb.UserRoleService.Create:output_type -> entpb.UserRole
+	46, // 105: entpb.UserRoleService.Get:output_type -> entpb.UserRole
+	46, // 106: entpb.UserRoleService.Update:output_type -> entpb.UserRole
+	57, // 107: entpb.UserRoleService.Delete:output_type -> google.protobuf.Empty
+	52, // 108: entpb.UserRoleService.List:output_type -> entpb.ListUserRoleResponse
+	54, // 109: entpb.UserRoleService.BatchCreate:output_type -> entpb.BatchCreateUserRolesResponse
+	80, // [80:110] is the sub-list for method output_type
+	50, // [50:80] is the sub-list for method input_type
+	50, // [50:50] is the sub-list for extension type_name
+	50, // [50:50] is the sub-list for extension extendee
+	0,  // [0:50] is the sub-list for field type_name
 }
 
 func init() { file_entpb_entpb_proto_init() }

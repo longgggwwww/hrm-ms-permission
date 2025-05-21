@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 )
 
@@ -61,6 +62,11 @@ func (upc *UserPermCreate) SetNillableUpdatedAt(t *time.Time) *UserPermCreate {
 		upc.SetUpdatedAt(*t)
 	}
 	return upc
+}
+
+// SetPerm sets the "perm" edge to the Perm entity.
+func (upc *UserPermCreate) SetPerm(p *Perm) *UserPermCreate {
+	return upc.SetPermID(p.ID)
 }
 
 // Mutation returns the UserPermMutation object of the builder.
@@ -127,6 +133,9 @@ func (upc *UserPermCreate) check() error {
 	if _, ok := upc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "UserPerm.updated_at"`)}
 	}
+	if len(upc.mutation.PermIDs()) == 0 {
+		return &ValidationError{Name: "perm", err: errors.New(`ent: missing required edge "UserPerm.perm"`)}
+	}
 	return nil
 }
 
@@ -158,10 +167,6 @@ func (upc *UserPermCreate) createSpec() (*UserPerm, *sqlgraph.CreateSpec) {
 		_spec.SetField(userperm.FieldUserID, field.TypeString, value)
 		_node.UserID = value
 	}
-	if value, ok := upc.mutation.PermID(); ok {
-		_spec.SetField(userperm.FieldPermID, field.TypeUUID, value)
-		_node.PermID = value
-	}
 	if value, ok := upc.mutation.CreatedAt(); ok {
 		_spec.SetField(userperm.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -169,6 +174,23 @@ func (upc *UserPermCreate) createSpec() (*UserPerm, *sqlgraph.CreateSpec) {
 	if value, ok := upc.mutation.UpdatedAt(); ok {
 		_spec.SetField(userperm.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if nodes := upc.mutation.PermIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   userperm.PermTable,
+			Columns: []string{userperm.PermColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(perm.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.PermID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

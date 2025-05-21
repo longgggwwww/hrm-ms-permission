@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 )
 
@@ -25,8 +26,31 @@ type UserPerm struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserPermQuery when eager-loading is set.
+	Edges        UserPermEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// UserPermEdges holds the relations/edges for other nodes in the graph.
+type UserPermEdges struct {
+	// Perm holds the value of the perm edge.
+	Perm *Perm `json:"perm,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// PermOrErr returns the Perm value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserPermEdges) PermOrErr() (*Perm, error) {
+	if e.Perm != nil {
+		return e.Perm, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: perm.Label}
+	}
+	return nil, &NotLoadedError{edge: "perm"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -98,6 +122,11 @@ func (up *UserPerm) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (up *UserPerm) Value(name string) (ent.Value, error) {
 	return up.selectValues.Get(name)
+}
+
+// QueryPerm queries the "perm" edge of the UserPerm entity.
+func (up *UserPerm) QueryPerm() *PermQuery {
+	return NewUserPermClient(up.config).QueryPerm(up)
 }
 
 // Update returns a builder for updating this UserPerm.

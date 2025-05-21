@@ -6,8 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // Driver Postgres
 	"github.com/longgggwwww/hrm-ms-permission/data/seeds"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 )
@@ -15,39 +14,42 @@ import (
 func main() {
 	log.Println("Starting seeding process...")
 
-	// Load environment variables
-	if err := loadEnv(); err != nil {
-		log.Fatalf("Error loading environment variables: %v", err)
-	}
-
-	// Initialize database client
+	// Khởi tạo client kết nối database
 	client, err := initDBClient()
 	if err != nil {
 		log.Fatalf("Failed to initialize database client: %v", err)
 	}
 	defer client.Close()
 
-	// Run seeders
-	if err := runSeeders(context.Background(), client); err != nil {
-		log.Fatalf("Seeding process failed: %v", err)
+	// Đăng ký các hàm seed theo thứ tự
+	seeders := []struct {
+		name string
+		fn   func(context.Context, *ent.Client) error
+	}{
+		{"perm groups", seeds.SeedPermGroups},
+		{"perms", seeds.SeedPerms},
+		{"admin role", seeds.SeedAdminRole},
+		{"roles", seeds.SeedRoles},
+		{"user roles", seeds.SeedUserRoles},
+		{"user perms", seeds.SeedUserPerms},
+	}
+
+	ctx := context.Background()
+	for _, seeder := range seeders {
+		log.Printf("Seeding %s...", seeder.name)
+		if err := seeder.fn(ctx, client); err != nil {
+			log.Fatalf("Failed to seed %s: %v", seeder.name, err)
+		}
 	}
 
 	log.Println("Seeding process completed successfully.")
 }
 
-// loadEnv loads environment variables from the .env file.
-func loadEnv() error {
-	if err := godotenv.Load(); err != nil {
-		return err
-	}
-	return nil
-}
-
-// initDBClient initializes and returns an Ent database client.
+// Khởi tạo và trả về client Ent kết nối database
 func initDBClient() (*ent.Client, error) {
 	connStr := os.Getenv("DB_URL")
 	if connStr == "" {
-		return nil, errMissingEnv("DB_URL")
+		return nil, fmt.Errorf("missing DB_URL environment variable")
 	}
 
 	client, err := ent.Open("postgres", connStr)
@@ -55,36 +57,4 @@ func initDBClient() (*ent.Client, error) {
 		return nil, err
 	}
 	return client, nil
-}
-
-// runSeeders executes all seed functions.
-func runSeeders(ctx context.Context, client *ent.Client) error {
-	if err := seeds.SeedPermGroups(ctx, client); err != nil {
-		return wrapError("PermGroup", err)
-	}
-
-	if err := seeds.SeedPerms(ctx, client); err != nil {
-		return wrapError("Perm", err)
-	}
-
-	// Add seeding for admin role
-	if err := seeds.SeedAdminRole(ctx, client); err != nil {
-		return wrapError("AdminRole", err)
-	}
-
-	if err := seeds.SeedRoles(ctx, client); err != nil {
-		return wrapError("Role", err)
-	}
-
-	return nil
-}
-
-// errMissingEnv creates an error for missing environment variables.
-func errMissingEnv(varName string) error {
-	return fmt.Errorf("environment variable %s is not set", varName)
-}
-
-// wrapError wraps a seeding error with additional context.
-func wrapError(entity string, err error) error {
-	return fmt.Errorf("failed to seed %s: %w", entity, err)
 }

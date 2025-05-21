@@ -37,9 +37,11 @@ type PermEdges struct {
 	Group *PermGroup `json:"group,omitempty"`
 	// Roles holds the value of the roles edge.
 	Roles []*Role `json:"roles,omitempty"`
+	// UserPerms holds the value of the user_perms edge.
+	UserPerms []*UserPerm `json:"user_perms,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -60,6 +62,15 @@ func (e PermEdges) RolesOrErr() ([]*Role, error) {
 		return e.Roles, nil
 	}
 	return nil, &NotLoadedError{edge: "roles"}
+}
+
+// UserPermsOrErr returns the UserPerms value or an error if the edge
+// was not loaded in eager-loading.
+func (e PermEdges) UserPermsOrErr() ([]*UserPerm, error) {
+	if e.loadedTypes[2] {
+		return e.UserPerms, nil
+	}
+	return nil, &NotLoadedError{edge: "user_perms"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -140,6 +151,11 @@ func (pe *Perm) QueryGroup() *PermGroupQuery {
 // QueryRoles queries the "roles" edge of the Perm entity.
 func (pe *Perm) QueryRoles() *RoleQuery {
 	return NewPermClient(pe.config).QueryRoles(pe)
+}
+
+// QueryUserPerms queries the "user_perms" edge of the Perm entity.
+func (pe *Perm) QueryUserPerms() *UserPermQuery {
+	return NewPermClient(pe.config).QueryUserPerms(pe)
 }
 
 // Update returns a builder for updating this Perm.

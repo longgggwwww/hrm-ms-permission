@@ -10,6 +10,7 @@ import (
 	fmt "fmt"
 	uuid "github.com/google/uuid"
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
+	perm "github.com/longgggwwww/hrm-ms-permission/ent/perm"
 	userperm "github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -38,15 +39,24 @@ func toProtoUserPerm(e *ent.UserPerm) (*UserPerm, error) {
 	v.CreatedAt = created_at
 	id := int64(e.ID)
 	v.Id = id
-	perm_id, err := e.PermID.MarshalBinary()
+	perm, err := e.PermID.MarshalBinary()
 	if err != nil {
 		return nil, err
 	}
-	v.PermId = perm_id
+	v.PermId = perm
 	updated_at := timestamppb.New(e.UpdatedAt)
 	v.UpdatedAt = updated_at
 	user_id := e.UserID
 	v.UserId = user_id
+	if edg := e.Edges.Perm; edg != nil {
+		id, err := edg.ID.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
+		v.Perm = &Perm{
+			Id: id,
+		}
+	}
 	return v, nil
 }
 
@@ -101,6 +111,9 @@ func (svc *UserPermService) Get(ctx context.Context, req *GetUserPermRequest) (*
 	case GetUserPermRequest_WITH_EDGE_IDS:
 		get, err = svc.client.UserPerm.Query().
 			Where(userperm.ID(id)).
+			WithPerm(func(query *ent.PermQuery) {
+				query.Select(perm.FieldID)
+			}).
 			Only(ctx)
 	default:
 		return nil, status.Error(codes.InvalidArgument, "invalid argument: unknown view")
@@ -132,6 +145,13 @@ func (svc *UserPermService) Update(ctx context.Context, req *UpdateUserPermReque
 	m.SetUpdatedAt(userpermUpdatedAt)
 	userpermUserID := userperm.GetUserId()
 	m.SetUserID(userpermUserID)
+	if userperm.GetPerm() != nil {
+		var userpermPerm uuid.UUID
+		if err := (&userpermPerm).UnmarshalBinary(userperm.GetPerm().GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
+		m.SetPermID(userpermPerm)
+	}
 
 	res, err := m.Save(ctx)
 	switch {
@@ -202,6 +222,9 @@ func (svc *UserPermService) List(ctx context.Context, req *ListUserPermRequest) 
 		entList, err = listQuery.All(ctx)
 	case ListUserPermRequest_WITH_EDGE_IDS:
 		entList, err = listQuery.
+			WithPerm(func(query *ent.PermQuery) {
+				query.Select(perm.FieldID)
+			}).
 			All(ctx)
 	}
 	switch {
@@ -274,5 +297,12 @@ func (svc *UserPermService) createBuilder(userperm *UserPerm) (*ent.UserPermCrea
 	m.SetUpdatedAt(userpermUpdatedAt)
 	userpermUserID := userperm.GetUserId()
 	m.SetUserID(userpermUserID)
+	if userperm.GetPerm() != nil {
+		var userpermPerm uuid.UUID
+		if err := (&userpermPerm).UnmarshalBinary(userperm.GetPerm().GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
+		m.SetPermID(userpermPerm)
+	}
 	return m, nil
 }

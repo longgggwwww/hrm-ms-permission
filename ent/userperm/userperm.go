@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -21,8 +22,17 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// EdgePerm holds the string denoting the perm edge name in mutations.
+	EdgePerm = "perm"
 	// Table holds the table name of the userperm in the database.
 	Table = "user_perms"
+	// PermTable is the table that holds the perm relation/edge.
+	PermTable = "user_perms"
+	// PermInverseTable is the table name for the Perm entity.
+	// It exists in this package in order to avoid circular dependency with the "perm" package.
+	PermInverseTable = "perms"
+	// PermColumn is the table column denoting the perm relation/edge.
+	PermColumn = "perm_id"
 )
 
 // Columns holds all SQL columns for userperm fields.
@@ -81,4 +91,18 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByPermField orders the results by perm field.
+func ByPermField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPermStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newPermStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PermInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, PermTable, PermColumn),
+	)
 }

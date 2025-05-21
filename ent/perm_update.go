@@ -15,6 +15,7 @@ import (
 	"github.com/longgggwwww/hrm-ms-permission/ent/permgroup"
 	"github.com/longgggwwww/hrm-ms-permission/ent/predicate"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
+	"github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 )
 
 // PermUpdate is the builder for updating Perm entities.
@@ -112,6 +113,21 @@ func (pu *PermUpdate) AddRoles(r ...*Role) *PermUpdate {
 	return pu.AddRoleIDs(ids...)
 }
 
+// AddUserPermIDs adds the "user_perms" edge to the UserPerm entity by IDs.
+func (pu *PermUpdate) AddUserPermIDs(ids ...int) *PermUpdate {
+	pu.mutation.AddUserPermIDs(ids...)
+	return pu
+}
+
+// AddUserPerms adds the "user_perms" edges to the UserPerm entity.
+func (pu *PermUpdate) AddUserPerms(u ...*UserPerm) *PermUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return pu.AddUserPermIDs(ids...)
+}
+
 // Mutation returns the PermMutation object of the builder.
 func (pu *PermUpdate) Mutation() *PermMutation {
 	return pu.mutation
@@ -142,6 +158,27 @@ func (pu *PermUpdate) RemoveRoles(r ...*Role) *PermUpdate {
 		ids[i] = r[i].ID
 	}
 	return pu.RemoveRoleIDs(ids...)
+}
+
+// ClearUserPerms clears all "user_perms" edges to the UserPerm entity.
+func (pu *PermUpdate) ClearUserPerms() *PermUpdate {
+	pu.mutation.ClearUserPerms()
+	return pu
+}
+
+// RemoveUserPermIDs removes the "user_perms" edge to UserPerm entities by IDs.
+func (pu *PermUpdate) RemoveUserPermIDs(ids ...int) *PermUpdate {
+	pu.mutation.RemoveUserPermIDs(ids...)
+	return pu
+}
+
+// RemoveUserPerms removes "user_perms" edges to UserPerm entities.
+func (pu *PermUpdate) RemoveUserPerms(u ...*UserPerm) *PermUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return pu.RemoveUserPermIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -279,6 +316,51 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if pu.mutation.UserPermsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   perm.UserPermsTable,
+			Columns: []string{perm.UserPermsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.RemovedUserPermsIDs(); len(nodes) > 0 && !pu.mutation.UserPermsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   perm.UserPermsTable,
+			Columns: []string{perm.UserPermsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.UserPermsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   perm.UserPermsTable,
+			Columns: []string{perm.UserPermsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{perm.Label}
@@ -381,6 +463,21 @@ func (puo *PermUpdateOne) AddRoles(r ...*Role) *PermUpdateOne {
 	return puo.AddRoleIDs(ids...)
 }
 
+// AddUserPermIDs adds the "user_perms" edge to the UserPerm entity by IDs.
+func (puo *PermUpdateOne) AddUserPermIDs(ids ...int) *PermUpdateOne {
+	puo.mutation.AddUserPermIDs(ids...)
+	return puo
+}
+
+// AddUserPerms adds the "user_perms" edges to the UserPerm entity.
+func (puo *PermUpdateOne) AddUserPerms(u ...*UserPerm) *PermUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return puo.AddUserPermIDs(ids...)
+}
+
 // Mutation returns the PermMutation object of the builder.
 func (puo *PermUpdateOne) Mutation() *PermMutation {
 	return puo.mutation
@@ -411,6 +508,27 @@ func (puo *PermUpdateOne) RemoveRoles(r ...*Role) *PermUpdateOne {
 		ids[i] = r[i].ID
 	}
 	return puo.RemoveRoleIDs(ids...)
+}
+
+// ClearUserPerms clears all "user_perms" edges to the UserPerm entity.
+func (puo *PermUpdateOne) ClearUserPerms() *PermUpdateOne {
+	puo.mutation.ClearUserPerms()
+	return puo
+}
+
+// RemoveUserPermIDs removes the "user_perms" edge to UserPerm entities by IDs.
+func (puo *PermUpdateOne) RemoveUserPermIDs(ids ...int) *PermUpdateOne {
+	puo.mutation.RemoveUserPermIDs(ids...)
+	return puo
+}
+
+// RemoveUserPerms removes "user_perms" edges to UserPerm entities.
+func (puo *PermUpdateOne) RemoveUserPerms(u ...*UserPerm) *PermUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return puo.RemoveUserPermIDs(ids...)
 }
 
 // Where appends a list predicates to the PermUpdate builder.
@@ -571,6 +689,51 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.UserPermsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   perm.UserPermsTable,
+			Columns: []string{perm.UserPermsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.RemovedUserPermsIDs(); len(nodes) > 0 && !puo.mutation.UserPermsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   perm.UserPermsTable,
+			Columns: []string{perm.UserPermsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.UserPermsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   perm.UserPermsTable,
+			Columns: []string{perm.UserPermsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
