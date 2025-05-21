@@ -4,33 +4,34 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	userPb "github.com/huynhthanhthao/hrm_user_service/generated"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
-	"github.com/longgggwwww/hrm-ms-permission/internal/utils"
 )
 
 type PermHandler struct {
-	Client *ent.Client
+	Client     *ent.Client
+	UserClient *userPb.UserServiceClient
 }
 
-// GetPerms handles the retrieval of permissions.
-func (h *PermHandler) GetPerms(c *gin.Context) {
-	perms, err := h.Client.Perm.Query().WithGroup().All(c.Request.Context())
+func NewPermHandler(c *ent.Client, user *userPb.UserServiceClient) *PermHandler {
+	return &PermHandler{
+		Client:     c,
+		UserClient: user,
+	}
+}
+
+func (h *PermHandler) RegisterRoutes(r *gin.Engine) {
+	r.GET("/", h.List)
+}
+
+func (h *PermHandler) List(c *gin.Context) {
+	out, err := h.Client.Perm.Query().
+		WithGroup().
+		All(c.Request.Context())
 	if err != nil {
-		h.respondWithError(c, http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, perms)
-}
 
-// RegisterRoutes registers the permission-related routes.
-func (h *PermHandler) RegisterRoutes(r *gin.Engine) {
-	gr := r.Group("/perms")
-	{
-		gr.GET("", h.GetPerms)
-	}
-}
-
-// respondWithError sends an error response in JSON format.
-func (h *PermHandler) respondWithError(c *gin.Context, statusCode int, err error) {
-	utils.RespondWithError(c, statusCode, err)
+	c.JSON(http.StatusOK, out)
 }

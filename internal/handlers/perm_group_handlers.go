@@ -11,18 +11,23 @@ type PermGroupHandler struct {
 	Client *ent.Client
 }
 
-func (h *PermGroupHandler) GetPermGroups(c *gin.Context) {
-	permGroups, err := h.Client.PermGroup.Query().WithPerms().All(c.Request.Context())
+func NewPermGroupHandler(c *ent.Client) *PermGroupHandler {
+	return &PermGroupHandler{
+		Client: c,
+	}
+}
+
+func (h *PermGroupHandler) RegisterRoutes(r *gin.Engine) {
+	r.GET("/perm-groups", h.List)
+}
+
+func (h *PermGroupHandler) List(c *gin.Context) {
+	out, err := h.Client.PermGroup.Query().
+		WithPerms().
+		All(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, permGroups)
-}
-
-func (h *PermGroupHandler) RegisterRoutes(r *gin.Engine) {
-	gr := r.Group("/perm-groups")
-	{
-		gr.GET("", h.GetPermGroups)
-	}
+	c.JSON(http.StatusOK, out)
 }

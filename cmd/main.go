@@ -1,13 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"os"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // PostgreSQL driver
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 	"github.com/longgggwwww/hrm-ms-permission/ent/proto/entpb"
 	"github.com/longgggwwww/hrm-ms-permission/internal/grpc_clients"
@@ -15,43 +14,46 @@ import (
 	"google.golang.org/grpc"
 )
 
+func registerGRPCServices(s *grpc.Server, c *ent.Client) {
+	entpb.RegisterPermServiceServer(s, entpb.NewPermService(c))
+	entpb.RegisterPermGroupServiceServer(s, entpb.NewPermGroupService(c))
+	entpb.RegisterRoleServiceServer(s, entpb.NewRoleService(c))
+	entpb.RegisterUserRoleServiceServer(s, entpb.NewUserRoleService(c))
+	entpb.RegisterUserPermServiceServer(s, entpb.NewUserPermService(c))
+	entpb.RegisterExtServiceServer(s, entpb.NewExtService(c))
+}
+
 func startGRPCServer(cli *ent.Client) {
-	perm := entpb.NewPermService(cli)
-	permGroup := entpb.NewPermGroupService(cli)
-	role := entpb.NewRoleService(cli)
-	userRole := entpb.NewUserRoleService(cli)
-	userPerm := entpb.NewUserPermService(cli)
+	srv := grpc.NewServer()
+	registerGRPCServices(srv, cli)
 
-	server := grpc.NewServer()
-	fmt.Println("Starting gRPC server on port 5000...")
-
-	entpb.RegisterPermServiceServer(server, perm)
-	entpb.RegisterPermGroupServiceServer(server, permGroup)
-	entpb.RegisterRoleServiceServer(server, role)
-	entpb.RegisterUserRoleServiceServer(server, userRole)
-	entpb.RegisterUserPermServiceServer(server, userPerm)
-	entpb.RegisterExtServiceServer(server, entpb.NewExtService(cli))
-
+	log.Println("gRPC server started on :5000")
 	lis, err := net.Listen("tcp", ":5000")
 	if err != nil {
-		log.Fatalf("failed listening: %s", err)
+		log.Fatalf("failed listening: %v", err)
 	}
 
-	if err := server.Serve(lis); err != nil {
-		log.Fatalf("server ended: %s", err)
+	if err := srv.Serve(lis); err != nil {
+		log.Fatalf("gRPC server ended: %v", err)
 	}
 }
 
-func startHTTPServer(cli *ent.Client, roleHandler *handlers.RoleHandler) {
+func startHTTPServer(cli *ent.Client) {
 	r := gin.Default()
 
-	permGroup := handlers.PermGroupHandler{Client: cli}
-	permGroup.RegisterRoutes(r)
+	user := grpc_clients.NewUserClient(os.Getenv("USER_SERVICE_URL"))
 
-	perm := handlers.PermHandler{Client: cli}
-	perm.RegisterRoutes(r)
-
-	roleHandler.RegisterRoutes(r)
+	// Đăng ký các route cho HTTP server
+	handlersList := []struct {
+		register func(*gin.Engine)
+	}{
+		{handlers.NewPermGroupHandler(cli).RegisterRoutes},
+		{handlers.NewPermHandler(cli, user).RegisterRoutes},
+		{handlers.NewRoleHandler(cli, user).RegisterRoutes},
+	}
+	for _, h := range handlersList {
+		h.register(r)
+	}
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("failed to start server: %v", err)
@@ -59,26 +61,17 @@ func startHTTPServer(cli *ent.Client, roleHandler *handlers.RoleHandler) {
 }
 
 func main() {
-	DB_URL := os.Getenv("DB_URL")
-	if DB_URL == "" {
+	dbURL := os.Getenv("DB_URL")
+	if dbURL == "" {
 		log.Fatal("DB_URL environment variable is not set")
 	}
 
-	cli, err := ent.Open("postgres", DB_URL)
+	cli, err := ent.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
 	defer cli.Close()
 
-	// Initialize gRPC clients
-	userClient, err := grpc_clients.NewUserClient()
-	if err != nil {
-		log.Fatalf("failed to initialize user client: %v", err)
-	}
-
-	roleHandler := handlers.NewRoleHandler(cli, userClient)
-
-	// Pass roleHandler to HTTP server
-	go startHTTPServer(cli, roleHandler)
+	go startHTTPServer(cli)
 	startGRPCServer(cli)
 }
