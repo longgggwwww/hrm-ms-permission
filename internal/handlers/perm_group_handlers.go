@@ -18,7 +18,7 @@ func NewPermGroupHandler(c *ent.Client) *PermGroupHandler {
 }
 
 func (h *PermGroupHandler) RegisterRoutes(r *gin.Engine) {
-	r.GET("/perm-groups", h.List)
+	r.GET("perm-groups", h.List)
 }
 
 func (h *PermGroupHandler) List(c *gin.Context) {

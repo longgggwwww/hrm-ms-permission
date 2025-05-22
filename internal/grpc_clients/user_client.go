@@ -7,7 +7,8 @@ import (
 )
 
 func NewUserClient(userConnStr string) *pb.UserServiceClient {
-	conn, err := grpc.NewClient(userConnStr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(userConnStr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil
 	}

@@ -794,7 +794,7 @@ func (c *UserPermClient) UpdateOne(up *UserPerm) *UserPermUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *UserPermClient) UpdateOneID(id int) *UserPermUpdateOne {
+func (c *UserPermClient) UpdateOneID(id uuid.UUID) *UserPermUpdateOne {
 	mutation := newUserPermMutation(c.config, OpUpdateOne, withUserPermID(id))
 	return &UserPermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -811,7 +811,7 @@ func (c *UserPermClient) DeleteOne(up *UserPerm) *UserPermDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *UserPermClient) DeleteOneID(id int) *UserPermDeleteOne {
+func (c *UserPermClient) DeleteOneID(id uuid.UUID) *UserPermDeleteOne {
 	builder := c.Delete().Where(userperm.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -828,12 +828,12 @@ func (c *UserPermClient) Query() *UserPermQuery {
 }
 
 // Get returns a UserPerm entity by its id.
-func (c *UserPermClient) Get(ctx context.Context, id int) (*UserPerm, error) {
+func (c *UserPermClient) Get(ctx context.Context, id uuid.UUID) (*UserPerm, error) {
 	return c.Query().Where(userperm.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *UserPermClient) GetX(ctx context.Context, id int) *UserPerm {
+func (c *UserPermClient) GetX(ctx context.Context, id uuid.UUID) *UserPerm {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

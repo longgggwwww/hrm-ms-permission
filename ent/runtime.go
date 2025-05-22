@@ -20,6 +20,10 @@ import (
 func init() {
 	permFields := schema.Perm{}.Fields()
 	_ = permFields
+	// permDescCode is the schema descriptor for code field.
+	permDescCode := permFields[1].Descriptor()
+	// perm.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	perm.CodeValidator = permDescCode.Validators[0].(func(string) error)
 	// permDescName is the schema descriptor for name field.
 	permDescName := permFields[2].Descriptor()
 	// perm.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -30,6 +34,10 @@ func init() {
 	perm.DefaultID = permDescID.Default.(func() uuid.UUID)
 	permgroupFields := schema.PermGroup{}.Fields()
 	_ = permgroupFields
+	// permgroupDescCode is the schema descriptor for code field.
+	permgroupDescCode := permgroupFields[1].Descriptor()
+	// permgroup.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	permgroup.CodeValidator = permgroupDescCode.Validators[0].(func(string) error)
 	// permgroupDescName is the schema descriptor for name field.
 	permgroupDescName := permgroupFields[2].Descriptor()
 	// permgroup.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -40,10 +48,24 @@ func init() {
 	permgroup.DefaultID = permgroupDescID.Default.(func() uuid.UUID)
 	roleFields := schema.Role{}.Fields()
 	_ = roleFields
+	// roleDescCode is the schema descriptor for code field.
+	roleDescCode := roleFields[1].Descriptor()
+	// role.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	role.CodeValidator = roleDescCode.Validators[0].(func(string) error)
 	// roleDescName is the schema descriptor for name field.
 	roleDescName := roleFields[2].Descriptor()
 	// role.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	role.NameValidator = roleDescName.Validators[0].(func(string) error)
+	// roleDescCreatedAt is the schema descriptor for created_at field.
+	roleDescCreatedAt := roleFields[5].Descriptor()
+	// role.DefaultCreatedAt holds the default value on creation for the created_at field.
+	role.DefaultCreatedAt = roleDescCreatedAt.Default.(func() time.Time)
+	// roleDescUpdatedAt is the schema descriptor for updated_at field.
+	roleDescUpdatedAt := roleFields[6].Descriptor()
+	// role.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	role.DefaultUpdatedAt = roleDescUpdatedAt.Default.(func() time.Time)
+	// role.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	role.UpdateDefaultUpdatedAt = roleDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// roleDescID is the schema descriptor for id field.
 	roleDescID := roleFields[0].Descriptor()
 	// role.DefaultID holds the default value on creation for the id field.
@@ -51,19 +73,23 @@ func init() {
 	userpermFields := schema.UserPerm{}.Fields()
 	_ = userpermFields
 	// userpermDescUserID is the schema descriptor for user_id field.
-	userpermDescUserID := userpermFields[0].Descriptor()
+	userpermDescUserID := userpermFields[1].Descriptor()
 	// userperm.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	userperm.UserIDValidator = userpermDescUserID.Validators[0].(func(string) error)
 	// userpermDescCreatedAt is the schema descriptor for created_at field.
-	userpermDescCreatedAt := userpermFields[2].Descriptor()
+	userpermDescCreatedAt := userpermFields[3].Descriptor()
 	// userperm.DefaultCreatedAt holds the default value on creation for the created_at field.
 	userperm.DefaultCreatedAt = userpermDescCreatedAt.Default.(func() time.Time)
 	// userpermDescUpdatedAt is the schema descriptor for updated_at field.
-	userpermDescUpdatedAt := userpermFields[3].Descriptor()
+	userpermDescUpdatedAt := userpermFields[4].Descriptor()
 	// userperm.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	userperm.DefaultUpdatedAt = userpermDescUpdatedAt.Default.(func() time.Time)
 	// userperm.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	userperm.UpdateDefaultUpdatedAt = userpermDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userpermDescID is the schema descriptor for id field.
+	userpermDescID := userpermFields[0].Descriptor()
+	// userperm.DefaultID holds the default value on creation for the id field.
+	userperm.DefaultID = userpermDescID.Default.(func() uuid.UUID)
 	userroleFields := schema.UserRole{}.Fields()
 	_ = userroleFields
 	// userroleDescUserID is the schema descriptor for user_id field.

@@ -21,7 +21,7 @@ func NewPermHandler(c *ent.Client, user *userPb.UserServiceClient) *PermHandler 
 }
 
 func (h *PermHandler) RegisterRoutes(r *gin.Engine) {
-	r.GET("/", h.List)
+	r.GET("", h.List)
 }
 
 func (h *PermHandler) List(c *gin.Context) {

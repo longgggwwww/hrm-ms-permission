@@ -114,14 +114,14 @@ func (pu *PermUpdate) AddRoles(r ...*Role) *PermUpdate {
 }
 
 // AddUserPermIDs adds the "user_perms" edge to the UserPerm entity by IDs.
-func (pu *PermUpdate) AddUserPermIDs(ids ...int) *PermUpdate {
+func (pu *PermUpdate) AddUserPermIDs(ids ...uuid.UUID) *PermUpdate {
 	pu.mutation.AddUserPermIDs(ids...)
 	return pu
 }
 
 // AddUserPerms adds the "user_perms" edges to the UserPerm entity.
 func (pu *PermUpdate) AddUserPerms(u ...*UserPerm) *PermUpdate {
-	ids := make([]int, len(u))
+	ids := make([]uuid.UUID, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -167,14 +167,14 @@ func (pu *PermUpdate) ClearUserPerms() *PermUpdate {
 }
 
 // RemoveUserPermIDs removes the "user_perms" edge to UserPerm entities by IDs.
-func (pu *PermUpdate) RemoveUserPermIDs(ids ...int) *PermUpdate {
+func (pu *PermUpdate) RemoveUserPermIDs(ids ...uuid.UUID) *PermUpdate {
 	pu.mutation.RemoveUserPermIDs(ids...)
 	return pu
 }
 
 // RemoveUserPerms removes "user_perms" edges to UserPerm entities.
 func (pu *PermUpdate) RemoveUserPerms(u ...*UserPerm) *PermUpdate {
-	ids := make([]int, len(u))
+	ids := make([]uuid.UUID, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -210,6 +210,11 @@ func (pu *PermUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (pu *PermUpdate) check() error {
+	if v, ok := pu.mutation.Code(); ok {
+		if err := perm.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Perm.code": %w`, err)}
+		}
+	}
 	if v, ok := pu.mutation.Name(); ok {
 		if err := perm.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Perm.name": %w`, err)}
@@ -324,7 +329,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{perm.UserPermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -337,7 +342,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{perm.UserPermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -353,7 +358,7 @@ func (pu *PermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{perm.UserPermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -464,14 +469,14 @@ func (puo *PermUpdateOne) AddRoles(r ...*Role) *PermUpdateOne {
 }
 
 // AddUserPermIDs adds the "user_perms" edge to the UserPerm entity by IDs.
-func (puo *PermUpdateOne) AddUserPermIDs(ids ...int) *PermUpdateOne {
+func (puo *PermUpdateOne) AddUserPermIDs(ids ...uuid.UUID) *PermUpdateOne {
 	puo.mutation.AddUserPermIDs(ids...)
 	return puo
 }
 
 // AddUserPerms adds the "user_perms" edges to the UserPerm entity.
 func (puo *PermUpdateOne) AddUserPerms(u ...*UserPerm) *PermUpdateOne {
-	ids := make([]int, len(u))
+	ids := make([]uuid.UUID, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -517,14 +522,14 @@ func (puo *PermUpdateOne) ClearUserPerms() *PermUpdateOne {
 }
 
 // RemoveUserPermIDs removes the "user_perms" edge to UserPerm entities by IDs.
-func (puo *PermUpdateOne) RemoveUserPermIDs(ids ...int) *PermUpdateOne {
+func (puo *PermUpdateOne) RemoveUserPermIDs(ids ...uuid.UUID) *PermUpdateOne {
 	puo.mutation.RemoveUserPermIDs(ids...)
 	return puo
 }
 
 // RemoveUserPerms removes "user_perms" edges to UserPerm entities.
 func (puo *PermUpdateOne) RemoveUserPerms(u ...*UserPerm) *PermUpdateOne {
-	ids := make([]int, len(u))
+	ids := make([]uuid.UUID, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -573,6 +578,11 @@ func (puo *PermUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (puo *PermUpdateOne) check() error {
+	if v, ok := puo.mutation.Code(); ok {
+		if err := perm.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Perm.code": %w`, err)}
+		}
+	}
 	if v, ok := puo.mutation.Name(); ok {
 		if err := perm.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Perm.name": %w`, err)}
@@ -704,7 +714,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Columns: []string{perm.UserPermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -717,7 +727,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Columns: []string{perm.UserPermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -733,7 +743,7 @@ func (puo *PermUpdateOne) sqlSave(ctx context.Context) (_node *Perm, err error) 
 			Columns: []string{perm.UserPermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

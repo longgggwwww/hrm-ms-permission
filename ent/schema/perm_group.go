@@ -17,9 +17,16 @@ type PermGroup struct {
 // Fields of the PermGroup.
 func (PermGroup) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Annotations(entproto.Field(1)),
-		field.String("code").Unique().Annotations(entproto.Field(2)),
-		field.String("name").NotEmpty().Annotations(entproto.Field(3)),
+		field.UUID("id", uuid.UUID{}).
+			Default(uuid.New).
+			Annotations(entproto.Field(1)),
+		field.String("code").
+			Unique().
+			NotEmpty().
+			Annotations(entproto.Field(2)),
+		field.String("name").
+			NotEmpty().
+			Annotations(entproto.Field(3)),
 	}
 }
 

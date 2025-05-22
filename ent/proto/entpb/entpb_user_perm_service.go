@@ -16,7 +16,6 @@ import (
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
-	strconv "strconv"
 )
 
 // UserPermService implements UserPermServiceServer
@@ -37,7 +36,10 @@ func toProtoUserPerm(e *ent.UserPerm) (*UserPerm, error) {
 	v := &UserPerm{}
 	created_at := timestamppb.New(e.CreatedAt)
 	v.CreatedAt = created_at
-	id := int64(e.ID)
+	id, err := e.ID.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
 	v.Id = id
 	perm, err := e.PermID.MarshalBinary()
 	if err != nil {
@@ -104,7 +106,10 @@ func (svc *UserPermService) Get(ctx context.Context, req *GetUserPermRequest) (*
 		err error
 		get *ent.UserPerm
 	)
-	id := int(req.GetId())
+	var id uuid.UUID
+	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	switch req.GetView() {
 	case GetUserPermRequest_VIEW_UNSPECIFIED, GetUserPermRequest_BASIC:
 		get, err = svc.client.UserPerm.Get(ctx, id)
@@ -132,10 +137,11 @@ func (svc *UserPermService) Get(ctx context.Context, req *GetUserPermRequest) (*
 // Update implements UserPermServiceServer.Update
 func (svc *UserPermService) Update(ctx context.Context, req *UpdateUserPermRequest) (*UserPerm, error) {
 	userperm := req.GetUserPerm()
-	userpermID := int(userperm.GetId())
+	var userpermID uuid.UUID
+	if err := (&userpermID).UnmarshalBinary(userperm.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	m := svc.client.UserPerm.UpdateOneID(userpermID)
-	userpermCreatedAt := runtime.ExtractTime(userperm.GetCreatedAt())
-	m.SetCreatedAt(userpermCreatedAt)
 	var userpermPermID uuid.UUID
 	if err := (&userpermPermID).UnmarshalBinary(userperm.GetPermId()); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
@@ -174,7 +180,10 @@ func (svc *UserPermService) Update(ctx context.Context, req *UpdateUserPermReque
 // Delete implements UserPermServiceServer.Delete
 func (svc *UserPermService) Delete(ctx context.Context, req *DeleteUserPermRequest) (*emptypb.Empty, error) {
 	var err error
-	id := int(req.GetId())
+	var id uuid.UUID
+	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+	}
 	err = svc.client.UserPerm.DeleteOneID(id).Exec(ctx)
 	switch {
 	case err == nil:
@@ -209,11 +218,10 @@ func (svc *UserPermService) List(ctx context.Context, req *ListUserPermRequest) 
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
 		}
-		token, err := strconv.ParseInt(string(bytes), 10, 32)
+		pageToken, err := uuid.ParseBytes(bytes)
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
 		}
-		pageToken := int(token)
 		listQuery = listQuery.
 			Where(userperm.IDLTE(pageToken))
 	}

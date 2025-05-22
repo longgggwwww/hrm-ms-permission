@@ -65,7 +65,10 @@ func toProtoPerm(e *ent.Perm) (*Perm, error) {
 		})
 	}
 	for _, edg := range e.Edges.UserPerms {
-		id := int64(edg.ID)
+		id, err := edg.ID.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
 		v.UserPerms = append(v.UserPerms, &UserPerm{
 			Id: id,
 		})
@@ -182,7 +185,10 @@ func (svc *PermService) Update(ctx context.Context, req *UpdatePermRequest) (*Pe
 		m.AddRoleIDs(roles)
 	}
 	for _, item := range perm.GetUserPerms() {
-		userperms := int(item.GetId())
+		var userperms uuid.UUID
+		if err := (&userperms).UnmarshalBinary(item.GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
 		m.AddUserPermIDs(userperms)
 	}
 
@@ -350,7 +356,10 @@ func (svc *PermService) createBuilder(perm *Perm) (*ent.PermCreate, error) {
 		m.AddRoleIDs(roles)
 	}
 	for _, item := range perm.GetUserPerms() {
-		userperms := int(item.GetId())
+		var userperms uuid.UUID
+		if err := (&userperms).UnmarshalBinary(item.GetId()); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
+		}
 		m.AddUserPermIDs(userperms)
 	}
 	return m, nil

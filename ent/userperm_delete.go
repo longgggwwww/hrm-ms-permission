@@ -40,7 +40,7 @@ func (upd *UserPermDelete) ExecX(ctx context.Context) int {
 }
 
 func (upd *UserPermDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(userperm.Table, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(userperm.Table, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID))
 	if ps := upd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

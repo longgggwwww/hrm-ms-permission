@@ -4,9 +4,12 @@ package entpb
 import (
 	context "context"
 	base64 "encoding/base64"
-	entproto "entgo.io/contrib/entproto"
-	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	fmt "fmt"
+	"log"
+
+	entproto "entgo.io/contrib/entproto"
+	runtime "entgo.io/contrib/entproto/runtime"
+	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	uuid "github.com/google/uuid"
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
 	perm "github.com/longgggwwww/hrm-ms-permission/ent/perm"
@@ -15,6 +18,7 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -38,6 +42,8 @@ func toProtoRole(e *ent.Role) (*Role, error) {
 	v.Code = code
 	color := wrapperspb.String(e.Color)
 	v.Color = color
+	created_at := timestamppb.New(e.CreatedAt)
+	v.CreatedAt = created_at
 	description := wrapperspb.String(e.Description)
 	v.Description = description
 	id, err := e.ID.MarshalBinary()
@@ -47,6 +53,8 @@ func toProtoRole(e *ent.Role) (*Role, error) {
 	v.Id = id
 	name := e.Name
 	v.Name = name
+	updated_at := timestamppb.New(e.UpdatedAt)
+	v.UpdatedAt = updated_at
 	for _, edg := range e.Edges.Perms {
 		id, err := edg.ID.MarshalBinary()
 		if err != nil {
@@ -163,6 +171,8 @@ func (svc *RoleService) Update(ctx context.Context, req *UpdateRoleRequest) (*Ro
 	}
 	roleName := role.GetName()
 	m.SetName(roleName)
+	roleUpdatedAt := runtime.ExtractTime(role.GetUpdatedAt())
+	m.SetUpdatedAt(roleUpdatedAt)
 	for _, item := range role.GetPerms() {
 		var perms uuid.UUID
 		if err := (&perms).UnmarshalBinary(item.GetId()); err != nil {
@@ -322,12 +332,18 @@ func (svc *RoleService) createBuilder(role *Role) (*ent.RoleCreate, error) {
 		roleColor := role.GetColor().GetValue()
 		m.SetColor(roleColor)
 	}
+	log.Println("xxx get created at", role.GetCreatedAt())
+	roleCreatedAt := runtime.ExtractTime(role.GetCreatedAt())
+	log.Println("xxx roleCreatedAt", roleCreatedAt)
+	m.SetCreatedAt(roleCreatedAt)
 	if role.GetDescription() != nil {
 		roleDescription := role.GetDescription().GetValue()
 		m.SetDescription(roleDescription)
 	}
 	roleName := role.GetName()
 	m.SetName(roleName)
+	roleUpdatedAt := runtime.ExtractTime(role.GetUpdatedAt())
+	m.SetUpdatedAt(roleUpdatedAt)
 	for _, item := range role.GetPerms() {
 		var perms uuid.UUID
 		if err := (&perms).UnmarshalBinary(item.GetId()); err != nil {

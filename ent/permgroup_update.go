@@ -127,6 +127,11 @@ func (pgu *PermGroupUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (pgu *PermGroupUpdate) check() error {
+	if v, ok := pgu.mutation.Code(); ok {
+		if err := permgroup.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "PermGroup.code": %w`, err)}
+		}
+	}
 	if v, ok := pgu.mutation.Name(); ok {
 		if err := permgroup.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "PermGroup.name": %w`, err)}
@@ -329,6 +334,11 @@ func (pguo *PermGroupUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (pguo *PermGroupUpdateOne) check() error {
+	if v, ok := pguo.mutation.Code(); ok {
+		if err := permgroup.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "PermGroup.code": %w`, err)}
+		}
+	}
 	if v, ok := pguo.mutation.Name(); ok {
 		if err := permgroup.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "PermGroup.name": %w`, err)}

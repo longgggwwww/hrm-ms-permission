@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -98,6 +99,12 @@ func (ru *RoleUpdate) ClearDescription() *RoleUpdate {
 	return ru
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (ru *RoleUpdate) SetUpdatedAt(t time.Time) *RoleUpdate {
+	ru.mutation.SetUpdatedAt(t)
+	return ru
+}
+
 // AddPermIDs adds the "perms" edge to the Perm entity by IDs.
 func (ru *RoleUpdate) AddPermIDs(ids ...uuid.UUID) *RoleUpdate {
 	ru.mutation.AddPermIDs(ids...)
@@ -177,6 +184,7 @@ func (ru *RoleUpdate) RemoveUserRoles(u ...*UserRole) *RoleUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ru *RoleUpdate) Save(ctx context.Context) (int, error) {
+	ru.defaults()
 	return withHooks(ctx, ru.sqlSave, ru.mutation, ru.hooks)
 }
 
@@ -202,8 +210,21 @@ func (ru *RoleUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ru *RoleUpdate) defaults() {
+	if _, ok := ru.mutation.UpdatedAt(); !ok {
+		v := role.UpdateDefaultUpdatedAt()
+		ru.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (ru *RoleUpdate) check() error {
+	if v, ok := ru.mutation.Code(); ok {
+		if err := role.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Role.code": %w`, err)}
+		}
+	}
 	if v, ok := ru.mutation.Name(); ok {
 		if err := role.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Role.name": %w`, err)}
@@ -241,6 +262,9 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ru.mutation.DescriptionCleared() {
 		_spec.ClearField(role.FieldDescription, field.TypeString)
+	}
+	if value, ok := ru.mutation.UpdatedAt(); ok {
+		_spec.SetField(role.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if ru.mutation.PermsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -420,6 +444,12 @@ func (ruo *RoleUpdateOne) ClearDescription() *RoleUpdateOne {
 	return ruo
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (ruo *RoleUpdateOne) SetUpdatedAt(t time.Time) *RoleUpdateOne {
+	ruo.mutation.SetUpdatedAt(t)
+	return ruo
+}
+
 // AddPermIDs adds the "perms" edge to the Perm entity by IDs.
 func (ruo *RoleUpdateOne) AddPermIDs(ids ...uuid.UUID) *RoleUpdateOne {
 	ruo.mutation.AddPermIDs(ids...)
@@ -512,6 +542,7 @@ func (ruo *RoleUpdateOne) Select(field string, fields ...string) *RoleUpdateOne 
 
 // Save executes the query and returns the updated Role entity.
 func (ruo *RoleUpdateOne) Save(ctx context.Context) (*Role, error) {
+	ruo.defaults()
 	return withHooks(ctx, ruo.sqlSave, ruo.mutation, ruo.hooks)
 }
 
@@ -537,8 +568,21 @@ func (ruo *RoleUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ruo *RoleUpdateOne) defaults() {
+	if _, ok := ruo.mutation.UpdatedAt(); !ok {
+		v := role.UpdateDefaultUpdatedAt()
+		ruo.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (ruo *RoleUpdateOne) check() error {
+	if v, ok := ruo.mutation.Code(); ok {
+		if err := role.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Role.code": %w`, err)}
+		}
+	}
 	if v, ok := ruo.mutation.Name(); ok {
 		if err := role.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Role.name": %w`, err)}
@@ -593,6 +637,9 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 	}
 	if ruo.mutation.DescriptionCleared() {
 		_spec.ClearField(role.FieldDescription, field.TypeString)
+	}
+	if value, ok := ruo.mutation.UpdatedAt(); ok {
+		_spec.SetField(role.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if ruo.mutation.PermsCleared() {
 		edge := &sqlgraph.EdgeSpec{

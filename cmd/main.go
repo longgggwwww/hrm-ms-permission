@@ -14,13 +14,13 @@ import (
 	"google.golang.org/grpc"
 )
 
-func registerGRPCServices(s *grpc.Server, c *ent.Client) {
-	entpb.RegisterPermServiceServer(s, entpb.NewPermService(c))
-	entpb.RegisterPermGroupServiceServer(s, entpb.NewPermGroupService(c))
-	entpb.RegisterRoleServiceServer(s, entpb.NewRoleService(c))
-	entpb.RegisterUserRoleServiceServer(s, entpb.NewUserRoleService(c))
-	entpb.RegisterUserPermServiceServer(s, entpb.NewUserPermService(c))
-	entpb.RegisterExtServiceServer(s, entpb.NewExtService(c))
+func registerGRPCServices(srv *grpc.Server, cli *ent.Client) {
+	entpb.RegisterPermServiceServer(srv, entpb.NewPermService(cli))
+	entpb.RegisterPermGroupServiceServer(srv, entpb.NewPermGroupService(cli))
+	entpb.RegisterRoleServiceServer(srv, entpb.NewRoleService(cli))
+	entpb.RegisterUserRoleServiceServer(srv, entpb.NewUserRoleService(cli))
+	entpb.RegisterUserPermServiceServer(srv, entpb.NewUserPermService(cli))
+	entpb.RegisterExtServiceServer(srv, entpb.NewExtService(cli))
 }
 
 func startGRPCServer(cli *ent.Client) {
@@ -41,15 +41,15 @@ func startGRPCServer(cli *ent.Client) {
 func startHTTPServer(cli *ent.Client) {
 	r := gin.Default()
 
-	user := grpc_clients.NewUserClient(os.Getenv("USER_SERVICE_URL"))
+	userSrv := grpc_clients.NewUserClient(os.Getenv("USER_SERVICE_URL"))
 
 	// Đăng ký các route cho HTTP server
 	handlersList := []struct {
 		register func(*gin.Engine)
 	}{
 		{handlers.NewPermGroupHandler(cli).RegisterRoutes},
-		{handlers.NewPermHandler(cli, user).RegisterRoutes},
-		{handlers.NewRoleHandler(cli, user).RegisterRoutes},
+		{handlers.NewPermHandler(cli, userSrv).RegisterRoutes},
+		{handlers.NewRoleHandler(cli, userSrv).RegisterRoutes},
 	}
 	for _, h := range handlersList {
 		h.register(r)
