@@ -22,24 +22,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PermService_Create_FullMethodName      = "/entpb.PermService/Create"
-	PermService_Get_FullMethodName         = "/entpb.PermService/Get"
-	PermService_Update_FullMethodName      = "/entpb.PermService/Update"
-	PermService_Delete_FullMethodName      = "/entpb.PermService/Delete"
-	PermService_List_FullMethodName        = "/entpb.PermService/List"
-	PermService_BatchCreate_FullMethodName = "/entpb.PermService/BatchCreate"
+	PermService_Get_FullMethodName  = "/entpb.PermService/Get"
+	PermService_List_FullMethodName = "/entpb.PermService/List"
 )
 
 // PermServiceClient is the client API for PermService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PermServiceClient interface {
-	Create(ctx context.Context, in *CreatePermRequest, opts ...grpc.CallOption) (*Perm, error)
 	Get(ctx context.Context, in *GetPermRequest, opts ...grpc.CallOption) (*Perm, error)
-	Update(ctx context.Context, in *UpdatePermRequest, opts ...grpc.CallOption) (*Perm, error)
-	Delete(ctx context.Context, in *DeletePermRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	List(ctx context.Context, in *ListPermRequest, opts ...grpc.CallOption) (*ListPermResponse, error)
-	BatchCreate(ctx context.Context, in *BatchCreatePermsRequest, opts ...grpc.CallOption) (*BatchCreatePermsResponse, error)
 }
 
 type permServiceClient struct {
@@ -50,40 +42,10 @@ func NewPermServiceClient(cc grpc.ClientConnInterface) PermServiceClient {
 	return &permServiceClient{cc}
 }
 
-func (c *permServiceClient) Create(ctx context.Context, in *CreatePermRequest, opts ...grpc.CallOption) (*Perm, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Perm)
-	err := c.cc.Invoke(ctx, PermService_Create_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *permServiceClient) Get(ctx context.Context, in *GetPermRequest, opts ...grpc.CallOption) (*Perm, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Perm)
 	err := c.cc.Invoke(ctx, PermService_Get_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *permServiceClient) Update(ctx context.Context, in *UpdatePermRequest, opts ...grpc.CallOption) (*Perm, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Perm)
-	err := c.cc.Invoke(ctx, PermService_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *permServiceClient) Delete(ctx context.Context, in *DeletePermRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PermService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,26 +62,12 @@ func (c *permServiceClient) List(ctx context.Context, in *ListPermRequest, opts 
 	return out, nil
 }
 
-func (c *permServiceClient) BatchCreate(ctx context.Context, in *BatchCreatePermsRequest, opts ...grpc.CallOption) (*BatchCreatePermsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BatchCreatePermsResponse)
-	err := c.cc.Invoke(ctx, PermService_BatchCreate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PermServiceServer is the server API for PermService service.
 // All implementations must embed UnimplementedPermServiceServer
 // for forward compatibility.
 type PermServiceServer interface {
-	Create(context.Context, *CreatePermRequest) (*Perm, error)
 	Get(context.Context, *GetPermRequest) (*Perm, error)
-	Update(context.Context, *UpdatePermRequest) (*Perm, error)
-	Delete(context.Context, *DeletePermRequest) (*emptypb.Empty, error)
 	List(context.Context, *ListPermRequest) (*ListPermResponse, error)
-	BatchCreate(context.Context, *BatchCreatePermsRequest) (*BatchCreatePermsResponse, error)
 	mustEmbedUnimplementedPermServiceServer()
 }
 
@@ -130,23 +78,11 @@ type PermServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPermServiceServer struct{}
 
-func (UnimplementedPermServiceServer) Create(context.Context, *CreatePermRequest) (*Perm, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
-}
 func (UnimplementedPermServiceServer) Get(context.Context, *GetPermRequest) (*Perm, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedPermServiceServer) Update(context.Context, *UpdatePermRequest) (*Perm, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedPermServiceServer) Delete(context.Context, *DeletePermRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
-}
 func (UnimplementedPermServiceServer) List(context.Context, *ListPermRequest) (*ListPermResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
-}
-func (UnimplementedPermServiceServer) BatchCreate(context.Context, *BatchCreatePermsRequest) (*BatchCreatePermsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BatchCreate not implemented")
 }
 func (UnimplementedPermServiceServer) mustEmbedUnimplementedPermServiceServer() {}
 func (UnimplementedPermServiceServer) testEmbeddedByValue()                     {}
@@ -169,24 +105,6 @@ func RegisterPermServiceServer(s grpc.ServiceRegistrar, srv PermServiceServer) {
 	s.RegisterService(&PermService_ServiceDesc, srv)
 }
 
-func _PermService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreatePermRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermServiceServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermService_Create_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermServiceServer).Create(ctx, req.(*CreatePermRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _PermService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPermRequest)
 	if err := dec(in); err != nil {
@@ -201,42 +119,6 @@ func _PermService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PermServiceServer).Get(ctx, req.(*GetPermRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PermService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdatePermRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermService_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermServiceServer).Update(ctx, req.(*UpdatePermRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PermService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeletePermRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermServiceServer).Delete(ctx, req.(*DeletePermRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -259,24 +141,6 @@ func _PermService_List_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermService_BatchCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchCreatePermsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermServiceServer).BatchCreate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermService_BatchCreate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermServiceServer).BatchCreate(ctx, req.(*BatchCreatePermsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PermService_ServiceDesc is the grpc.ServiceDesc for PermService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -285,28 +149,12 @@ var PermService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PermServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _PermService_Create_Handler,
-		},
-		{
 			MethodName: "Get",
 			Handler:    _PermService_Get_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _PermService_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _PermService_Delete_Handler,
-		},
-		{
 			MethodName: "List",
 			Handler:    _PermService_List_Handler,
-		},
-		{
-			MethodName: "BatchCreate",
-			Handler:    _PermService_BatchCreate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -314,24 +162,16 @@ var PermService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	PermGroupService_Create_FullMethodName      = "/entpb.PermGroupService/Create"
-	PermGroupService_Get_FullMethodName         = "/entpb.PermGroupService/Get"
-	PermGroupService_Update_FullMethodName      = "/entpb.PermGroupService/Update"
-	PermGroupService_Delete_FullMethodName      = "/entpb.PermGroupService/Delete"
-	PermGroupService_List_FullMethodName        = "/entpb.PermGroupService/List"
-	PermGroupService_BatchCreate_FullMethodName = "/entpb.PermGroupService/BatchCreate"
+	PermGroupService_Get_FullMethodName  = "/entpb.PermGroupService/Get"
+	PermGroupService_List_FullMethodName = "/entpb.PermGroupService/List"
 )
 
 // PermGroupServiceClient is the client API for PermGroupService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PermGroupServiceClient interface {
-	Create(ctx context.Context, in *CreatePermGroupRequest, opts ...grpc.CallOption) (*PermGroup, error)
 	Get(ctx context.Context, in *GetPermGroupRequest, opts ...grpc.CallOption) (*PermGroup, error)
-	Update(ctx context.Context, in *UpdatePermGroupRequest, opts ...grpc.CallOption) (*PermGroup, error)
-	Delete(ctx context.Context, in *DeletePermGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	List(ctx context.Context, in *ListPermGroupRequest, opts ...grpc.CallOption) (*ListPermGroupResponse, error)
-	BatchCreate(ctx context.Context, in *BatchCreatePermGroupsRequest, opts ...grpc.CallOption) (*BatchCreatePermGroupsResponse, error)
 }
 
 type permGroupServiceClient struct {
@@ -342,40 +182,10 @@ func NewPermGroupServiceClient(cc grpc.ClientConnInterface) PermGroupServiceClie
 	return &permGroupServiceClient{cc}
 }
 
-func (c *permGroupServiceClient) Create(ctx context.Context, in *CreatePermGroupRequest, opts ...grpc.CallOption) (*PermGroup, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PermGroup)
-	err := c.cc.Invoke(ctx, PermGroupService_Create_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *permGroupServiceClient) Get(ctx context.Context, in *GetPermGroupRequest, opts ...grpc.CallOption) (*PermGroup, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PermGroup)
 	err := c.cc.Invoke(ctx, PermGroupService_Get_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *permGroupServiceClient) Update(ctx context.Context, in *UpdatePermGroupRequest, opts ...grpc.CallOption) (*PermGroup, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PermGroup)
-	err := c.cc.Invoke(ctx, PermGroupService_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *permGroupServiceClient) Delete(ctx context.Context, in *DeletePermGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PermGroupService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -392,26 +202,12 @@ func (c *permGroupServiceClient) List(ctx context.Context, in *ListPermGroupRequ
 	return out, nil
 }
 
-func (c *permGroupServiceClient) BatchCreate(ctx context.Context, in *BatchCreatePermGroupsRequest, opts ...grpc.CallOption) (*BatchCreatePermGroupsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BatchCreatePermGroupsResponse)
-	err := c.cc.Invoke(ctx, PermGroupService_BatchCreate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PermGroupServiceServer is the server API for PermGroupService service.
 // All implementations must embed UnimplementedPermGroupServiceServer
 // for forward compatibility.
 type PermGroupServiceServer interface {
-	Create(context.Context, *CreatePermGroupRequest) (*PermGroup, error)
 	Get(context.Context, *GetPermGroupRequest) (*PermGroup, error)
-	Update(context.Context, *UpdatePermGroupRequest) (*PermGroup, error)
-	Delete(context.Context, *DeletePermGroupRequest) (*emptypb.Empty, error)
 	List(context.Context, *ListPermGroupRequest) (*ListPermGroupResponse, error)
-	BatchCreate(context.Context, *BatchCreatePermGroupsRequest) (*BatchCreatePermGroupsResponse, error)
 	mustEmbedUnimplementedPermGroupServiceServer()
 }
 
@@ -422,23 +218,11 @@ type PermGroupServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPermGroupServiceServer struct{}
 
-func (UnimplementedPermGroupServiceServer) Create(context.Context, *CreatePermGroupRequest) (*PermGroup, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
-}
 func (UnimplementedPermGroupServiceServer) Get(context.Context, *GetPermGroupRequest) (*PermGroup, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedPermGroupServiceServer) Update(context.Context, *UpdatePermGroupRequest) (*PermGroup, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedPermGroupServiceServer) Delete(context.Context, *DeletePermGroupRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
-}
 func (UnimplementedPermGroupServiceServer) List(context.Context, *ListPermGroupRequest) (*ListPermGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
-}
-func (UnimplementedPermGroupServiceServer) BatchCreate(context.Context, *BatchCreatePermGroupsRequest) (*BatchCreatePermGroupsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BatchCreate not implemented")
 }
 func (UnimplementedPermGroupServiceServer) mustEmbedUnimplementedPermGroupServiceServer() {}
 func (UnimplementedPermGroupServiceServer) testEmbeddedByValue()                          {}
@@ -461,24 +245,6 @@ func RegisterPermGroupServiceServer(s grpc.ServiceRegistrar, srv PermGroupServic
 	s.RegisterService(&PermGroupService_ServiceDesc, srv)
 }
 
-func _PermGroupService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreatePermGroupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermGroupServiceServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermGroupService_Create_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermGroupServiceServer).Create(ctx, req.(*CreatePermGroupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _PermGroupService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPermGroupRequest)
 	if err := dec(in); err != nil {
@@ -493,42 +259,6 @@ func _PermGroupService_Get_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PermGroupServiceServer).Get(ctx, req.(*GetPermGroupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PermGroupService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdatePermGroupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermGroupServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermGroupService_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermGroupServiceServer).Update(ctx, req.(*UpdatePermGroupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PermGroupService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeletePermGroupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermGroupServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermGroupService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermGroupServiceServer).Delete(ctx, req.(*DeletePermGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -551,24 +281,6 @@ func _PermGroupService_List_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermGroupService_BatchCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchCreatePermGroupsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermGroupServiceServer).BatchCreate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermGroupService_BatchCreate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermGroupServiceServer).BatchCreate(ctx, req.(*BatchCreatePermGroupsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PermGroupService_ServiceDesc is the grpc.ServiceDesc for PermGroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -577,28 +289,12 @@ var PermGroupService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PermGroupServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _PermGroupService_Create_Handler,
-		},
-		{
 			MethodName: "Get",
 			Handler:    _PermGroupService_Get_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _PermGroupService_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _PermGroupService_Delete_Handler,
-		},
-		{
 			MethodName: "List",
 			Handler:    _PermGroupService_List_Handler,
-		},
-		{
-			MethodName: "BatchCreate",
-			Handler:    _PermGroupService_BatchCreate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

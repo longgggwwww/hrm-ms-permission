@@ -27,10 +27,6 @@ message Perm {
   repeated UserPerm user_perms = 7;
 }
 
-message CreatePermRequest {
-  Perm perm = 1;
-}
-
 message GetPermRequest {
   bytes id = 1;
 
@@ -43,14 +39,6 @@ message GetPermRequest {
 
     WITH_EDGE_IDS = 2;
   }
-}
-
-message UpdatePermRequest {
-  Perm perm = 1;
-}
-
-message DeletePermRequest {
-  bytes id = 1;
 }
 
 message ListPermRequest {
@@ -75,14 +63,6 @@ message ListPermResponse {
   string next_page_token = 2;
 }
 
-message BatchCreatePermsRequest {
-  repeated CreatePermRequest requests = 1;
-}
-
-message BatchCreatePermsResponse {
-  repeated Perm perms = 1;
-}
-
 message PermGroup {
   bytes id = 1;
 
@@ -91,10 +71,6 @@ message PermGroup {
   string name = 3;
 
   repeated Perm perms = 4;
-}
-
-message CreatePermGroupRequest {
-  PermGroup perm_group = 1;
 }
 
 message GetPermGroupRequest {
@@ -109,14 +85,6 @@ message GetPermGroupRequest {
 
     WITH_EDGE_IDS = 2;
   }
-}
-
-message UpdatePermGroupRequest {
-  PermGroup perm_group = 1;
-}
-
-message DeletePermGroupRequest {
-  bytes id = 1;
 }
 
 message ListPermGroupRequest {
@@ -139,14 +107,6 @@ message ListPermGroupResponse {
   repeated PermGroup perm_group_list = 1;
 
   string next_page_token = 2;
-}
-
-message BatchCreatePermGroupsRequest {
-  repeated CreatePermGroupRequest requests = 1;
-}
-
-message BatchCreatePermGroupsResponse {
-  repeated PermGroup perm_groups = 1;
 }
 
 message Role {
@@ -366,31 +326,15 @@ message BatchCreateUserRolesResponse {
 }
 
 service PermService {
-  rpc Create ( CreatePermRequest ) returns ( Perm );
-
   rpc Get ( GetPermRequest ) returns ( Perm );
 
-  rpc Update ( UpdatePermRequest ) returns ( Perm );
-
-  rpc Delete ( DeletePermRequest ) returns ( google.protobuf.Empty );
-
   rpc List ( ListPermRequest ) returns ( ListPermResponse );
-
-  rpc BatchCreate ( BatchCreatePermsRequest ) returns ( BatchCreatePermsResponse );
 }
 
 service PermGroupService {
-  rpc Create ( CreatePermGroupRequest ) returns ( PermGroup );
-
   rpc Get ( GetPermGroupRequest ) returns ( PermGroup );
 
-  rpc Update ( UpdatePermGroupRequest ) returns ( PermGroup );
-
-  rpc Delete ( DeletePermGroupRequest ) returns ( google.protobuf.Empty );
-
   rpc List ( ListPermGroupRequest ) returns ( ListPermGroupResponse );
-
-  rpc BatchCreate ( BatchCreatePermGroupsRequest ) returns ( BatchCreatePermGroupsResponse );
 }
 
 service RoleService {

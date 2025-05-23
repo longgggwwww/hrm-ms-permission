@@ -72,7 +72,7 @@ func (x GetPermRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GetPermRequest_View.Descriptor instead.
 func (GetPermRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{2, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{1, 0}
 }
 
 type ListPermRequest_View int32
@@ -121,7 +121,7 @@ func (x ListPermRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ListPermRequest_View.Descriptor instead.
 func (ListPermRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{5, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{2, 0}
 }
 
 type GetPermGroupRequest_View int32
@@ -170,7 +170,7 @@ func (x GetPermGroupRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GetPermGroupRequest_View.Descriptor instead.
 func (GetPermGroupRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{11, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{5, 0}
 }
 
 type ListPermGroupRequest_View int32
@@ -219,7 +219,7 @@ func (x ListPermGroupRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ListPermGroupRequest_View.Descriptor instead.
 func (ListPermGroupRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{14, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{6, 0}
 }
 
 type GetRoleRequest_View int32
@@ -268,7 +268,7 @@ func (x GetRoleRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GetRoleRequest_View.Descriptor instead.
 func (GetRoleRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{20, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{10, 0}
 }
 
 type ListRoleRequest_View int32
@@ -317,7 +317,7 @@ func (x ListRoleRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ListRoleRequest_View.Descriptor instead.
 func (ListRoleRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{23, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{13, 0}
 }
 
 type GetUserPermRequest_View int32
@@ -366,7 +366,7 @@ func (x GetUserPermRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GetUserPermRequest_View.Descriptor instead.
 func (GetUserPermRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{29, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{19, 0}
 }
 
 type ListUserPermRequest_View int32
@@ -415,7 +415,7 @@ func (x ListUserPermRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ListUserPermRequest_View.Descriptor instead.
 func (ListUserPermRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{32, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{22, 0}
 }
 
 type GetUserRoleRequest_View int32
@@ -464,7 +464,7 @@ func (x GetUserRoleRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GetUserRoleRequest_View.Descriptor instead.
 func (GetUserRoleRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{38, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{28, 0}
 }
 
 type ListUserRoleRequest_View int32
@@ -513,7 +513,7 @@ func (x ListUserRoleRequest_View) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ListUserRoleRequest_View.Descriptor instead.
 func (ListUserRoleRequest_View) EnumDescriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{41, 0}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{31, 0}
 }
 
 type Perm struct {
@@ -608,50 +608,6 @@ func (x *Perm) GetUserPerms() []*UserPerm {
 	return nil
 }
 
-type CreatePermRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Perm          *Perm                  `protobuf:"bytes,1,opt,name=perm,proto3" json:"perm,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreatePermRequest) Reset() {
-	*x = CreatePermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreatePermRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreatePermRequest) ProtoMessage() {}
-
-func (x *CreatePermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreatePermRequest.ProtoReflect.Descriptor instead.
-func (*CreatePermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *CreatePermRequest) GetPerm() *Perm {
-	if x != nil {
-		return x.Perm
-	}
-	return nil
-}
-
 type GetPermRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -662,7 +618,7 @@ type GetPermRequest struct {
 
 func (x *GetPermRequest) Reset() {
 	*x = GetPermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[2]
+	mi := &file_entpb_entpb_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -674,7 +630,7 @@ func (x *GetPermRequest) String() string {
 func (*GetPermRequest) ProtoMessage() {}
 
 func (x *GetPermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[2]
+	mi := &file_entpb_entpb_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -687,7 +643,7 @@ func (x *GetPermRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPermRequest.ProtoReflect.Descriptor instead.
 func (*GetPermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{2}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetPermRequest) GetId() []byte {
@@ -704,94 +660,6 @@ func (x *GetPermRequest) GetView() GetPermRequest_View {
 	return GetPermRequest_VIEW_UNSPECIFIED
 }
 
-type UpdatePermRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Perm          *Perm                  `protobuf:"bytes,1,opt,name=perm,proto3" json:"perm,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdatePermRequest) Reset() {
-	*x = UpdatePermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdatePermRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdatePermRequest) ProtoMessage() {}
-
-func (x *UpdatePermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdatePermRequest.ProtoReflect.Descriptor instead.
-func (*UpdatePermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *UpdatePermRequest) GetPerm() *Perm {
-	if x != nil {
-		return x.Perm
-	}
-	return nil
-}
-
-type DeletePermRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeletePermRequest) Reset() {
-	*x = DeletePermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeletePermRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeletePermRequest) ProtoMessage() {}
-
-func (x *DeletePermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeletePermRequest.ProtoReflect.Descriptor instead.
-func (*DeletePermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *DeletePermRequest) GetId() []byte {
-	if x != nil {
-		return x.Id
-	}
-	return nil
-}
-
 type ListPermRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
@@ -803,7 +671,7 @@ type ListPermRequest struct {
 
 func (x *ListPermRequest) Reset() {
 	*x = ListPermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[5]
+	mi := &file_entpb_entpb_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -815,7 +683,7 @@ func (x *ListPermRequest) String() string {
 func (*ListPermRequest) ProtoMessage() {}
 
 func (x *ListPermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[5]
+	mi := &file_entpb_entpb_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -828,7 +696,7 @@ func (x *ListPermRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPermRequest.ProtoReflect.Descriptor instead.
 func (*ListPermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{5}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ListPermRequest) GetPageSize() int32 {
@@ -862,7 +730,7 @@ type ListPermResponse struct {
 
 func (x *ListPermResponse) Reset() {
 	*x = ListPermResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[6]
+	mi := &file_entpb_entpb_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -874,7 +742,7 @@ func (x *ListPermResponse) String() string {
 func (*ListPermResponse) ProtoMessage() {}
 
 func (x *ListPermResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[6]
+	mi := &file_entpb_entpb_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -887,7 +755,7 @@ func (x *ListPermResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPermResponse.ProtoReflect.Descriptor instead.
 func (*ListPermResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{6}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ListPermResponse) GetPermList() []*Perm {
@@ -904,94 +772,6 @@ func (x *ListPermResponse) GetNextPageToken() string {
 	return ""
 }
 
-type BatchCreatePermsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Requests      []*CreatePermRequest   `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BatchCreatePermsRequest) Reset() {
-	*x = BatchCreatePermsRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BatchCreatePermsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BatchCreatePermsRequest) ProtoMessage() {}
-
-func (x *BatchCreatePermsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BatchCreatePermsRequest.ProtoReflect.Descriptor instead.
-func (*BatchCreatePermsRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *BatchCreatePermsRequest) GetRequests() []*CreatePermRequest {
-	if x != nil {
-		return x.Requests
-	}
-	return nil
-}
-
-type BatchCreatePermsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Perms         []*Perm                `protobuf:"bytes,1,rep,name=perms,proto3" json:"perms,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BatchCreatePermsResponse) Reset() {
-	*x = BatchCreatePermsResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BatchCreatePermsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BatchCreatePermsResponse) ProtoMessage() {}
-
-func (x *BatchCreatePermsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BatchCreatePermsResponse.ProtoReflect.Descriptor instead.
-func (*BatchCreatePermsResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *BatchCreatePermsResponse) GetPerms() []*Perm {
-	if x != nil {
-		return x.Perms
-	}
-	return nil
-}
-
 type PermGroup struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1004,7 +784,7 @@ type PermGroup struct {
 
 func (x *PermGroup) Reset() {
 	*x = PermGroup{}
-	mi := &file_entpb_entpb_proto_msgTypes[9]
+	mi := &file_entpb_entpb_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1016,7 +796,7 @@ func (x *PermGroup) String() string {
 func (*PermGroup) ProtoMessage() {}
 
 func (x *PermGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[9]
+	mi := &file_entpb_entpb_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1029,7 +809,7 @@ func (x *PermGroup) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PermGroup.ProtoReflect.Descriptor instead.
 func (*PermGroup) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{9}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PermGroup) GetId() []byte {
@@ -1060,50 +840,6 @@ func (x *PermGroup) GetPerms() []*Perm {
 	return nil
 }
 
-type CreatePermGroupRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	PermGroup     *PermGroup             `protobuf:"bytes,1,opt,name=perm_group,json=permGroup,proto3" json:"perm_group,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreatePermGroupRequest) Reset() {
-	*x = CreatePermGroupRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreatePermGroupRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreatePermGroupRequest) ProtoMessage() {}
-
-func (x *CreatePermGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreatePermGroupRequest.ProtoReflect.Descriptor instead.
-func (*CreatePermGroupRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *CreatePermGroupRequest) GetPermGroup() *PermGroup {
-	if x != nil {
-		return x.PermGroup
-	}
-	return nil
-}
-
 type GetPermGroupRequest struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Id            []byte                   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1114,7 +850,7 @@ type GetPermGroupRequest struct {
 
 func (x *GetPermGroupRequest) Reset() {
 	*x = GetPermGroupRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[11]
+	mi := &file_entpb_entpb_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1126,7 +862,7 @@ func (x *GetPermGroupRequest) String() string {
 func (*GetPermGroupRequest) ProtoMessage() {}
 
 func (x *GetPermGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[11]
+	mi := &file_entpb_entpb_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1139,7 +875,7 @@ func (x *GetPermGroupRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPermGroupRequest.ProtoReflect.Descriptor instead.
 func (*GetPermGroupRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{11}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetPermGroupRequest) GetId() []byte {
@@ -1156,94 +892,6 @@ func (x *GetPermGroupRequest) GetView() GetPermGroupRequest_View {
 	return GetPermGroupRequest_VIEW_UNSPECIFIED
 }
 
-type UpdatePermGroupRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	PermGroup     *PermGroup             `protobuf:"bytes,1,opt,name=perm_group,json=permGroup,proto3" json:"perm_group,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdatePermGroupRequest) Reset() {
-	*x = UpdatePermGroupRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdatePermGroupRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdatePermGroupRequest) ProtoMessage() {}
-
-func (x *UpdatePermGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdatePermGroupRequest.ProtoReflect.Descriptor instead.
-func (*UpdatePermGroupRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *UpdatePermGroupRequest) GetPermGroup() *PermGroup {
-	if x != nil {
-		return x.PermGroup
-	}
-	return nil
-}
-
-type DeletePermGroupRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeletePermGroupRequest) Reset() {
-	*x = DeletePermGroupRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeletePermGroupRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeletePermGroupRequest) ProtoMessage() {}
-
-func (x *DeletePermGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeletePermGroupRequest.ProtoReflect.Descriptor instead.
-func (*DeletePermGroupRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *DeletePermGroupRequest) GetId() []byte {
-	if x != nil {
-		return x.Id
-	}
-	return nil
-}
-
 type ListPermGroupRequest struct {
 	state         protoimpl.MessageState    `protogen:"open.v1"`
 	PageSize      int32                     `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
@@ -1255,7 +903,7 @@ type ListPermGroupRequest struct {
 
 func (x *ListPermGroupRequest) Reset() {
 	*x = ListPermGroupRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[14]
+	mi := &file_entpb_entpb_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1267,7 +915,7 @@ func (x *ListPermGroupRequest) String() string {
 func (*ListPermGroupRequest) ProtoMessage() {}
 
 func (x *ListPermGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[14]
+	mi := &file_entpb_entpb_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1280,7 +928,7 @@ func (x *ListPermGroupRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPermGroupRequest.ProtoReflect.Descriptor instead.
 func (*ListPermGroupRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{14}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListPermGroupRequest) GetPageSize() int32 {
@@ -1314,7 +962,7 @@ type ListPermGroupResponse struct {
 
 func (x *ListPermGroupResponse) Reset() {
 	*x = ListPermGroupResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[15]
+	mi := &file_entpb_entpb_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1326,7 +974,7 @@ func (x *ListPermGroupResponse) String() string {
 func (*ListPermGroupResponse) ProtoMessage() {}
 
 func (x *ListPermGroupResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[15]
+	mi := &file_entpb_entpb_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1339,7 +987,7 @@ func (x *ListPermGroupResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPermGroupResponse.ProtoReflect.Descriptor instead.
 func (*ListPermGroupResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{15}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListPermGroupResponse) GetPermGroupList() []*PermGroup {
@@ -1354,94 +1002,6 @@ func (x *ListPermGroupResponse) GetNextPageToken() string {
 		return x.NextPageToken
 	}
 	return ""
-}
-
-type BatchCreatePermGroupsRequest struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Requests      []*CreatePermGroupRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BatchCreatePermGroupsRequest) Reset() {
-	*x = BatchCreatePermGroupsRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BatchCreatePermGroupsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BatchCreatePermGroupsRequest) ProtoMessage() {}
-
-func (x *BatchCreatePermGroupsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BatchCreatePermGroupsRequest.ProtoReflect.Descriptor instead.
-func (*BatchCreatePermGroupsRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *BatchCreatePermGroupsRequest) GetRequests() []*CreatePermGroupRequest {
-	if x != nil {
-		return x.Requests
-	}
-	return nil
-}
-
-type BatchCreatePermGroupsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	PermGroups    []*PermGroup           `protobuf:"bytes,1,rep,name=perm_groups,json=permGroups,proto3" json:"perm_groups,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BatchCreatePermGroupsResponse) Reset() {
-	*x = BatchCreatePermGroupsResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BatchCreatePermGroupsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BatchCreatePermGroupsResponse) ProtoMessage() {}
-
-func (x *BatchCreatePermGroupsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BatchCreatePermGroupsResponse.ProtoReflect.Descriptor instead.
-func (*BatchCreatePermGroupsResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *BatchCreatePermGroupsResponse) GetPermGroups() []*PermGroup {
-	if x != nil {
-		return x.PermGroups
-	}
-	return nil
 }
 
 type Role struct {
@@ -1461,7 +1021,7 @@ type Role struct {
 
 func (x *Role) Reset() {
 	*x = Role{}
-	mi := &file_entpb_entpb_proto_msgTypes[18]
+	mi := &file_entpb_entpb_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1473,7 +1033,7 @@ func (x *Role) String() string {
 func (*Role) ProtoMessage() {}
 
 func (x *Role) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[18]
+	mi := &file_entpb_entpb_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1486,7 +1046,7 @@ func (x *Role) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Role.ProtoReflect.Descriptor instead.
 func (*Role) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{18}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Role) GetId() []byte {
@@ -1561,7 +1121,7 @@ type CreateRoleRequest struct {
 
 func (x *CreateRoleRequest) Reset() {
 	*x = CreateRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[19]
+	mi := &file_entpb_entpb_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1573,7 +1133,7 @@ func (x *CreateRoleRequest) String() string {
 func (*CreateRoleRequest) ProtoMessage() {}
 
 func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[19]
+	mi := &file_entpb_entpb_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1586,7 +1146,7 @@ func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRoleRequest.ProtoReflect.Descriptor instead.
 func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{19}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateRoleRequest) GetRole() *Role {
@@ -1606,7 +1166,7 @@ type GetRoleRequest struct {
 
 func (x *GetRoleRequest) Reset() {
 	*x = GetRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[20]
+	mi := &file_entpb_entpb_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1618,7 +1178,7 @@ func (x *GetRoleRequest) String() string {
 func (*GetRoleRequest) ProtoMessage() {}
 
 func (x *GetRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[20]
+	mi := &file_entpb_entpb_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1631,7 +1191,7 @@ func (x *GetRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRoleRequest.ProtoReflect.Descriptor instead.
 func (*GetRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{20}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetRoleRequest) GetId() []byte {
@@ -1657,7 +1217,7 @@ type UpdateRoleRequest struct {
 
 func (x *UpdateRoleRequest) Reset() {
 	*x = UpdateRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[21]
+	mi := &file_entpb_entpb_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1669,7 +1229,7 @@ func (x *UpdateRoleRequest) String() string {
 func (*UpdateRoleRequest) ProtoMessage() {}
 
 func (x *UpdateRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[21]
+	mi := &file_entpb_entpb_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1682,7 +1242,7 @@ func (x *UpdateRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRoleRequest.ProtoReflect.Descriptor instead.
 func (*UpdateRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{21}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UpdateRoleRequest) GetRole() *Role {
@@ -1701,7 +1261,7 @@ type DeleteRoleRequest struct {
 
 func (x *DeleteRoleRequest) Reset() {
 	*x = DeleteRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[22]
+	mi := &file_entpb_entpb_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1713,7 +1273,7 @@ func (x *DeleteRoleRequest) String() string {
 func (*DeleteRoleRequest) ProtoMessage() {}
 
 func (x *DeleteRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[22]
+	mi := &file_entpb_entpb_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1726,7 +1286,7 @@ func (x *DeleteRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteRoleRequest.ProtoReflect.Descriptor instead.
 func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{22}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *DeleteRoleRequest) GetId() []byte {
@@ -1747,7 +1307,7 @@ type ListRoleRequest struct {
 
 func (x *ListRoleRequest) Reset() {
 	*x = ListRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[23]
+	mi := &file_entpb_entpb_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1759,7 +1319,7 @@ func (x *ListRoleRequest) String() string {
 func (*ListRoleRequest) ProtoMessage() {}
 
 func (x *ListRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[23]
+	mi := &file_entpb_entpb_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1772,7 +1332,7 @@ func (x *ListRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoleRequest.ProtoReflect.Descriptor instead.
 func (*ListRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{23}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListRoleRequest) GetPageSize() int32 {
@@ -1806,7 +1366,7 @@ type ListRoleResponse struct {
 
 func (x *ListRoleResponse) Reset() {
 	*x = ListRoleResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[24]
+	mi := &file_entpb_entpb_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1818,7 +1378,7 @@ func (x *ListRoleResponse) String() string {
 func (*ListRoleResponse) ProtoMessage() {}
 
 func (x *ListRoleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[24]
+	mi := &file_entpb_entpb_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1831,7 +1391,7 @@ func (x *ListRoleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoleResponse.ProtoReflect.Descriptor instead.
 func (*ListRoleResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{24}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListRoleResponse) GetRoleList() []*Role {
@@ -1857,7 +1417,7 @@ type BatchCreateRolesRequest struct {
 
 func (x *BatchCreateRolesRequest) Reset() {
 	*x = BatchCreateRolesRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[25]
+	mi := &file_entpb_entpb_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1869,7 +1429,7 @@ func (x *BatchCreateRolesRequest) String() string {
 func (*BatchCreateRolesRequest) ProtoMessage() {}
 
 func (x *BatchCreateRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[25]
+	mi := &file_entpb_entpb_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1882,7 +1442,7 @@ func (x *BatchCreateRolesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateRolesRequest.ProtoReflect.Descriptor instead.
 func (*BatchCreateRolesRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{25}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *BatchCreateRolesRequest) GetRequests() []*CreateRoleRequest {
@@ -1901,7 +1461,7 @@ type BatchCreateRolesResponse struct {
 
 func (x *BatchCreateRolesResponse) Reset() {
 	*x = BatchCreateRolesResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[26]
+	mi := &file_entpb_entpb_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1913,7 +1473,7 @@ func (x *BatchCreateRolesResponse) String() string {
 func (*BatchCreateRolesResponse) ProtoMessage() {}
 
 func (x *BatchCreateRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[26]
+	mi := &file_entpb_entpb_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1926,7 +1486,7 @@ func (x *BatchCreateRolesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateRolesResponse.ProtoReflect.Descriptor instead.
 func (*BatchCreateRolesResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{26}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *BatchCreateRolesResponse) GetRoles() []*Role {
@@ -1950,7 +1510,7 @@ type UserPerm struct {
 
 func (x *UserPerm) Reset() {
 	*x = UserPerm{}
-	mi := &file_entpb_entpb_proto_msgTypes[27]
+	mi := &file_entpb_entpb_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1962,7 +1522,7 @@ func (x *UserPerm) String() string {
 func (*UserPerm) ProtoMessage() {}
 
 func (x *UserPerm) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[27]
+	mi := &file_entpb_entpb_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1975,7 +1535,7 @@ func (x *UserPerm) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserPerm.ProtoReflect.Descriptor instead.
 func (*UserPerm) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{27}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *UserPerm) GetId() []byte {
@@ -2029,7 +1589,7 @@ type CreateUserPermRequest struct {
 
 func (x *CreateUserPermRequest) Reset() {
 	*x = CreateUserPermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[28]
+	mi := &file_entpb_entpb_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2041,7 +1601,7 @@ func (x *CreateUserPermRequest) String() string {
 func (*CreateUserPermRequest) ProtoMessage() {}
 
 func (x *CreateUserPermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[28]
+	mi := &file_entpb_entpb_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2054,7 +1614,7 @@ func (x *CreateUserPermRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateUserPermRequest.ProtoReflect.Descriptor instead.
 func (*CreateUserPermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{28}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CreateUserPermRequest) GetUserPerm() *UserPerm {
@@ -2074,7 +1634,7 @@ type GetUserPermRequest struct {
 
 func (x *GetUserPermRequest) Reset() {
 	*x = GetUserPermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[29]
+	mi := &file_entpb_entpb_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2086,7 +1646,7 @@ func (x *GetUserPermRequest) String() string {
 func (*GetUserPermRequest) ProtoMessage() {}
 
 func (x *GetUserPermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[29]
+	mi := &file_entpb_entpb_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2099,7 +1659,7 @@ func (x *GetUserPermRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserPermRequest.ProtoReflect.Descriptor instead.
 func (*GetUserPermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{29}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetUserPermRequest) GetId() []byte {
@@ -2125,7 +1685,7 @@ type UpdateUserPermRequest struct {
 
 func (x *UpdateUserPermRequest) Reset() {
 	*x = UpdateUserPermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[30]
+	mi := &file_entpb_entpb_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2137,7 +1697,7 @@ func (x *UpdateUserPermRequest) String() string {
 func (*UpdateUserPermRequest) ProtoMessage() {}
 
 func (x *UpdateUserPermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[30]
+	mi := &file_entpb_entpb_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2150,7 +1710,7 @@ func (x *UpdateUserPermRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserPermRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserPermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{30}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *UpdateUserPermRequest) GetUserPerm() *UserPerm {
@@ -2169,7 +1729,7 @@ type DeleteUserPermRequest struct {
 
 func (x *DeleteUserPermRequest) Reset() {
 	*x = DeleteUserPermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[31]
+	mi := &file_entpb_entpb_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2181,7 +1741,7 @@ func (x *DeleteUserPermRequest) String() string {
 func (*DeleteUserPermRequest) ProtoMessage() {}
 
 func (x *DeleteUserPermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[31]
+	mi := &file_entpb_entpb_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2194,7 +1754,7 @@ func (x *DeleteUserPermRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserPermRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserPermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{31}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *DeleteUserPermRequest) GetId() []byte {
@@ -2215,7 +1775,7 @@ type ListUserPermRequest struct {
 
 func (x *ListUserPermRequest) Reset() {
 	*x = ListUserPermRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[32]
+	mi := &file_entpb_entpb_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2227,7 +1787,7 @@ func (x *ListUserPermRequest) String() string {
 func (*ListUserPermRequest) ProtoMessage() {}
 
 func (x *ListUserPermRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[32]
+	mi := &file_entpb_entpb_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2240,7 +1800,7 @@ func (x *ListUserPermRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserPermRequest.ProtoReflect.Descriptor instead.
 func (*ListUserPermRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{32}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ListUserPermRequest) GetPageSize() int32 {
@@ -2274,7 +1834,7 @@ type ListUserPermResponse struct {
 
 func (x *ListUserPermResponse) Reset() {
 	*x = ListUserPermResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[33]
+	mi := &file_entpb_entpb_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2286,7 +1846,7 @@ func (x *ListUserPermResponse) String() string {
 func (*ListUserPermResponse) ProtoMessage() {}
 
 func (x *ListUserPermResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[33]
+	mi := &file_entpb_entpb_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2299,7 +1859,7 @@ func (x *ListUserPermResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserPermResponse.ProtoReflect.Descriptor instead.
 func (*ListUserPermResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{33}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListUserPermResponse) GetUserPermList() []*UserPerm {
@@ -2325,7 +1885,7 @@ type BatchCreateUserPermsRequest struct {
 
 func (x *BatchCreateUserPermsRequest) Reset() {
 	*x = BatchCreateUserPermsRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[34]
+	mi := &file_entpb_entpb_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2337,7 +1897,7 @@ func (x *BatchCreateUserPermsRequest) String() string {
 func (*BatchCreateUserPermsRequest) ProtoMessage() {}
 
 func (x *BatchCreateUserPermsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[34]
+	mi := &file_entpb_entpb_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2350,7 +1910,7 @@ func (x *BatchCreateUserPermsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateUserPermsRequest.ProtoReflect.Descriptor instead.
 func (*BatchCreateUserPermsRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{34}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *BatchCreateUserPermsRequest) GetRequests() []*CreateUserPermRequest {
@@ -2369,7 +1929,7 @@ type BatchCreateUserPermsResponse struct {
 
 func (x *BatchCreateUserPermsResponse) Reset() {
 	*x = BatchCreateUserPermsResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[35]
+	mi := &file_entpb_entpb_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2381,7 +1941,7 @@ func (x *BatchCreateUserPermsResponse) String() string {
 func (*BatchCreateUserPermsResponse) ProtoMessage() {}
 
 func (x *BatchCreateUserPermsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[35]
+	mi := &file_entpb_entpb_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2394,7 +1954,7 @@ func (x *BatchCreateUserPermsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateUserPermsResponse.ProtoReflect.Descriptor instead.
 func (*BatchCreateUserPermsResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{35}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *BatchCreateUserPermsResponse) GetUserPerms() []*UserPerm {
@@ -2418,7 +1978,7 @@ type UserRole struct {
 
 func (x *UserRole) Reset() {
 	*x = UserRole{}
-	mi := &file_entpb_entpb_proto_msgTypes[36]
+	mi := &file_entpb_entpb_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2430,7 +1990,7 @@ func (x *UserRole) String() string {
 func (*UserRole) ProtoMessage() {}
 
 func (x *UserRole) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[36]
+	mi := &file_entpb_entpb_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2443,7 +2003,7 @@ func (x *UserRole) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserRole.ProtoReflect.Descriptor instead.
 func (*UserRole) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{36}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *UserRole) GetId() []byte {
@@ -2497,7 +2057,7 @@ type CreateUserRoleRequest struct {
 
 func (x *CreateUserRoleRequest) Reset() {
 	*x = CreateUserRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[37]
+	mi := &file_entpb_entpb_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2509,7 +2069,7 @@ func (x *CreateUserRoleRequest) String() string {
 func (*CreateUserRoleRequest) ProtoMessage() {}
 
 func (x *CreateUserRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[37]
+	mi := &file_entpb_entpb_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2522,7 +2082,7 @@ func (x *CreateUserRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateUserRoleRequest.ProtoReflect.Descriptor instead.
 func (*CreateUserRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{37}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *CreateUserRoleRequest) GetUserRole() *UserRole {
@@ -2542,7 +2102,7 @@ type GetUserRoleRequest struct {
 
 func (x *GetUserRoleRequest) Reset() {
 	*x = GetUserRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[38]
+	mi := &file_entpb_entpb_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2554,7 +2114,7 @@ func (x *GetUserRoleRequest) String() string {
 func (*GetUserRoleRequest) ProtoMessage() {}
 
 func (x *GetUserRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[38]
+	mi := &file_entpb_entpb_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2567,7 +2127,7 @@ func (x *GetUserRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRoleRequest.ProtoReflect.Descriptor instead.
 func (*GetUserRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{38}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *GetUserRoleRequest) GetId() []byte {
@@ -2593,7 +2153,7 @@ type UpdateUserRoleRequest struct {
 
 func (x *UpdateUserRoleRequest) Reset() {
 	*x = UpdateUserRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[39]
+	mi := &file_entpb_entpb_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2605,7 +2165,7 @@ func (x *UpdateUserRoleRequest) String() string {
 func (*UpdateUserRoleRequest) ProtoMessage() {}
 
 func (x *UpdateUserRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[39]
+	mi := &file_entpb_entpb_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2618,7 +2178,7 @@ func (x *UpdateUserRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserRoleRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{39}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *UpdateUserRoleRequest) GetUserRole() *UserRole {
@@ -2637,7 +2197,7 @@ type DeleteUserRoleRequest struct {
 
 func (x *DeleteUserRoleRequest) Reset() {
 	*x = DeleteUserRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[40]
+	mi := &file_entpb_entpb_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2649,7 +2209,7 @@ func (x *DeleteUserRoleRequest) String() string {
 func (*DeleteUserRoleRequest) ProtoMessage() {}
 
 func (x *DeleteUserRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[40]
+	mi := &file_entpb_entpb_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2662,7 +2222,7 @@ func (x *DeleteUserRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserRoleRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{40}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *DeleteUserRoleRequest) GetId() []byte {
@@ -2683,7 +2243,7 @@ type ListUserRoleRequest struct {
 
 func (x *ListUserRoleRequest) Reset() {
 	*x = ListUserRoleRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[41]
+	mi := &file_entpb_entpb_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2695,7 +2255,7 @@ func (x *ListUserRoleRequest) String() string {
 func (*ListUserRoleRequest) ProtoMessage() {}
 
 func (x *ListUserRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[41]
+	mi := &file_entpb_entpb_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2708,7 +2268,7 @@ func (x *ListUserRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserRoleRequest.ProtoReflect.Descriptor instead.
 func (*ListUserRoleRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{41}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ListUserRoleRequest) GetPageSize() int32 {
@@ -2742,7 +2302,7 @@ type ListUserRoleResponse struct {
 
 func (x *ListUserRoleResponse) Reset() {
 	*x = ListUserRoleResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[42]
+	mi := &file_entpb_entpb_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2754,7 +2314,7 @@ func (x *ListUserRoleResponse) String() string {
 func (*ListUserRoleResponse) ProtoMessage() {}
 
 func (x *ListUserRoleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[42]
+	mi := &file_entpb_entpb_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2767,7 +2327,7 @@ func (x *ListUserRoleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserRoleResponse.ProtoReflect.Descriptor instead.
 func (*ListUserRoleResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{42}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ListUserRoleResponse) GetUserRoleList() []*UserRole {
@@ -2793,7 +2353,7 @@ type BatchCreateUserRolesRequest struct {
 
 func (x *BatchCreateUserRolesRequest) Reset() {
 	*x = BatchCreateUserRolesRequest{}
-	mi := &file_entpb_entpb_proto_msgTypes[43]
+	mi := &file_entpb_entpb_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2805,7 +2365,7 @@ func (x *BatchCreateUserRolesRequest) String() string {
 func (*BatchCreateUserRolesRequest) ProtoMessage() {}
 
 func (x *BatchCreateUserRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[43]
+	mi := &file_entpb_entpb_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2818,7 +2378,7 @@ func (x *BatchCreateUserRolesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateUserRolesRequest.ProtoReflect.Descriptor instead.
 func (*BatchCreateUserRolesRequest) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{43}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *BatchCreateUserRolesRequest) GetRequests() []*CreateUserRoleRequest {
@@ -2837,7 +2397,7 @@ type BatchCreateUserRolesResponse struct {
 
 func (x *BatchCreateUserRolesResponse) Reset() {
 	*x = BatchCreateUserRolesResponse{}
-	mi := &file_entpb_entpb_proto_msgTypes[44]
+	mi := &file_entpb_entpb_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2849,7 +2409,7 @@ func (x *BatchCreateUserRolesResponse) String() string {
 func (*BatchCreateUserRolesResponse) ProtoMessage() {}
 
 func (x *BatchCreateUserRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entpb_entpb_proto_msgTypes[44]
+	mi := &file_entpb_entpb_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2862,7 +2422,7 @@ func (x *BatchCreateUserRolesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateUserRolesResponse.ProtoReflect.Descriptor instead.
 func (*BatchCreateUserRolesResponse) Descriptor() ([]byte, []int) {
-	return file_entpb_entpb_proto_rawDescGZIP(), []int{44}
+	return file_entpb_entpb_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *BatchCreateUserRolesResponse) GetUserRoles() []*UserRole {
@@ -2885,20 +2445,14 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\x05group\x18\x05 \x01(\v2\x10.entpb.PermGroupR\x05group\x12!\n" +
 	"\x05roles\x18\x06 \x03(\v2\v.entpb.RoleR\x05roles\x12.\n" +
 	"\n" +
-	"user_perms\x18\a \x03(\v2\x0f.entpb.UserPermR\tuserPerms\"4\n" +
-	"\x11CreatePermRequest\x12\x1f\n" +
-	"\x04perm\x18\x01 \x01(\v2\v.entpb.PermR\x04perm\"\x8c\x01\n" +
+	"user_perms\x18\a \x03(\v2\x0f.entpb.UserPermR\tuserPerms\"\x8c\x01\n" +
 	"\x0eGetPermRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\fR\x02id\x12.\n" +
 	"\x04view\x18\x02 \x01(\x0e2\x1a.entpb.GetPermRequest.ViewR\x04view\":\n" +
 	"\x04View\x12\x14\n" +
 	"\x10VIEW_UNSPECIFIED\x10\x00\x12\t\n" +
 	"\x05BASIC\x10\x01\x12\x11\n" +
-	"\rWITH_EDGE_IDS\x10\x02\"4\n" +
-	"\x11UpdatePermRequest\x12\x1f\n" +
-	"\x04perm\x18\x01 \x01(\v2\v.entpb.PermR\x04perm\"#\n" +
-	"\x11DeletePermRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\fR\x02id\"\xba\x01\n" +
+	"\rWITH_EDGE_IDS\x10\x02\"\xba\x01\n" +
 	"\x0fListPermRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
@@ -2910,31 +2464,19 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\rWITH_EDGE_IDS\x10\x02\"d\n" +
 	"\x10ListPermResponse\x12(\n" +
 	"\tperm_list\x18\x01 \x03(\v2\v.entpb.PermR\bpermList\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"O\n" +
-	"\x17BatchCreatePermsRequest\x124\n" +
-	"\brequests\x18\x01 \x03(\v2\x18.entpb.CreatePermRequestR\brequests\"=\n" +
-	"\x18BatchCreatePermsResponse\x12!\n" +
-	"\x05perms\x18\x01 \x03(\v2\v.entpb.PermR\x05perms\"f\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"f\n" +
 	"\tPermGroup\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\fR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12!\n" +
-	"\x05perms\x18\x04 \x03(\v2\v.entpb.PermR\x05perms\"I\n" +
-	"\x16CreatePermGroupRequest\x12/\n" +
-	"\n" +
-	"perm_group\x18\x01 \x01(\v2\x10.entpb.PermGroupR\tpermGroup\"\x96\x01\n" +
+	"\x05perms\x18\x04 \x03(\v2\v.entpb.PermR\x05perms\"\x96\x01\n" +
 	"\x13GetPermGroupRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\fR\x02id\x123\n" +
 	"\x04view\x18\x02 \x01(\x0e2\x1f.entpb.GetPermGroupRequest.ViewR\x04view\":\n" +
 	"\x04View\x12\x14\n" +
 	"\x10VIEW_UNSPECIFIED\x10\x00\x12\t\n" +
 	"\x05BASIC\x10\x01\x12\x11\n" +
-	"\rWITH_EDGE_IDS\x10\x02\"I\n" +
-	"\x16UpdatePermGroupRequest\x12/\n" +
-	"\n" +
-	"perm_group\x18\x01 \x01(\v2\x10.entpb.PermGroupR\tpermGroup\"(\n" +
-	"\x16DeletePermGroupRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\fR\x02id\"\xc4\x01\n" +
+	"\rWITH_EDGE_IDS\x10\x02\"\xc4\x01\n" +
 	"\x14ListPermGroupRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
@@ -2946,12 +2488,7 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\rWITH_EDGE_IDS\x10\x02\"y\n" +
 	"\x15ListPermGroupResponse\x128\n" +
 	"\x0fperm_group_list\x18\x01 \x03(\v2\x10.entpb.PermGroupR\rpermGroupList\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Y\n" +
-	"\x1cBatchCreatePermGroupsRequest\x129\n" +
-	"\brequests\x18\x01 \x03(\v2\x1d.entpb.CreatePermGroupRequestR\brequests\"R\n" +
-	"\x1dBatchCreatePermGroupsResponse\x121\n" +
-	"\vperm_groups\x18\x01 \x03(\v2\x10.entpb.PermGroupR\n" +
-	"permGroups\"\xfb\x02\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xfb\x02\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\fR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
@@ -3071,21 +2608,13 @@ const file_entpb_entpb_proto_rawDesc = "" +
 	"\brequests\x18\x01 \x03(\v2\x1c.entpb.CreateUserRoleRequestR\brequests\"N\n" +
 	"\x1cBatchCreateUserRolesResponse\x12.\n" +
 	"\n" +
-	"user_roles\x18\x01 \x03(\v2\x0f.entpb.UserRoleR\tuserRoles2\xdf\x02\n" +
-	"\vPermService\x12/\n" +
-	"\x06Create\x12\x18.entpb.CreatePermRequest\x1a\v.entpb.Perm\x12)\n" +
-	"\x03Get\x12\x15.entpb.GetPermRequest\x1a\v.entpb.Perm\x12/\n" +
-	"\x06Update\x12\x18.entpb.UpdatePermRequest\x1a\v.entpb.Perm\x12:\n" +
-	"\x06Delete\x12\x18.entpb.DeletePermRequest\x1a\x16.google.protobuf.Empty\x127\n" +
-	"\x04List\x12\x16.entpb.ListPermRequest\x1a\x17.entpb.ListPermResponse\x12N\n" +
-	"\vBatchCreate\x12\x1e.entpb.BatchCreatePermsRequest\x1a\x1f.entpb.BatchCreatePermsResponse2\x9b\x03\n" +
-	"\x10PermGroupService\x129\n" +
-	"\x06Create\x12\x1d.entpb.CreatePermGroupRequest\x1a\x10.entpb.PermGroup\x123\n" +
-	"\x03Get\x12\x1a.entpb.GetPermGroupRequest\x1a\x10.entpb.PermGroup\x129\n" +
-	"\x06Update\x12\x1d.entpb.UpdatePermGroupRequest\x1a\x10.entpb.PermGroup\x12?\n" +
-	"\x06Delete\x12\x1d.entpb.DeletePermGroupRequest\x1a\x16.google.protobuf.Empty\x12A\n" +
-	"\x04List\x12\x1b.entpb.ListPermGroupRequest\x1a\x1c.entpb.ListPermGroupResponse\x12X\n" +
-	"\vBatchCreate\x12#.entpb.BatchCreatePermGroupsRequest\x1a$.entpb.BatchCreatePermGroupsResponse2\xdf\x02\n" +
+	"user_roles\x18\x01 \x03(\v2\x0f.entpb.UserRoleR\tuserRoles2q\n" +
+	"\vPermService\x12)\n" +
+	"\x03Get\x12\x15.entpb.GetPermRequest\x1a\v.entpb.Perm\x127\n" +
+	"\x04List\x12\x16.entpb.ListPermRequest\x1a\x17.entpb.ListPermResponse2\x8a\x01\n" +
+	"\x10PermGroupService\x123\n" +
+	"\x03Get\x12\x1a.entpb.GetPermGroupRequest\x1a\x10.entpb.PermGroup\x12A\n" +
+	"\x04List\x12\x1b.entpb.ListPermGroupRequest\x1a\x1c.entpb.ListPermGroupResponse2\xdf\x02\n" +
 	"\vRoleService\x12/\n" +
 	"\x06Create\x12\x18.entpb.CreateRoleRequest\x1a\v.entpb.Role\x12)\n" +
 	"\x03Get\x12\x15.entpb.GetRoleRequest\x1a\v.entpb.Role\x12/\n" +
@@ -3121,185 +2650,151 @@ func file_entpb_entpb_proto_rawDescGZIP() []byte {
 }
 
 var file_entpb_entpb_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
-var file_entpb_entpb_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
+var file_entpb_entpb_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
 var file_entpb_entpb_proto_goTypes = []any{
-	(GetPermRequest_View)(0),              // 0: entpb.GetPermRequest.View
-	(ListPermRequest_View)(0),             // 1: entpb.ListPermRequest.View
-	(GetPermGroupRequest_View)(0),         // 2: entpb.GetPermGroupRequest.View
-	(ListPermGroupRequest_View)(0),        // 3: entpb.ListPermGroupRequest.View
-	(GetRoleRequest_View)(0),              // 4: entpb.GetRoleRequest.View
-	(ListRoleRequest_View)(0),             // 5: entpb.ListRoleRequest.View
-	(GetUserPermRequest_View)(0),          // 6: entpb.GetUserPermRequest.View
-	(ListUserPermRequest_View)(0),         // 7: entpb.ListUserPermRequest.View
-	(GetUserRoleRequest_View)(0),          // 8: entpb.GetUserRoleRequest.View
-	(ListUserRoleRequest_View)(0),         // 9: entpb.ListUserRoleRequest.View
-	(*Perm)(nil),                          // 10: entpb.Perm
-	(*CreatePermRequest)(nil),             // 11: entpb.CreatePermRequest
-	(*GetPermRequest)(nil),                // 12: entpb.GetPermRequest
-	(*UpdatePermRequest)(nil),             // 13: entpb.UpdatePermRequest
-	(*DeletePermRequest)(nil),             // 14: entpb.DeletePermRequest
-	(*ListPermRequest)(nil),               // 15: entpb.ListPermRequest
-	(*ListPermResponse)(nil),              // 16: entpb.ListPermResponse
-	(*BatchCreatePermsRequest)(nil),       // 17: entpb.BatchCreatePermsRequest
-	(*BatchCreatePermsResponse)(nil),      // 18: entpb.BatchCreatePermsResponse
-	(*PermGroup)(nil),                     // 19: entpb.PermGroup
-	(*CreatePermGroupRequest)(nil),        // 20: entpb.CreatePermGroupRequest
-	(*GetPermGroupRequest)(nil),           // 21: entpb.GetPermGroupRequest
-	(*UpdatePermGroupRequest)(nil),        // 22: entpb.UpdatePermGroupRequest
-	(*DeletePermGroupRequest)(nil),        // 23: entpb.DeletePermGroupRequest
-	(*ListPermGroupRequest)(nil),          // 24: entpb.ListPermGroupRequest
-	(*ListPermGroupResponse)(nil),         // 25: entpb.ListPermGroupResponse
-	(*BatchCreatePermGroupsRequest)(nil),  // 26: entpb.BatchCreatePermGroupsRequest
-	(*BatchCreatePermGroupsResponse)(nil), // 27: entpb.BatchCreatePermGroupsResponse
-	(*Role)(nil),                          // 28: entpb.Role
-	(*CreateRoleRequest)(nil),             // 29: entpb.CreateRoleRequest
-	(*GetRoleRequest)(nil),                // 30: entpb.GetRoleRequest
-	(*UpdateRoleRequest)(nil),             // 31: entpb.UpdateRoleRequest
-	(*DeleteRoleRequest)(nil),             // 32: entpb.DeleteRoleRequest
-	(*ListRoleRequest)(nil),               // 33: entpb.ListRoleRequest
-	(*ListRoleResponse)(nil),              // 34: entpb.ListRoleResponse
-	(*BatchCreateRolesRequest)(nil),       // 35: entpb.BatchCreateRolesRequest
-	(*BatchCreateRolesResponse)(nil),      // 36: entpb.BatchCreateRolesResponse
-	(*UserPerm)(nil),                      // 37: entpb.UserPerm
-	(*CreateUserPermRequest)(nil),         // 38: entpb.CreateUserPermRequest
-	(*GetUserPermRequest)(nil),            // 39: entpb.GetUserPermRequest
-	(*UpdateUserPermRequest)(nil),         // 40: entpb.UpdateUserPermRequest
-	(*DeleteUserPermRequest)(nil),         // 41: entpb.DeleteUserPermRequest
-	(*ListUserPermRequest)(nil),           // 42: entpb.ListUserPermRequest
-	(*ListUserPermResponse)(nil),          // 43: entpb.ListUserPermResponse
-	(*BatchCreateUserPermsRequest)(nil),   // 44: entpb.BatchCreateUserPermsRequest
-	(*BatchCreateUserPermsResponse)(nil),  // 45: entpb.BatchCreateUserPermsResponse
-	(*UserRole)(nil),                      // 46: entpb.UserRole
-	(*CreateUserRoleRequest)(nil),         // 47: entpb.CreateUserRoleRequest
-	(*GetUserRoleRequest)(nil),            // 48: entpb.GetUserRoleRequest
-	(*UpdateUserRoleRequest)(nil),         // 49: entpb.UpdateUserRoleRequest
-	(*DeleteUserRoleRequest)(nil),         // 50: entpb.DeleteUserRoleRequest
-	(*ListUserRoleRequest)(nil),           // 51: entpb.ListUserRoleRequest
-	(*ListUserRoleResponse)(nil),          // 52: entpb.ListUserRoleResponse
-	(*BatchCreateUserRolesRequest)(nil),   // 53: entpb.BatchCreateUserRolesRequest
-	(*BatchCreateUserRolesResponse)(nil),  // 54: entpb.BatchCreateUserRolesResponse
-	(*wrapperspb.StringValue)(nil),        // 55: google.protobuf.StringValue
-	(*timestamppb.Timestamp)(nil),         // 56: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),                 // 57: google.protobuf.Empty
+	(GetPermRequest_View)(0),             // 0: entpb.GetPermRequest.View
+	(ListPermRequest_View)(0),            // 1: entpb.ListPermRequest.View
+	(GetPermGroupRequest_View)(0),        // 2: entpb.GetPermGroupRequest.View
+	(ListPermGroupRequest_View)(0),       // 3: entpb.ListPermGroupRequest.View
+	(GetRoleRequest_View)(0),             // 4: entpb.GetRoleRequest.View
+	(ListRoleRequest_View)(0),            // 5: entpb.ListRoleRequest.View
+	(GetUserPermRequest_View)(0),         // 6: entpb.GetUserPermRequest.View
+	(ListUserPermRequest_View)(0),        // 7: entpb.ListUserPermRequest.View
+	(GetUserRoleRequest_View)(0),         // 8: entpb.GetUserRoleRequest.View
+	(ListUserRoleRequest_View)(0),        // 9: entpb.ListUserRoleRequest.View
+	(*Perm)(nil),                         // 10: entpb.Perm
+	(*GetPermRequest)(nil),               // 11: entpb.GetPermRequest
+	(*ListPermRequest)(nil),              // 12: entpb.ListPermRequest
+	(*ListPermResponse)(nil),             // 13: entpb.ListPermResponse
+	(*PermGroup)(nil),                    // 14: entpb.PermGroup
+	(*GetPermGroupRequest)(nil),          // 15: entpb.GetPermGroupRequest
+	(*ListPermGroupRequest)(nil),         // 16: entpb.ListPermGroupRequest
+	(*ListPermGroupResponse)(nil),        // 17: entpb.ListPermGroupResponse
+	(*Role)(nil),                         // 18: entpb.Role
+	(*CreateRoleRequest)(nil),            // 19: entpb.CreateRoleRequest
+	(*GetRoleRequest)(nil),               // 20: entpb.GetRoleRequest
+	(*UpdateRoleRequest)(nil),            // 21: entpb.UpdateRoleRequest
+	(*DeleteRoleRequest)(nil),            // 22: entpb.DeleteRoleRequest
+	(*ListRoleRequest)(nil),              // 23: entpb.ListRoleRequest
+	(*ListRoleResponse)(nil),             // 24: entpb.ListRoleResponse
+	(*BatchCreateRolesRequest)(nil),      // 25: entpb.BatchCreateRolesRequest
+	(*BatchCreateRolesResponse)(nil),     // 26: entpb.BatchCreateRolesResponse
+	(*UserPerm)(nil),                     // 27: entpb.UserPerm
+	(*CreateUserPermRequest)(nil),        // 28: entpb.CreateUserPermRequest
+	(*GetUserPermRequest)(nil),           // 29: entpb.GetUserPermRequest
+	(*UpdateUserPermRequest)(nil),        // 30: entpb.UpdateUserPermRequest
+	(*DeleteUserPermRequest)(nil),        // 31: entpb.DeleteUserPermRequest
+	(*ListUserPermRequest)(nil),          // 32: entpb.ListUserPermRequest
+	(*ListUserPermResponse)(nil),         // 33: entpb.ListUserPermResponse
+	(*BatchCreateUserPermsRequest)(nil),  // 34: entpb.BatchCreateUserPermsRequest
+	(*BatchCreateUserPermsResponse)(nil), // 35: entpb.BatchCreateUserPermsResponse
+	(*UserRole)(nil),                     // 36: entpb.UserRole
+	(*CreateUserRoleRequest)(nil),        // 37: entpb.CreateUserRoleRequest
+	(*GetUserRoleRequest)(nil),           // 38: entpb.GetUserRoleRequest
+	(*UpdateUserRoleRequest)(nil),        // 39: entpb.UpdateUserRoleRequest
+	(*DeleteUserRoleRequest)(nil),        // 40: entpb.DeleteUserRoleRequest
+	(*ListUserRoleRequest)(nil),          // 41: entpb.ListUserRoleRequest
+	(*ListUserRoleResponse)(nil),         // 42: entpb.ListUserRoleResponse
+	(*BatchCreateUserRolesRequest)(nil),  // 43: entpb.BatchCreateUserRolesRequest
+	(*BatchCreateUserRolesResponse)(nil), // 44: entpb.BatchCreateUserRolesResponse
+	(*wrapperspb.StringValue)(nil),       // 45: google.protobuf.StringValue
+	(*timestamppb.Timestamp)(nil),        // 46: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                // 47: google.protobuf.Empty
 }
 var file_entpb_entpb_proto_depIdxs = []int32{
-	55, // 0: entpb.Perm.description:type_name -> google.protobuf.StringValue
-	19, // 1: entpb.Perm.group:type_name -> entpb.PermGroup
-	28, // 2: entpb.Perm.roles:type_name -> entpb.Role
-	37, // 3: entpb.Perm.user_perms:type_name -> entpb.UserPerm
-	10, // 4: entpb.CreatePermRequest.perm:type_name -> entpb.Perm
-	0,  // 5: entpb.GetPermRequest.view:type_name -> entpb.GetPermRequest.View
-	10, // 6: entpb.UpdatePermRequest.perm:type_name -> entpb.Perm
-	1,  // 7: entpb.ListPermRequest.view:type_name -> entpb.ListPermRequest.View
-	10, // 8: entpb.ListPermResponse.perm_list:type_name -> entpb.Perm
-	11, // 9: entpb.BatchCreatePermsRequest.requests:type_name -> entpb.CreatePermRequest
-	10, // 10: entpb.BatchCreatePermsResponse.perms:type_name -> entpb.Perm
-	10, // 11: entpb.PermGroup.perms:type_name -> entpb.Perm
-	19, // 12: entpb.CreatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
-	2,  // 13: entpb.GetPermGroupRequest.view:type_name -> entpb.GetPermGroupRequest.View
-	19, // 14: entpb.UpdatePermGroupRequest.perm_group:type_name -> entpb.PermGroup
-	3,  // 15: entpb.ListPermGroupRequest.view:type_name -> entpb.ListPermGroupRequest.View
-	19, // 16: entpb.ListPermGroupResponse.perm_group_list:type_name -> entpb.PermGroup
-	20, // 17: entpb.BatchCreatePermGroupsRequest.requests:type_name -> entpb.CreatePermGroupRequest
-	19, // 18: entpb.BatchCreatePermGroupsResponse.perm_groups:type_name -> entpb.PermGroup
-	55, // 19: entpb.Role.color:type_name -> google.protobuf.StringValue
-	55, // 20: entpb.Role.description:type_name -> google.protobuf.StringValue
-	56, // 21: entpb.Role.created_at:type_name -> google.protobuf.Timestamp
-	56, // 22: entpb.Role.updated_at:type_name -> google.protobuf.Timestamp
-	10, // 23: entpb.Role.perms:type_name -> entpb.Perm
-	46, // 24: entpb.Role.user_roles:type_name -> entpb.UserRole
-	28, // 25: entpb.CreateRoleRequest.role:type_name -> entpb.Role
-	4,  // 26: entpb.GetRoleRequest.view:type_name -> entpb.GetRoleRequest.View
-	28, // 27: entpb.UpdateRoleRequest.role:type_name -> entpb.Role
-	5,  // 28: entpb.ListRoleRequest.view:type_name -> entpb.ListRoleRequest.View
-	28, // 29: entpb.ListRoleResponse.role_list:type_name -> entpb.Role
-	29, // 30: entpb.BatchCreateRolesRequest.requests:type_name -> entpb.CreateRoleRequest
-	28, // 31: entpb.BatchCreateRolesResponse.roles:type_name -> entpb.Role
-	56, // 32: entpb.UserPerm.created_at:type_name -> google.protobuf.Timestamp
-	56, // 33: entpb.UserPerm.updated_at:type_name -> google.protobuf.Timestamp
-	10, // 34: entpb.UserPerm.perm:type_name -> entpb.Perm
-	37, // 35: entpb.CreateUserPermRequest.user_perm:type_name -> entpb.UserPerm
-	6,  // 36: entpb.GetUserPermRequest.view:type_name -> entpb.GetUserPermRequest.View
-	37, // 37: entpb.UpdateUserPermRequest.user_perm:type_name -> entpb.UserPerm
-	7,  // 38: entpb.ListUserPermRequest.view:type_name -> entpb.ListUserPermRequest.View
-	37, // 39: entpb.ListUserPermResponse.user_perm_list:type_name -> entpb.UserPerm
-	38, // 40: entpb.BatchCreateUserPermsRequest.requests:type_name -> entpb.CreateUserPermRequest
-	37, // 41: entpb.BatchCreateUserPermsResponse.user_perms:type_name -> entpb.UserPerm
-	56, // 42: entpb.UserRole.created_at:type_name -> google.protobuf.Timestamp
-	56, // 43: entpb.UserRole.updated_at:type_name -> google.protobuf.Timestamp
-	28, // 44: entpb.UserRole.role:type_name -> entpb.Role
-	46, // 45: entpb.CreateUserRoleRequest.user_role:type_name -> entpb.UserRole
-	8,  // 46: entpb.GetUserRoleRequest.view:type_name -> entpb.GetUserRoleRequest.View
-	46, // 47: entpb.UpdateUserRoleRequest.user_role:type_name -> entpb.UserRole
-	9,  // 48: entpb.ListUserRoleRequest.view:type_name -> entpb.ListUserRoleRequest.View
-	46, // 49: entpb.ListUserRoleResponse.user_role_list:type_name -> entpb.UserRole
-	47, // 50: entpb.BatchCreateUserRolesRequest.requests:type_name -> entpb.CreateUserRoleRequest
-	46, // 51: entpb.BatchCreateUserRolesResponse.user_roles:type_name -> entpb.UserRole
-	11, // 52: entpb.PermService.Create:input_type -> entpb.CreatePermRequest
-	12, // 53: entpb.PermService.Get:input_type -> entpb.GetPermRequest
-	13, // 54: entpb.PermService.Update:input_type -> entpb.UpdatePermRequest
-	14, // 55: entpb.PermService.Delete:input_type -> entpb.DeletePermRequest
-	15, // 56: entpb.PermService.List:input_type -> entpb.ListPermRequest
-	17, // 57: entpb.PermService.BatchCreate:input_type -> entpb.BatchCreatePermsRequest
-	20, // 58: entpb.PermGroupService.Create:input_type -> entpb.CreatePermGroupRequest
-	21, // 59: entpb.PermGroupService.Get:input_type -> entpb.GetPermGroupRequest
-	22, // 60: entpb.PermGroupService.Update:input_type -> entpb.UpdatePermGroupRequest
-	23, // 61: entpb.PermGroupService.Delete:input_type -> entpb.DeletePermGroupRequest
-	24, // 62: entpb.PermGroupService.List:input_type -> entpb.ListPermGroupRequest
-	26, // 63: entpb.PermGroupService.BatchCreate:input_type -> entpb.BatchCreatePermGroupsRequest
-	29, // 64: entpb.RoleService.Create:input_type -> entpb.CreateRoleRequest
-	30, // 65: entpb.RoleService.Get:input_type -> entpb.GetRoleRequest
-	31, // 66: entpb.RoleService.Update:input_type -> entpb.UpdateRoleRequest
-	32, // 67: entpb.RoleService.Delete:input_type -> entpb.DeleteRoleRequest
-	33, // 68: entpb.RoleService.List:input_type -> entpb.ListRoleRequest
-	35, // 69: entpb.RoleService.BatchCreate:input_type -> entpb.BatchCreateRolesRequest
-	38, // 70: entpb.UserPermService.Create:input_type -> entpb.CreateUserPermRequest
-	39, // 71: entpb.UserPermService.Get:input_type -> entpb.GetUserPermRequest
-	40, // 72: entpb.UserPermService.Update:input_type -> entpb.UpdateUserPermRequest
-	41, // 73: entpb.UserPermService.Delete:input_type -> entpb.DeleteUserPermRequest
-	42, // 74: entpb.UserPermService.List:input_type -> entpb.ListUserPermRequest
-	44, // 75: entpb.UserPermService.BatchCreate:input_type -> entpb.BatchCreateUserPermsRequest
-	47, // 76: entpb.UserRoleService.Create:input_type -> entpb.CreateUserRoleRequest
-	48, // 77: entpb.UserRoleService.Get:input_type -> entpb.GetUserRoleRequest
-	49, // 78: entpb.UserRoleService.Update:input_type -> entpb.UpdateUserRoleRequest
-	50, // 79: entpb.UserRoleService.Delete:input_type -> entpb.DeleteUserRoleRequest
-	51, // 80: entpb.UserRoleService.List:input_type -> entpb.ListUserRoleRequest
-	53, // 81: entpb.UserRoleService.BatchCreate:input_type -> entpb.BatchCreateUserRolesRequest
-	10, // 82: entpb.PermService.Create:output_type -> entpb.Perm
-	10, // 83: entpb.PermService.Get:output_type -> entpb.Perm
-	10, // 84: entpb.PermService.Update:output_type -> entpb.Perm
-	57, // 85: entpb.PermService.Delete:output_type -> google.protobuf.Empty
-	16, // 86: entpb.PermService.List:output_type -> entpb.ListPermResponse
-	18, // 87: entpb.PermService.BatchCreate:output_type -> entpb.BatchCreatePermsResponse
-	19, // 88: entpb.PermGroupService.Create:output_type -> entpb.PermGroup
-	19, // 89: entpb.PermGroupService.Get:output_type -> entpb.PermGroup
-	19, // 90: entpb.PermGroupService.Update:output_type -> entpb.PermGroup
-	57, // 91: entpb.PermGroupService.Delete:output_type -> google.protobuf.Empty
-	25, // 92: entpb.PermGroupService.List:output_type -> entpb.ListPermGroupResponse
-	27, // 93: entpb.PermGroupService.BatchCreate:output_type -> entpb.BatchCreatePermGroupsResponse
-	28, // 94: entpb.RoleService.Create:output_type -> entpb.Role
-	28, // 95: entpb.RoleService.Get:output_type -> entpb.Role
-	28, // 96: entpb.RoleService.Update:output_type -> entpb.Role
-	57, // 97: entpb.RoleService.Delete:output_type -> google.protobuf.Empty
-	34, // 98: entpb.RoleService.List:output_type -> entpb.ListRoleResponse
-	36, // 99: entpb.RoleService.BatchCreate:output_type -> entpb.BatchCreateRolesResponse
-	37, // 100: entpb.UserPermService.Create:output_type -> entpb.UserPerm
-	37, // 101: entpb.UserPermService.Get:output_type -> entpb.UserPerm
-	37, // 102: entpb.UserPermService.Update:output_type -> entpb.UserPerm
-	57, // 103: entpb.UserPermService.Delete:output_type -> google.protobuf.Empty
-	43, // 104: entpb.UserPermService.List:output_type -> entpb.ListUserPermResponse
-	45, // 105: entpb.UserPermService.BatchCreate:output_type -> entpb.BatchCreateUserPermsResponse
-	46, // 106: entpb.UserRoleService.Create:output_type -> entpb.UserRole
-	46, // 107: entpb.UserRoleService.Get:output_type -> entpb.UserRole
-	46, // 108: entpb.UserRoleService.Update:output_type -> entpb.UserRole
-	57, // 109: entpb.UserRoleService.Delete:output_type -> google.protobuf.Empty
-	52, // 110: entpb.UserRoleService.List:output_type -> entpb.ListUserRoleResponse
-	54, // 111: entpb.UserRoleService.BatchCreate:output_type -> entpb.BatchCreateUserRolesResponse
-	82, // [82:112] is the sub-list for method output_type
-	52, // [52:82] is the sub-list for method input_type
-	52, // [52:52] is the sub-list for extension type_name
-	52, // [52:52] is the sub-list for extension extendee
-	0,  // [0:52] is the sub-list for field type_name
+	45, // 0: entpb.Perm.description:type_name -> google.protobuf.StringValue
+	14, // 1: entpb.Perm.group:type_name -> entpb.PermGroup
+	18, // 2: entpb.Perm.roles:type_name -> entpb.Role
+	27, // 3: entpb.Perm.user_perms:type_name -> entpb.UserPerm
+	0,  // 4: entpb.GetPermRequest.view:type_name -> entpb.GetPermRequest.View
+	1,  // 5: entpb.ListPermRequest.view:type_name -> entpb.ListPermRequest.View
+	10, // 6: entpb.ListPermResponse.perm_list:type_name -> entpb.Perm
+	10, // 7: entpb.PermGroup.perms:type_name -> entpb.Perm
+	2,  // 8: entpb.GetPermGroupRequest.view:type_name -> entpb.GetPermGroupRequest.View
+	3,  // 9: entpb.ListPermGroupRequest.view:type_name -> entpb.ListPermGroupRequest.View
+	14, // 10: entpb.ListPermGroupResponse.perm_group_list:type_name -> entpb.PermGroup
+	45, // 11: entpb.Role.color:type_name -> google.protobuf.StringValue
+	45, // 12: entpb.Role.description:type_name -> google.protobuf.StringValue
+	46, // 13: entpb.Role.created_at:type_name -> google.protobuf.Timestamp
+	46, // 14: entpb.Role.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 15: entpb.Role.perms:type_name -> entpb.Perm
+	36, // 16: entpb.Role.user_roles:type_name -> entpb.UserRole
+	18, // 17: entpb.CreateRoleRequest.role:type_name -> entpb.Role
+	4,  // 18: entpb.GetRoleRequest.view:type_name -> entpb.GetRoleRequest.View
+	18, // 19: entpb.UpdateRoleRequest.role:type_name -> entpb.Role
+	5,  // 20: entpb.ListRoleRequest.view:type_name -> entpb.ListRoleRequest.View
+	18, // 21: entpb.ListRoleResponse.role_list:type_name -> entpb.Role
+	19, // 22: entpb.BatchCreateRolesRequest.requests:type_name -> entpb.CreateRoleRequest
+	18, // 23: entpb.BatchCreateRolesResponse.roles:type_name -> entpb.Role
+	46, // 24: entpb.UserPerm.created_at:type_name -> google.protobuf.Timestamp
+	46, // 25: entpb.UserPerm.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 26: entpb.UserPerm.perm:type_name -> entpb.Perm
+	27, // 27: entpb.CreateUserPermRequest.user_perm:type_name -> entpb.UserPerm
+	6,  // 28: entpb.GetUserPermRequest.view:type_name -> entpb.GetUserPermRequest.View
+	27, // 29: entpb.UpdateUserPermRequest.user_perm:type_name -> entpb.UserPerm
+	7,  // 30: entpb.ListUserPermRequest.view:type_name -> entpb.ListUserPermRequest.View
+	27, // 31: entpb.ListUserPermResponse.user_perm_list:type_name -> entpb.UserPerm
+	28, // 32: entpb.BatchCreateUserPermsRequest.requests:type_name -> entpb.CreateUserPermRequest
+	27, // 33: entpb.BatchCreateUserPermsResponse.user_perms:type_name -> entpb.UserPerm
+	46, // 34: entpb.UserRole.created_at:type_name -> google.protobuf.Timestamp
+	46, // 35: entpb.UserRole.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 36: entpb.UserRole.role:type_name -> entpb.Role
+	36, // 37: entpb.CreateUserRoleRequest.user_role:type_name -> entpb.UserRole
+	8,  // 38: entpb.GetUserRoleRequest.view:type_name -> entpb.GetUserRoleRequest.View
+	36, // 39: entpb.UpdateUserRoleRequest.user_role:type_name -> entpb.UserRole
+	9,  // 40: entpb.ListUserRoleRequest.view:type_name -> entpb.ListUserRoleRequest.View
+	36, // 41: entpb.ListUserRoleResponse.user_role_list:type_name -> entpb.UserRole
+	37, // 42: entpb.BatchCreateUserRolesRequest.requests:type_name -> entpb.CreateUserRoleRequest
+	36, // 43: entpb.BatchCreateUserRolesResponse.user_roles:type_name -> entpb.UserRole
+	11, // 44: entpb.PermService.Get:input_type -> entpb.GetPermRequest
+	12, // 45: entpb.PermService.List:input_type -> entpb.ListPermRequest
+	15, // 46: entpb.PermGroupService.Get:input_type -> entpb.GetPermGroupRequest
+	16, // 47: entpb.PermGroupService.List:input_type -> entpb.ListPermGroupRequest
+	19, // 48: entpb.RoleService.Create:input_type -> entpb.CreateRoleRequest
+	20, // 49: entpb.RoleService.Get:input_type -> entpb.GetRoleRequest
+	21, // 50: entpb.RoleService.Update:input_type -> entpb.UpdateRoleRequest
+	22, // 51: entpb.RoleService.Delete:input_type -> entpb.DeleteRoleRequest
+	23, // 52: entpb.RoleService.List:input_type -> entpb.ListRoleRequest
+	25, // 53: entpb.RoleService.BatchCreate:input_type -> entpb.BatchCreateRolesRequest
+	28, // 54: entpb.UserPermService.Create:input_type -> entpb.CreateUserPermRequest
+	29, // 55: entpb.UserPermService.Get:input_type -> entpb.GetUserPermRequest
+	30, // 56: entpb.UserPermService.Update:input_type -> entpb.UpdateUserPermRequest
+	31, // 57: entpb.UserPermService.Delete:input_type -> entpb.DeleteUserPermRequest
+	32, // 58: entpb.UserPermService.List:input_type -> entpb.ListUserPermRequest
+	34, // 59: entpb.UserPermService.BatchCreate:input_type -> entpb.BatchCreateUserPermsRequest
+	37, // 60: entpb.UserRoleService.Create:input_type -> entpb.CreateUserRoleRequest
+	38, // 61: entpb.UserRoleService.Get:input_type -> entpb.GetUserRoleRequest
+	39, // 62: entpb.UserRoleService.Update:input_type -> entpb.UpdateUserRoleRequest
+	40, // 63: entpb.UserRoleService.Delete:input_type -> entpb.DeleteUserRoleRequest
+	41, // 64: entpb.UserRoleService.List:input_type -> entpb.ListUserRoleRequest
+	43, // 65: entpb.UserRoleService.BatchCreate:input_type -> entpb.BatchCreateUserRolesRequest
+	10, // 66: entpb.PermService.Get:output_type -> entpb.Perm
+	13, // 67: entpb.PermService.List:output_type -> entpb.ListPermResponse
+	14, // 68: entpb.PermGroupService.Get:output_type -> entpb.PermGroup
+	17, // 69: entpb.PermGroupService.List:output_type -> entpb.ListPermGroupResponse
+	18, // 70: entpb.RoleService.Create:output_type -> entpb.Role
+	18, // 71: entpb.RoleService.Get:output_type -> entpb.Role
+	18, // 72: entpb.RoleService.Update:output_type -> entpb.Role
+	47, // 73: entpb.RoleService.Delete:output_type -> google.protobuf.Empty
+	24, // 74: entpb.RoleService.List:output_type -> entpb.ListRoleResponse
+	26, // 75: entpb.RoleService.BatchCreate:output_type -> entpb.BatchCreateRolesResponse
+	27, // 76: entpb.UserPermService.Create:output_type -> entpb.UserPerm
+	27, // 77: entpb.UserPermService.Get:output_type -> entpb.UserPerm
+	27, // 78: entpb.UserPermService.Update:output_type -> entpb.UserPerm
+	47, // 79: entpb.UserPermService.Delete:output_type -> google.protobuf.Empty
+	33, // 80: entpb.UserPermService.List:output_type -> entpb.ListUserPermResponse
+	35, // 81: entpb.UserPermService.BatchCreate:output_type -> entpb.BatchCreateUserPermsResponse
+	36, // 82: entpb.UserRoleService.Create:output_type -> entpb.UserRole
+	36, // 83: entpb.UserRoleService.Get:output_type -> entpb.UserRole
+	36, // 84: entpb.UserRoleService.Update:output_type -> entpb.UserRole
+	47, // 85: entpb.UserRoleService.Delete:output_type -> google.protobuf.Empty
+	42, // 86: entpb.UserRoleService.List:output_type -> entpb.ListUserRoleResponse
+	44, // 87: entpb.UserRoleService.BatchCreate:output_type -> entpb.BatchCreateUserRolesResponse
+	66, // [66:88] is the sub-list for method output_type
+	44, // [44:66] is the sub-list for method input_type
+	44, // [44:44] is the sub-list for extension type_name
+	44, // [44:44] is the sub-list for extension extendee
+	0,  // [0:44] is the sub-list for field type_name
 }
 
 func init() { file_entpb_entpb_proto_init() }
@@ -3313,7 +2808,7 @@ func file_entpb_entpb_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_entpb_entpb_proto_rawDesc), len(file_entpb_entpb_proto_rawDesc)),
 			NumEnums:      10,
-			NumMessages:   45,
+			NumMessages:   35,
 			NumExtensions: 0,
 			NumServices:   5,
 		},

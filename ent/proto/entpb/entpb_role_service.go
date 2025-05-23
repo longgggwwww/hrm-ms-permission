@@ -40,8 +40,10 @@ func toProtoRole(e *ent.Role) (*Role, error) {
 	v.Code = code
 	color := wrapperspb.String(e.Color)
 	v.Color = color
-	created_at := timestamppb.New(e.CreatedAt)
-	v.CreatedAt = created_at
+	if e.CreatedAt != nil {
+		created_at := timestamppb.New(*e.CreatedAt)
+		v.CreatedAt = created_at
+	}
 	description := wrapperspb.String(e.Description)
 	v.Description = description
 	id, err := e.ID.MarshalBinary()
@@ -51,8 +53,10 @@ func toProtoRole(e *ent.Role) (*Role, error) {
 	v.Id = id
 	name := e.Name
 	v.Name = name
-	updated_at := timestamppb.New(e.UpdatedAt)
-	v.UpdatedAt = updated_at
+	if e.UpdatedAt != nil {
+		updated_at := timestamppb.New(*e.UpdatedAt)
+		v.UpdatedAt = updated_at
+	}
 	for _, edg := range e.Edges.Perms {
 		id, err := edg.ID.MarshalBinary()
 		if err != nil {
