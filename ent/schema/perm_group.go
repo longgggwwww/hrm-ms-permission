@@ -43,6 +43,8 @@ func (PermGroup) Edges() []ent.Edge {
 func (PermGroup) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entproto.Message(),
-		entproto.Service(),
+		entproto.Service(
+			entproto.Methods(entproto.MethodList | entproto.MethodGet),
+		),
 	}
 }

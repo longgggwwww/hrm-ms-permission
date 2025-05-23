@@ -36,10 +36,12 @@ func (Role) Fields() []ent.Field {
 			Optional().
 			Annotations(entproto.Field(5)),
 		field.Time("created_at").
+			Nillable().
 			Immutable().
 			Default(time.Now).
 			Annotations(entproto.Field(6)),
 		field.Time("updated_at").
+			Nillable().
 			Default(time.Now).
 			UpdateDefault(time.Now).
 			Annotations(entproto.Field(7)),

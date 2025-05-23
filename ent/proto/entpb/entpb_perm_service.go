@@ -5,7 +5,6 @@ import (
 	context "context"
 	base64 "encoding/base64"
 	entproto "entgo.io/contrib/entproto"
-	sqlgraph "entgo.io/ent/dialect/sql/sqlgraph"
 	fmt "fmt"
 	uuid "github.com/google/uuid"
 	ent "github.com/longgggwwww/hrm-ms-permission/ent"
@@ -15,7 +14,6 @@ import (
 	userperm "github.com/longgggwwww/hrm-ms-permission/ent/userperm"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -89,31 +87,6 @@ func toProtoPermList(e []*ent.Perm) ([]*Perm, error) {
 	return pbList, nil
 }
 
-// Create implements PermServiceServer.Create
-func (svc *PermService) Create(ctx context.Context, req *CreatePermRequest) (*Perm, error) {
-	perm := req.GetPerm()
-	m, err := svc.createBuilder(perm)
-	if err != nil {
-		return nil, err
-	}
-	res, err := m.Save(ctx)
-	switch {
-	case err == nil:
-		proto, err := toProtoPerm(res)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-		}
-		return proto, nil
-	case sqlgraph.IsUniqueConstraintError(err):
-		return nil, status.Errorf(codes.AlreadyExists, "already exists: %s", err)
-	case ent.IsConstraintError(err):
-		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-	default:
-		return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-	}
-
-}
-
 // Get implements PermServiceServer.Get
 func (svc *PermService) Get(ctx context.Context, req *GetPermRequest) (*Perm, error) {
 	var (
@@ -146,81 +119,6 @@ func (svc *PermService) Get(ctx context.Context, req *GetPermRequest) (*Perm, er
 	switch {
 	case err == nil:
 		return toProtoPerm(get)
-	case ent.IsNotFound(err):
-		return nil, status.Errorf(codes.NotFound, "not found: %s", err)
-	default:
-		return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-	}
-
-}
-
-// Update implements PermServiceServer.Update
-func (svc *PermService) Update(ctx context.Context, req *UpdatePermRequest) (*Perm, error) {
-	perm := req.GetPerm()
-	var permID uuid.UUID
-	if err := (&permID).UnmarshalBinary(perm.GetId()); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-	}
-	m := svc.client.Perm.UpdateOneID(permID)
-	permCode := perm.GetCode()
-	m.SetCode(permCode)
-	if perm.GetDescription() != nil {
-		permDescription := perm.GetDescription().GetValue()
-		m.SetDescription(permDescription)
-	}
-	permName := perm.GetName()
-	m.SetName(permName)
-	if perm.GetGroup() != nil {
-		var permGroup uuid.UUID
-		if err := (&permGroup).UnmarshalBinary(perm.GetGroup().GetId()); err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-		}
-		m.SetGroupID(permGroup)
-	}
-	for _, item := range perm.GetRoles() {
-		var roles uuid.UUID
-		if err := (&roles).UnmarshalBinary(item.GetId()); err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-		}
-		m.AddRoleIDs(roles)
-	}
-	for _, item := range perm.GetUserPerms() {
-		var userperms uuid.UUID
-		if err := (&userperms).UnmarshalBinary(item.GetId()); err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-		}
-		m.AddUserPermIDs(userperms)
-	}
-
-	res, err := m.Save(ctx)
-	switch {
-	case err == nil:
-		proto, err := toProtoPerm(res)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-		}
-		return proto, nil
-	case sqlgraph.IsUniqueConstraintError(err):
-		return nil, status.Errorf(codes.AlreadyExists, "already exists: %s", err)
-	case ent.IsConstraintError(err):
-		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-	default:
-		return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-	}
-
-}
-
-// Delete implements PermServiceServer.Delete
-func (svc *PermService) Delete(ctx context.Context, req *DeletePermRequest) (*emptypb.Empty, error) {
-	var err error
-	var id uuid.UUID
-	if err := (&id).UnmarshalBinary(req.GetId()); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-	}
-	err = svc.client.Perm.DeleteOneID(id).Exec(ctx)
-	switch {
-	case err == nil:
-		return &emptypb.Empty{}, nil
 	case ent.IsNotFound(err):
 		return nil, status.Errorf(codes.NotFound, "not found: %s", err)
 	default:
@@ -294,73 +192,4 @@ func (svc *PermService) List(ctx context.Context, req *ListPermRequest) (*ListPe
 		return nil, status.Errorf(codes.Internal, "internal error: %s", err)
 	}
 
-}
-
-// BatchCreate implements PermServiceServer.BatchCreate
-func (svc *PermService) BatchCreate(ctx context.Context, req *BatchCreatePermsRequest) (*BatchCreatePermsResponse, error) {
-	requests := req.GetRequests()
-	if len(requests) > entproto.MaxBatchCreateSize {
-		return nil, status.Errorf(codes.InvalidArgument, "batch size cannot be greater than %d", entproto.MaxBatchCreateSize)
-	}
-	bulk := make([]*ent.PermCreate, len(requests))
-	for i, req := range requests {
-		perm := req.GetPerm()
-		var err error
-		bulk[i], err = svc.createBuilder(perm)
-		if err != nil {
-			return nil, err
-		}
-	}
-	res, err := svc.client.Perm.CreateBulk(bulk...).Save(ctx)
-	switch {
-	case err == nil:
-		protoList, err := toProtoPermList(res)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-		}
-		return &BatchCreatePermsResponse{
-			Perms: protoList,
-		}, nil
-	case sqlgraph.IsUniqueConstraintError(err):
-		return nil, status.Errorf(codes.AlreadyExists, "already exists: %s", err)
-	case ent.IsConstraintError(err):
-		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-	default:
-		return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-	}
-
-}
-
-func (svc *PermService) createBuilder(perm *Perm) (*ent.PermCreate, error) {
-	m := svc.client.Perm.Create()
-	permCode := perm.GetCode()
-	m.SetCode(permCode)
-	if perm.GetDescription() != nil {
-		permDescription := perm.GetDescription().GetValue()
-		m.SetDescription(permDescription)
-	}
-	permName := perm.GetName()
-	m.SetName(permName)
-	if perm.GetGroup() != nil {
-		var permGroup uuid.UUID
-		if err := (&permGroup).UnmarshalBinary(perm.GetGroup().GetId()); err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-		}
-		m.SetGroupID(permGroup)
-	}
-	for _, item := range perm.GetRoles() {
-		var roles uuid.UUID
-		if err := (&roles).UnmarshalBinary(item.GetId()); err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-		}
-		m.AddRoleIDs(roles)
-	}
-	for _, item := range perm.GetUserPerms() {
-		var userperms uuid.UUID
-		if err := (&userperms).UnmarshalBinary(item.GetId()); err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-		}
-		m.AddUserPermIDs(userperms)
-	}
-	return m, nil
 }
