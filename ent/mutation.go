@@ -51,8 +51,8 @@ type PermMutation struct {
 	roles             map[uuid.UUID]struct{}
 	removedroles      map[uuid.UUID]struct{}
 	clearedroles      bool
-	user_perms        map[int]struct{}
-	removeduser_perms map[int]struct{}
+	user_perms        map[uuid.UUID]struct{}
+	removeduser_perms map[uuid.UUID]struct{}
 	cleareduser_perms bool
 	done              bool
 	oldValue          func(context.Context) (*Perm, error)
@@ -378,9 +378,9 @@ func (m *PermMutation) ResetRoles() {
 }
 
 // AddUserPermIDs adds the "user_perms" edge to the UserPerm entity by ids.
-func (m *PermMutation) AddUserPermIDs(ids ...int) {
+func (m *PermMutation) AddUserPermIDs(ids ...uuid.UUID) {
 	if m.user_perms == nil {
-		m.user_perms = make(map[int]struct{})
+		m.user_perms = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.user_perms[ids[i]] = struct{}{}
@@ -398,9 +398,9 @@ func (m *PermMutation) UserPermsCleared() bool {
 }
 
 // RemoveUserPermIDs removes the "user_perms" edge to the UserPerm entity by IDs.
-func (m *PermMutation) RemoveUserPermIDs(ids ...int) {
+func (m *PermMutation) RemoveUserPermIDs(ids ...uuid.UUID) {
 	if m.removeduser_perms == nil {
-		m.removeduser_perms = make(map[int]struct{})
+		m.removeduser_perms = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.user_perms, ids[i])
@@ -409,7 +409,7 @@ func (m *PermMutation) RemoveUserPermIDs(ids ...int) {
 }
 
 // RemovedUserPerms returns the removed IDs of the "user_perms" edge to the UserPerm entity.
-func (m *PermMutation) RemovedUserPermsIDs() (ids []int) {
+func (m *PermMutation) RemovedUserPermsIDs() (ids []uuid.UUID) {
 	for id := range m.removeduser_perms {
 		ids = append(ids, id)
 	}
@@ -417,7 +417,7 @@ func (m *PermMutation) RemovedUserPermsIDs() (ids []int) {
 }
 
 // UserPermsIDs returns the "user_perms" edge IDs in the mutation.
-func (m *PermMutation) UserPermsIDs() (ids []int) {
+func (m *PermMutation) UserPermsIDs() (ids []uuid.UUID) {
 	for id := range m.user_perms {
 		ids = append(ids, id)
 	}
@@ -1222,6 +1222,8 @@ type RoleMutation struct {
 	name              *string
 	color             *string
 	description       *string
+	created_at        *time.Time
+	updated_at        *time.Time
 	clearedFields     map[string]struct{}
 	perms             map[uuid.UUID]struct{}
 	removedperms      map[uuid.UUID]struct{}
@@ -1508,6 +1510,78 @@ func (m *RoleMutation) ResetDescription() {
 	delete(m.clearedFields, role.FieldDescription)
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (m *RoleMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *RoleMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *RoleMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *RoleMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *RoleMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *RoleMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
 // AddPermIDs adds the "perms" edge to the Perm entity by ids.
 func (m *RoleMutation) AddPermIDs(ids ...uuid.UUID) {
 	if m.perms == nil {
@@ -1650,7 +1724,7 @@ func (m *RoleMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RoleMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 6)
 	if m.code != nil {
 		fields = append(fields, role.FieldCode)
 	}
@@ -1662,6 +1736,12 @@ func (m *RoleMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, role.FieldDescription)
+	}
+	if m.created_at != nil {
+		fields = append(fields, role.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, role.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -1679,6 +1759,10 @@ func (m *RoleMutation) Field(name string) (ent.Value, bool) {
 		return m.Color()
 	case role.FieldDescription:
 		return m.Description()
+	case role.FieldCreatedAt:
+		return m.CreatedAt()
+	case role.FieldUpdatedAt:
+		return m.UpdatedAt()
 	}
 	return nil, false
 }
@@ -1696,6 +1780,10 @@ func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldColor(ctx)
 	case role.FieldDescription:
 		return m.OldDescription(ctx)
+	case role.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case role.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Role field %s", name)
 }
@@ -1732,6 +1820,20 @@ func (m *RoleMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case role.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case role.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Role field %s", name)
@@ -1808,6 +1910,12 @@ func (m *RoleMutation) ResetField(name string) error {
 		return nil
 	case role.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case role.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case role.FieldUpdatedAt:
+		m.ResetUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Role field %s", name)
@@ -1928,7 +2036,7 @@ type UserPermMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *uuid.UUID
 	user_id       *string
 	created_at    *time.Time
 	updated_at    *time.Time
@@ -1960,7 +2068,7 @@ func newUserPermMutation(c config, op Op, opts ...userpermOption) *UserPermMutat
 }
 
 // withUserPermID sets the ID field of the mutation.
-func withUserPermID(id int) userpermOption {
+func withUserPermID(id uuid.UUID) userpermOption {
 	return func(m *UserPermMutation) {
 		var (
 			err   error
@@ -2010,9 +2118,15 @@ func (m UserPermMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of UserPerm entities.
+func (m *UserPermMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserPermMutation) ID() (id int, exists bool) {
+func (m *UserPermMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2023,12 +2137,12 @@ func (m *UserPermMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserPermMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *UserPermMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):

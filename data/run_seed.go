@@ -14,14 +14,12 @@ import (
 func main() {
 	log.Println("Starting seeding process...")
 
-	// Khởi tạo client kết nối database
 	client, err := initDBClient()
 	if err != nil {
 		log.Fatalf("Failed to initialize database client: %v", err)
 	}
 	defer client.Close()
 
-	// Đăng ký các hàm seed theo thứ tự
 	seeders := []struct {
 		name string
 		fn   func(context.Context, *ent.Client) error
@@ -45,7 +43,6 @@ func main() {
 	log.Println("Seeding process completed successfully.")
 }
 
-// Khởi tạo và trả về client Ent kết nối database
 func initDBClient() (*ent.Client, error) {
 	connStr := os.Getenv("DB_URL")
 	if connStr == "" {

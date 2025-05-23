@@ -8,70 +8,143 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	pb "github.com/huynhthanhthao/hrm_user_service/generated"
+	userPb "github.com/huynhthanhthao/hrm_user_service/generated"
 	"github.com/longgggwwww/hrm-ms-permission/ent"
 	"github.com/longgggwwww/hrm-ms-permission/ent/role"
 	"github.com/longgggwwww/hrm-ms-permission/ent/userrole"
-	"github.com/longgggwwww/hrm-ms-permission/internal/utils"
 )
 
 type RoleHandler struct {
 	Client     *ent.Client
-	UserClient *pb.UserServiceClient
+	UserClient *userPb.UserServiceClient
 }
 
-func NewRoleHandler(client *ent.Client, userClient *pb.UserServiceClient) *RoleHandler {
+func NewRoleHandler(client *ent.Client, userClient *userPb.UserServiceClient) *RoleHandler {
 	return &RoleHandler{
 		Client:     client,
 		UserClient: userClient,
 	}
 }
-
-func (h *RoleHandler) GetRoles(c *gin.Context) {
-	roles, err := h.Client.Role.Query().WithPerms().All(c.Request.Context())
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
+	roles := r.Group("roles")
+	{
+		roles.POST("", h.Create)
+		roles.GET("", h.List)
+		roles.GET(":id", h.Get)
+		roles.PATCH(":id", h.Update)
+		roles.DELETE(":id", h.Delete)
+		roles.DELETE("", h.DeleteBatch)
+		roles.POST(":id/assign", h.AssignRoleToUsers)
+		roles.GET(":id/users", h.GetUsersByRole)
 	}
-	c.JSON(http.StatusOK, roles)
+
+	r.GET("/users/:user_id/roles", h.GetRolesByUser)
 }
 
-func (h *RoleHandler) CreateRole(c *gin.Context) {
+func (h *RoleHandler) Create(c *gin.Context) {
 	var input struct {
-		Code        string  `json:"code" binding:"required"`
-		Name        string  `json:"name" binding:"required"`
-		Color       *string `json:"color"`
-		Description *string `json:"description"`
+		Code        string       `json:"code" binding:"required"`
+		Name        string       `json:"name" binding:"required"`
+		Color       *string      `json:"color"`
+		Description *string      `json:"description"`
+		PermIDs     []*uuid.UUID `json:"perm_ids"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
 	roleCreate := h.Client.Role.Create().
 		SetCode(input.Code).
-		SetName(input.Name)
-	if input.Color != nil {
-		roleCreate.SetColor(*input.Color)
-	}
-	if input.Description != nil {
-		roleCreate.SetDescription(*input.Description)
+		SetName(input.Name).
+		SetNillableColor(input.Color).
+		SetNillableDescription(input.Description)
+
+	if len(input.PermIDs) > 0 {
+		var permIDs []uuid.UUID
+		for _, idPtr := range input.PermIDs {
+			if idPtr != nil {
+				permIDs = append(permIDs, *idPtr)
+			}
+		}
+		if len(permIDs) > 0 {
+			roleCreate.AddPermIDs(permIDs...)
+		}
 	}
 
-	role, err := roleCreate.Save(context.Background())
+	createdRole, err := roleCreate.Save(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, role)
+	res, err := h.Client.Role.Query().
+		Where(role.IDEQ(createdRole.ID)).
+		WithPerms().
+		Only(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to fetch role with permissions",
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, res)
 }
 
-func (h *RoleHandler) UpdateRole(c *gin.Context) {
-	// Parse the UUID from the URL parameter
+func (h *RoleHandler) List(c *gin.Context) {
+	roles, err := h.Client.Role.Query().
+		WithPerms().
+		All(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, roles)
+}
+
+func (h *RoleHandler) Get(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid UUID format for role ID",
+		})
+		return
+	}
+
+	role, err := h.Client.Role.Query().
+		Where(role.IDEQ(id)).
+		WithPerms().
+		Only(c.Request.Context())
+	if err != nil {
+		if ent.IsNotFound(err) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Role not found",
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Failed to fetch role",
+			})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, role)
+}
+
+func (h *RoleHandler) Update(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid UUID format",
+		})
 		return
 	}
 
@@ -82,20 +155,16 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 		PermIDs     []*uuid.UUID `json:"perm_ids"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	update := h.Client.Role.UpdateOneID(id)
-	if input.Name != nil {
-		update.SetName(*input.Name)
-	}
-	if input.Color != nil {
-		update.SetColor(*input.Color)
-	}
-	if input.Description != nil {
-		update.SetDescription(*input.Description)
-	}
+	update := h.Client.Role.UpdateOneID(id).
+		SetNillableName(input.Name).
+		SetNillableColor(input.Color).
+		SetNillableDescription(input.Description)
 	if len(input.PermIDs) > 0 {
 		update.ClearPerms()
 		for _, permID := range input.PermIDs {
@@ -103,34 +172,52 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 		}
 	}
 
-	updated, err := update.Save(context.Background())
+	updated, err := update.Save(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if ent.IsNotFound(err) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Role not found",
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+		}
 		return
 	}
 
-	updatedRole, err := h.Client.Role.Query().Where(role.IDEQ(updated.ID)).WithPerms().Only(context.Background())
+	role, err := h.Client.Role.Query().
+		Where(role.IDEQ(updated.ID)).
+		WithPerms().
+		Only(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated role with permissions"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to fetch updated role with permissions",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedRole)
+	c.JSON(http.StatusOK, role)
 }
 
-func (h *RoleHandler) DeleteRole(c *gin.Context) {
-	// Parse the UUID from the URL parameter
+func (h *RoleHandler) Delete(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid UUID format",
+		})
 		return
 	}
 
-	if err := h.Client.Role.DeleteOneID(id).Exec(context.Background()); err != nil {
+	if err := h.Client.Role.DeleteOneID(id).Exec(c.Request.Context()); err != nil {
 		if ent.IsNotFound(err) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Role not found"})
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Role not found",
+			})
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
 		}
 		return
 	}
@@ -138,47 +225,62 @@ func (h *RoleHandler) DeleteRole(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func (h *RoleHandler) DeleteMultipleRoles(c *gin.Context) {
+func (h *RoleHandler) DeleteBatch(c *gin.Context) {
 	var input struct {
 		IDs []uuid.UUID `json:"ids" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
-		h.handleError(c, http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
+	// Check if IDs are provided
 	if len(input.IDs) == 0 {
-		h.handleError(c, http.StatusBadRequest, "No role IDs provided")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "No role IDs provided",
+		})
 		return
 	}
 
-	tx, err := h.Client.Tx(context.Background())
+	// Start a transaction
+	tx, err := h.Client.Tx(c.Request.Context())
 	if err != nil {
-		h.handleError(c, http.StatusInternalServerError, "Failed to start transaction")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to start transaction",
+		})
 		return
 	}
 
+	// Make sure to rollback the transaction if any error occurs
 	for _, id := range input.IDs {
-		if err := tx.Role.DeleteOneID(id).Exec(context.Background()); err != nil {
-			tx.Rollback()
+		if err := tx.Role.DeleteOneID(id).Exec(c.Request.Context()); err != nil {
+			tx.Rollback() // Rollback the transaction on error
 			if ent.IsNotFound(err) {
-				h.handleError(c, http.StatusNotFound, fmt.Sprintf("Role with ID %s not found", id))
+				c.JSON(http.StatusNotFound, gin.H{
+					"error": fmt.Sprintf("Role with ID %s not found", id),
+				})
 			} else {
-				h.handleError(c, http.StatusInternalServerError, err.Error())
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": err.Error(),
+				})
 			}
 			return
 		}
 	}
 
+	// Commit the transaction if all deletions were successful
 	if err := tx.Commit(); err != nil {
-		h.handleError(c, http.StatusInternalServerError, "Failed to commit transaction")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to commit transaction",
+		})
 		return
 	}
-
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func (h *RoleHandler) checkUserIDsExist(userIDs []string, users *pb.GetUsersByIDsResponse) error {
+func (h *RoleHandler) checkUserIDsExist(userIDs []string, users *userPb.GetUsersByIDsResponse) error {
 	userIDsMap := make(map[string]bool)
 	for _, user := range users.Users {
 		userIDsMap[user.Id] = true
@@ -199,7 +301,6 @@ func (h *RoleHandler) assignRoleToUsers(roleID uuid.UUID, userIDs []string) erro
 			OnConflict(sql.ConflictColumns("role_id", "user_id")).
 			UpdateNewValues().
 			Exec(context.Background())
-
 		if err != nil {
 			return fmt.Errorf("failed to assign role to user %s: %v", userID, err)
 		}
@@ -207,24 +308,20 @@ func (h *RoleHandler) assignRoleToUsers(roleID uuid.UUID, userIDs []string) erro
 	return nil
 }
 
-func (h *RoleHandler) handleError(c *gin.Context, statusCode int, message string) {
-	utils.RespondWithError(c, statusCode, fmt.Errorf("%s", message))
-}
-
 func (h *RoleHandler) AssignRoleToUsers(c *gin.Context) {
 	roleID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		h.handleError(c, http.StatusBadRequest, "Invalid UUID format for role ID")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format for role ID"})
 		return
 	}
 
 	exists, err := h.Client.Role.Query().Where(role.IDEQ(roleID)).Exist(context.Background())
 	if err != nil {
-		h.handleError(c, http.StatusInternalServerError, "Failed to check role existence")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check role existence"})
 		return
 	}
 	if !exists {
-		h.handleError(c, http.StatusNotFound, "Role not found")
+		c.JSON(http.StatusNotFound, gin.H{"error": "Role not found"})
 		return
 	}
 
@@ -232,25 +329,25 @@ func (h *RoleHandler) AssignRoleToUsers(c *gin.Context) {
 		UserIDs []string `json:"user_ids" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
-		h.handleError(c, http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	users, err := (*h.UserClient).GetUsersByIDs(context.Background(), &pb.GetUsersByIDsRequest{
+	users, err := (*h.UserClient).GetUsersByIDs(context.Background(), &userPb.GetUsersByIDsRequest{
 		Ids: input.UserIDs,
 	})
 	if err != nil {
-		h.handleError(c, http.StatusInternalServerError, "Failed to fetch users")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
 		return
 	}
 
 	if err := h.checkUserIDsExist(input.UserIDs, users); err != nil {
-		h.handleError(c, http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := h.assignRoleToUsers(roleID, input.UserIDs); err != nil {
-		h.handleError(c, http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -260,17 +357,17 @@ func (h *RoleHandler) AssignRoleToUsers(c *gin.Context) {
 func (h *RoleHandler) GetUsersByRole(c *gin.Context) {
 	roleID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		h.handleError(c, http.StatusBadRequest, "Invalid UUID format for role ID")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID format for role ID"})
 		return
 	}
 
 	userRoles, err := h.Client.UserRole.Query().Where(userrole.RoleIDEQ(roleID)).All(context.Background())
 	if err != nil {
-		h.handleError(c, http.StatusInternalServerError, "Failed to fetch users by role")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users by role"})
 		return
 	}
 	if len(userRoles) == 0 {
-		h.handleError(c, http.StatusNotFound, "No users found for the given role")
+		c.JSON(http.StatusNotFound, gin.H{"error": "No users found for the given role"})
 		return
 	}
 
@@ -281,11 +378,11 @@ func (h *RoleHandler) GetUsersByRole(c *gin.Context) {
 	}
 
 	// Fetch user details from the UserService
-	respb, err := (*h.UserClient).GetUsersByIDs(context.Background(), &pb.GetUsersByIDsRequest{
+	respb, err := (*h.UserClient).GetUsersByIDs(context.Background(), &userPb.GetUsersByIDsRequest{
 		Ids: userIDs,
 	})
 	if err != nil {
-		h.handleError(c, http.StatusInternalServerError, "Failed to fetch users")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
 		return
 	}
 
@@ -300,13 +397,13 @@ func (h *RoleHandler) GetUsersByRole(c *gin.Context) {
 func (h *RoleHandler) GetRolesByUser(c *gin.Context) {
 	userID := c.Param("user_id")
 	if userID == "" {
-		h.handleError(c, http.StatusBadRequest, "User ID is required")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
 		return
 	}
 
 	userRoles, err := h.Client.UserRole.Query().Where(userrole.UserIDEQ(userID)).WithRole().All(context.Background())
 	if err != nil {
-		h.handleError(c, http.StatusInternalServerError, "Failed to fetch roles for the user")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch roles for the user"})
 		return
 	}
 
@@ -316,50 +413,11 @@ func (h *RoleHandler) GetRolesByUser(c *gin.Context) {
 	for _, userRole := range userRoles {
 		role := userRole.Edges.Role
 		if role == nil {
-			h.handleError(c, http.StatusInternalServerError, "Role not found for user role")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Role not found for user role"})
 			return
 		}
 		roles = append(roles, role)
 	}
 
 	c.JSON(http.StatusOK, roles)
-}
-
-func (h *RoleHandler) GetRoleByID(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		h.handleError(c, http.StatusBadRequest, "Invalid UUID format for role ID")
-		return
-	}
-
-	role, err := h.Client.Role.Query().Where(role.IDEQ(id)).WithPerms().Only(context.Background())
-	if err != nil {
-		if ent.IsNotFound(err) {
-			h.handleError(c, http.StatusNotFound, "Role not found")
-		} else {
-			h.handleError(c, http.StatusInternalServerError, "Failed to fetch role")
-		}
-		return
-	}
-
-	c.JSON(http.StatusOK, role)
-}
-
-func (h *RoleHandler) RegisterRoutes(r *gin.Engine) {
-	gr := r.Group("/roles")
-	{
-		gr.GET("/", h.GetRoles)
-		gr.POST("/", h.CreateRole)
-		gr.PATCH("/:id", h.UpdateRole)
-		gr.DELETE("/:id", h.DeleteRole)
-		gr.DELETE("/", h.DeleteMultipleRoles)
-		gr.POST("/:id/assign", h.AssignRoleToUsers)
-		gr.GET("/:id/users", h.GetUsersByRole)
-		gr.GET("/:id", h.GetRoleByID)
-	}
-
-	ur := r.Group("/users")
-	{
-		ur.GET(":user_id/roles", h.GetRolesByUser)
-	}
 }

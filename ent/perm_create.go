@@ -101,14 +101,14 @@ func (pc *PermCreate) AddRoles(r ...*Role) *PermCreate {
 }
 
 // AddUserPermIDs adds the "user_perms" edge to the UserPerm entity by IDs.
-func (pc *PermCreate) AddUserPermIDs(ids ...int) *PermCreate {
+func (pc *PermCreate) AddUserPermIDs(ids ...uuid.UUID) *PermCreate {
 	pc.mutation.AddUserPermIDs(ids...)
 	return pc
 }
 
 // AddUserPerms adds the "user_perms" edges to the UserPerm entity.
 func (pc *PermCreate) AddUserPerms(u ...*UserPerm) *PermCreate {
-	ids := make([]int, len(u))
+	ids := make([]uuid.UUID, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -160,6 +160,11 @@ func (pc *PermCreate) defaults() {
 func (pc *PermCreate) check() error {
 	if _, ok := pc.mutation.Code(); !ok {
 		return &ValidationError{Name: "code", err: errors.New(`ent: missing required field "Perm.code"`)}
+	}
+	if v, ok := pc.mutation.Code(); ok {
+		if err := perm.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Perm.code": %w`, err)}
+		}
 	}
 	if _, ok := pc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Perm.name"`)}
@@ -258,7 +263,7 @@ func (pc *PermCreate) createSpec() (*Perm, *sqlgraph.CreateSpec) {
 			Columns: []string{perm.UserPermsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

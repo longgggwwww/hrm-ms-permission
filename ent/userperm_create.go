@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,6 +65,20 @@ func (upc *UserPermCreate) SetNillableUpdatedAt(t *time.Time) *UserPermCreate {
 	return upc
 }
 
+// SetID sets the "id" field.
+func (upc *UserPermCreate) SetID(u uuid.UUID) *UserPermCreate {
+	upc.mutation.SetID(u)
+	return upc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (upc *UserPermCreate) SetNillableID(u *uuid.UUID) *UserPermCreate {
+	if u != nil {
+		upc.SetID(*u)
+	}
+	return upc
+}
+
 // SetPerm sets the "perm" edge to the Perm entity.
 func (upc *UserPermCreate) SetPerm(p *Perm) *UserPermCreate {
 	return upc.SetPermID(p.ID)
@@ -112,6 +127,10 @@ func (upc *UserPermCreate) defaults() {
 		v := userperm.DefaultUpdatedAt()
 		upc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := upc.mutation.ID(); !ok {
+		v := userperm.DefaultID()
+		upc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -150,8 +169,13 @@ func (upc *UserPermCreate) sqlSave(ctx context.Context) (*UserPerm, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
+	}
 	upc.mutation.id = &_node.ID
 	upc.mutation.done = true
 	return _node, nil
@@ -160,9 +184,13 @@ func (upc *UserPermCreate) sqlSave(ctx context.Context) (*UserPerm, error) {
 func (upc *UserPermCreate) createSpec() (*UserPerm, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserPerm{config: upc.config}
-		_spec = sqlgraph.NewCreateSpec(userperm.Table, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(userperm.Table, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = upc.conflict
+	if id, ok := upc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = &id
+	}
 	if value, ok := upc.mutation.UserID(); ok {
 		_spec.SetField(userperm.FieldUserID, field.TypeString, value)
 		_node.UserID = value
@@ -268,18 +296,6 @@ func (u *UserPermUpsert) UpdatePermID() *UserPermUpsert {
 	return u
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (u *UserPermUpsert) SetCreatedAt(v time.Time) *UserPermUpsert {
-	u.Set(userperm.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *UserPermUpsert) UpdateCreatedAt() *UserPermUpsert {
-	u.SetExcluded(userperm.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *UserPermUpsert) SetUpdatedAt(v time.Time) *UserPermUpsert {
 	u.Set(userperm.FieldUpdatedAt, v)
@@ -292,16 +308,27 @@ func (u *UserPermUpsert) UpdateUpdatedAt() *UserPermUpsert {
 	return u
 }
 
-// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.UserPerm.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(userperm.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 func (u *UserPermUpsertOne) UpdateNewValues() *UserPermUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(userperm.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(userperm.FieldCreatedAt)
+		}
+	}))
 	return u
 }
 
@@ -360,20 +387,6 @@ func (u *UserPermUpsertOne) UpdatePermID() *UserPermUpsertOne {
 	})
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (u *UserPermUpsertOne) SetCreatedAt(v time.Time) *UserPermUpsertOne {
-	return u.Update(func(s *UserPermUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *UserPermUpsertOne) UpdateCreatedAt() *UserPermUpsertOne {
-	return u.Update(func(s *UserPermUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *UserPermUpsertOne) SetUpdatedAt(v time.Time) *UserPermUpsertOne {
 	return u.Update(func(s *UserPermUpsert) {
@@ -404,7 +417,12 @@ func (u *UserPermUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *UserPermUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *UserPermUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: UserPermUpsertOne.ID is not supported by MySQL driver. Use UserPermUpsertOne.Exec instead")
+	}
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -413,7 +431,7 @@ func (u *UserPermUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *UserPermUpsertOne) IDX(ctx context.Context) int {
+func (u *UserPermUpsertOne) IDX(ctx context.Context) uuid.UUID {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -468,10 +486,6 @@ func (upcb *UserPermCreateBulk) Save(ctx context.Context) ([]*UserPerm, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -558,10 +572,23 @@ type UserPermUpsertBulk struct {
 //	client.UserPerm.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(userperm.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 func (u *UserPermUpsertBulk) UpdateNewValues() *UserPermUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(userperm.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(userperm.FieldCreatedAt)
+			}
+		}
+	}))
 	return u
 }
 
@@ -617,20 +644,6 @@ func (u *UserPermUpsertBulk) SetPermID(v uuid.UUID) *UserPermUpsertBulk {
 func (u *UserPermUpsertBulk) UpdatePermID() *UserPermUpsertBulk {
 	return u.Update(func(s *UserPermUpsert) {
 		s.UpdatePermID()
-	})
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *UserPermUpsertBulk) SetCreatedAt(v time.Time) *UserPermUpsertBulk {
-	return u.Update(func(s *UserPermUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *UserPermUpsertBulk) UpdateCreatedAt() *UserPermUpsertBulk {
-	return u.Update(func(s *UserPermUpsert) {
-		s.UpdateCreatedAt()
 	})
 }
 

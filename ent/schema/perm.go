@@ -22,6 +22,7 @@ func (Perm) Fields() []ent.Field {
 			Annotations(entproto.Field(1)),
 		field.String("code").
 			Unique().
+			NotEmpty().
 			Annotations(entproto.Field(2)),
 		field.String("name").
 			NotEmpty().

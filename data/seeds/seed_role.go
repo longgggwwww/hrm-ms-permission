@@ -103,9 +103,9 @@ func SeedAdminRole(ctx context.Context, client *ent.Client) error {
 		SetCode("admin").
 		SetName("Quản trị viên").
 		SetColor("#FF0000").
-		SetDescription("tài khoản quản trị viên").
+		SetDescription("Tài khoản quản trị viên").
 		OnConflict(sql.ConflictColumns("code")).
-		Ignore()
+		UpdateNewValues()
 	if err := adm.Exec(ctx); err != nil {
 		return utils.WrapError("creating admin role", err)
 	}

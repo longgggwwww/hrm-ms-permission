@@ -107,8 +107,8 @@ func (upq *UserPermQuery) FirstX(ctx context.Context) *UserPerm {
 
 // FirstID returns the first UserPerm ID from the query.
 // Returns a *NotFoundError when no UserPerm ID was found.
-func (upq *UserPermQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (upq *UserPermQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = upq.Limit(1).IDs(setContextOp(ctx, upq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -120,7 +120,7 @@ func (upq *UserPermQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (upq *UserPermQuery) FirstIDX(ctx context.Context) int {
+func (upq *UserPermQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := upq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -158,8 +158,8 @@ func (upq *UserPermQuery) OnlyX(ctx context.Context) *UserPerm {
 // OnlyID is like Only, but returns the only UserPerm ID in the query.
 // Returns a *NotSingularError when more than one UserPerm ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (upq *UserPermQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (upq *UserPermQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = upq.Limit(2).IDs(setContextOp(ctx, upq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -175,7 +175,7 @@ func (upq *UserPermQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (upq *UserPermQuery) OnlyIDX(ctx context.Context) int {
+func (upq *UserPermQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := upq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -203,7 +203,7 @@ func (upq *UserPermQuery) AllX(ctx context.Context) []*UserPerm {
 }
 
 // IDs executes the query and returns a list of UserPerm IDs.
-func (upq *UserPermQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (upq *UserPermQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 	if upq.ctx.Unique == nil && upq.path != nil {
 		upq.Unique(true)
 	}
@@ -215,7 +215,7 @@ func (upq *UserPermQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (upq *UserPermQuery) IDsX(ctx context.Context) []int {
+func (upq *UserPermQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := upq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -442,7 +442,7 @@ func (upq *UserPermQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (upq *UserPermQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(userperm.Table, userperm.Columns, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(userperm.Table, userperm.Columns, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID))
 	_spec.From = upq.sql
 	if unique := upq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

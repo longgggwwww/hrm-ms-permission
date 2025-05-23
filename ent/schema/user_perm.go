@@ -20,12 +20,16 @@ type UserPerm struct {
 // Fields of the UserPerm.
 func (UserPerm) Fields() []ent.Field {
 	return []ent.Field{
+		field.UUID("id", uuid.UUID{}).
+			Default(uuid.New).
+			Annotations(entproto.Field(1)),
 		field.String("user_id").
 			NotEmpty().
 			Annotations(entproto.Field(2)),
 		field.UUID("perm_id", uuid.UUID{}).
 			Annotations(entproto.Field(3)),
 		field.Time("created_at").
+			Immutable().
 			Default(time.Now).
 			Annotations(entproto.Field(4)),
 		field.Time("updated_at").

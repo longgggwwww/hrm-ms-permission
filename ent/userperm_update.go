@@ -58,20 +58,6 @@ func (upu *UserPermUpdate) SetNillablePermID(u *uuid.UUID) *UserPermUpdate {
 	return upu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (upu *UserPermUpdate) SetCreatedAt(t time.Time) *UserPermUpdate {
-	upu.mutation.SetCreatedAt(t)
-	return upu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (upu *UserPermUpdate) SetNillableCreatedAt(t *time.Time) *UserPermUpdate {
-	if t != nil {
-		upu.SetCreatedAt(*t)
-	}
-	return upu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (upu *UserPermUpdate) SetUpdatedAt(t time.Time) *UserPermUpdate {
 	upu.mutation.SetUpdatedAt(t)
@@ -147,7 +133,7 @@ func (upu *UserPermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := upu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(userperm.Table, userperm.Columns, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(userperm.Table, userperm.Columns, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID))
 	if ps := upu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -157,9 +143,6 @@ func (upu *UserPermUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := upu.mutation.UserID(); ok {
 		_spec.SetField(userperm.FieldUserID, field.TypeString, value)
-	}
-	if value, ok := upu.mutation.CreatedAt(); ok {
-		_spec.SetField(userperm.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := upu.mutation.UpdatedAt(); ok {
 		_spec.SetField(userperm.FieldUpdatedAt, field.TypeTime, value)
@@ -237,20 +220,6 @@ func (upuo *UserPermUpdateOne) SetPermID(u uuid.UUID) *UserPermUpdateOne {
 func (upuo *UserPermUpdateOne) SetNillablePermID(u *uuid.UUID) *UserPermUpdateOne {
 	if u != nil {
 		upuo.SetPermID(*u)
-	}
-	return upuo
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (upuo *UserPermUpdateOne) SetCreatedAt(t time.Time) *UserPermUpdateOne {
-	upuo.mutation.SetCreatedAt(t)
-	return upuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (upuo *UserPermUpdateOne) SetNillableCreatedAt(t *time.Time) *UserPermUpdateOne {
-	if t != nil {
-		upuo.SetCreatedAt(*t)
 	}
 	return upuo
 }
@@ -343,7 +312,7 @@ func (upuo *UserPermUpdateOne) sqlSave(ctx context.Context) (_node *UserPerm, er
 	if err := upuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(userperm.Table, userperm.Columns, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(userperm.Table, userperm.Columns, sqlgraph.NewFieldSpec(userperm.FieldID, field.TypeUUID))
 	id, ok := upuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserPerm.id" for update`)}
@@ -370,9 +339,6 @@ func (upuo *UserPermUpdateOne) sqlSave(ctx context.Context) (_node *UserPerm, er
 	}
 	if value, ok := upuo.mutation.UserID(); ok {
 		_spec.SetField(userperm.FieldUserID, field.TypeString, value)
-	}
-	if value, ok := upuo.mutation.CreatedAt(); ok {
-		_spec.SetField(userperm.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := upuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(userperm.FieldUpdatedAt, field.TypeTime, value)
