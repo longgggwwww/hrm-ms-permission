@@ -10,6 +10,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // ExtService implements ExtServiceServer.
@@ -112,6 +114,74 @@ func (s *ExtService) UpdateUserRoles(ctx context.Context, req *UpdateUserRolesRe
 		return nil, status.Errorf(codes.Internal, "#6 UpdateUserRoles: failed to commit transaction: %v", err)
 	}
 	return &UpdateUserRolesResponse{Success: true}, nil
+}
+
+// GetUserPerms returns all permissions of a user.
+func (s *ExtService) GetUserPerms(ctx context.Context, req *GetUserPermsRequest) (*GetUserPermsResponse, error) {
+	if req.GetUserId() == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "#1 GetUserPerms: user_id is required")
+	}
+	userPerms, err := s.client.UserPerm.Query().Where(userperm.UserID(req.GetUserId())).WithPerm().All(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "#2 GetUserPerms: failed to query user perms: %v", err)
+	}
+	perms := make([]*PermExt, 0, len(userPerms))
+	for _, up := range userPerms {
+		perm := up.Edges.Perm
+		if perm == nil {
+			continue
+		}
+		perms = append(perms, &PermExt{
+			Id:          perm.ID[:],
+			Code:        perm.Code,
+			Name:        perm.Name,
+			Description: stringToStringValue(perm.Description),
+		})
+	}
+	return &GetUserPermsResponse{Perms: perms}, nil
+}
+
+// GetUserRoles returns all roles of a user.
+func (s *ExtService) GetUserRoles(ctx context.Context, req *GetUserRolesRequest) (*GetUserRolesResponse, error) {
+	if req.GetUserId() == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "#1 GetUserRoles: user_id is required")
+	}
+	userRoles, err := s.client.UserRole.Query().Where(userrole.UserID(req.GetUserId())).WithRole().All(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "#2 GetUserRoles: failed to query user roles: %v", err)
+	}
+	roles := make([]*RoleExt, 0, len(userRoles))
+	for _, ur := range userRoles {
+		role := ur.Edges.Role
+		if role == nil {
+			continue
+		}
+		var createdAt, updatedAt *timestamppb.Timestamp
+		if role.CreatedAt != nil {
+			createdAt = timestamppb.New(*role.CreatedAt)
+		}
+		if role.UpdatedAt != nil {
+			updatedAt = timestamppb.New(*role.UpdatedAt)
+		}
+		roles = append(roles, &RoleExt{
+			Id:          role.ID[:],
+			Code:        role.Code,
+			Name:        role.Name,
+			Color:       stringToStringValue(role.Color),
+			Description: stringToStringValue(role.Description),
+			CreatedAt:   createdAt,
+			UpdatedAt:   updatedAt,
+		})
+	}
+	return &GetUserRolesResponse{Roles: roles}, nil
+}
+
+// Helper for google.protobuf.StringValue
+func stringToStringValue(s string) *wrapperspb.StringValue {
+	if s == "" {
+		return nil
+	}
+	return wrapperspb.String(s)
 }
 
 // NewExtService returns a new ExtService.

@@ -6,48 +6,89 @@ option go_package = "github.com/longgggwwww/hr-ms-permission/ent/proto/entpb";
 
 import "google/protobuf/empty.proto";
 
-// ExtService defines operations for managing user permissions and roles
+import "google/protobuf/timestamp.proto";
+
+import "google/protobuf/wrappers.proto";
+
 service ExtService {
-  // Delete all UserPerms by user_id
-  rpc DeleteUserPermsByUserID (DeleteUserPermsByUserIDRequest) returns (google.protobuf.Empty);
-  // Delete all UserRoles by user_id
-  rpc DeleteUserRolesByUserID (DeleteUserRolesByUserIDRequest) returns (google.protobuf.Empty);
-  // Update UserPerms by deleting existing ones and creating new ones
-  rpc UpdateUserPerms (UpdateUserPermsRequest) returns (UpdateUserPermsResponse);
-  // Update UserRoles by deleting existing ones and creating new ones
-  rpc UpdateUserRoles (UpdateUserRolesRequest) returns (UpdateUserRolesResponse);
+  rpc DeleteUserPermsByUserID ( DeleteUserPermsByUserIDRequest ) returns ( google.protobuf.Empty );
+
+  rpc DeleteUserRolesByUserID ( DeleteUserRolesByUserIDRequest ) returns ( google.protobuf.Empty );
+
+  rpc UpdateUserPerms ( UpdateUserPermsRequest ) returns ( UpdateUserPermsResponse );
+
+  rpc UpdateUserRoles ( UpdateUserRolesRequest ) returns ( UpdateUserRolesResponse );
+
+  rpc GetUserPerms ( GetUserPermsRequest ) returns ( GetUserPermsResponse );
+
+  rpc GetUserRoles ( GetUserRolesRequest ) returns ( GetUserRolesResponse );
 }
 
-// Request message for deleting user perms by user_id
 message DeleteUserPermsByUserIDRequest {
   string user_id = 1;
 }
 
-// Request message for deleting user roles by user_id
 message DeleteUserRolesByUserIDRequest {
   string user_id = 1;
 }
 
-// Request message for updating user permissions
 message UpdateUserPermsRequest {
   string user_id = 1;
-  repeated string perm_ids = 2; // Hex-encoded permission IDs
+  repeated string perm_ids = 2;
 }
 
-// Response message for updating user permissions
 message UpdateUserPermsResponse {
-  // Placeholder for potential response fields
   bool success = 1;
 }
 
-// Request message for updating user roles
 message UpdateUserRolesRequest {
   string user_id = 1;
   repeated string role_ids = 2;
 }
 
-// Response message for updating user roles
 message UpdateUserRolesResponse {
-  // Placeholder for potential response fields
   bool success = 1;
+}
+
+message GetUserPermsRequest {
+  string user_id = 1;
+}
+
+
+message GetUserRolesRequest {
+  string user_id = 1;
+}
+
+message GetUserPermsResponse {
+  repeated PermExt perms = 1;
+}
+
+message GetUserRolesResponse {
+  repeated RoleExt roles = 1;
+}
+
+message RoleExt {
+  bytes id = 1;
+
+  string code = 2;
+
+  string name = 3;
+
+  google.protobuf.StringValue color = 4;
+
+  google.protobuf.StringValue description = 5;
+
+  google.protobuf.Timestamp created_at = 6;
+
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message PermExt {
+  bytes id = 1;
+
+  string code = 2;
+
+  string name = 3;
+
+  google.protobuf.StringValue description = 4;
 }
