@@ -81,6 +81,8 @@ message RoleExt {
   google.protobuf.Timestamp created_at = 6;
 
   google.protobuf.Timestamp updated_at = 7;
+
+  repeated PermExt perms = 8;
 }
 
 message PermExt {

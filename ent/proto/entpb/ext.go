@@ -146,7 +146,9 @@ func (s *ExtService) GetUserRoles(ctx context.Context, req *GetUserRolesRequest)
 	if req.GetUserId() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "#1 GetUserRoles: user_id is required")
 	}
-	userRoles, err := s.client.UserRole.Query().Where(userrole.UserID(req.GetUserId())).WithRole().All(ctx)
+	userRoles, err := s.client.UserRole.Query().Where(userrole.UserID(req.GetUserId())).WithRole(func(rq *ent.RoleQuery) {
+		rq.WithPerms()
+	}).All(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "#2 GetUserRoles: failed to query user roles: %v", err)
 	}
@@ -163,6 +165,20 @@ func (s *ExtService) GetUserRoles(ctx context.Context, req *GetUserRolesRequest)
 		if role.UpdatedAt != nil {
 			updatedAt = timestamppb.New(*role.UpdatedAt)
 		}
+		// Convert role permissions to PermExt
+		var rolePerms []*PermExt
+		if role.Edges.Perms != nil {
+			rolePerms = make([]*PermExt, 0, len(role.Edges.Perms))
+			for _, perm := range role.Edges.Perms {
+				rolePerms = append(rolePerms, &PermExt{
+					Id:          perm.ID[:],
+					Code:        perm.Code,
+					Name:        perm.Name,
+					Description: stringToStringValue(perm.Description),
+				})
+			}
+		}
+
 		roles = append(roles, &RoleExt{
 			Id:          role.ID[:],
 			Code:        role.Code,
@@ -171,6 +187,7 @@ func (s *ExtService) GetUserRoles(ctx context.Context, req *GetUserRolesRequest)
 			Description: stringToStringValue(role.Description),
 			CreatedAt:   createdAt,
 			UpdatedAt:   updatedAt,
+			Perms:       rolePerms,
 		})
 	}
 	return &GetUserRolesResponse{Roles: roles}, nil

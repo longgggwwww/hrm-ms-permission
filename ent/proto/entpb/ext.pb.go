@@ -489,6 +489,7 @@ type RoleExt struct {
 	Description   *wrapperspb.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
 	CreatedAt     *timestamppb.Timestamp  `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp  `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Perms         []*PermExt              `protobuf:"bytes,8,rep,name=perms,proto3" json:"perms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -568,6 +569,13 @@ func (x *RoleExt) GetCreatedAt() *timestamppb.Timestamp {
 func (x *RoleExt) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *RoleExt) GetPerms() []*PermExt {
+	if x != nil {
+		return x.Perms
 	}
 	return nil
 }
@@ -666,7 +674,7 @@ const file_entpb_ext_proto_rawDesc = "" +
 	"\x14GetUserPermsResponse\x12$\n" +
 	"\x05perms\x18\x01 \x03(\v2\x0e.entpb.PermExtR\x05perms\"<\n" +
 	"\x14GetUserRolesResponse\x12$\n" +
-	"\x05roles\x18\x01 \x03(\v2\x0e.entpb.RoleExtR\x05roles\"\xab\x02\n" +
+	"\x05roles\x18\x01 \x03(\v2\x0e.entpb.RoleExtR\x05roles\"\xd1\x02\n" +
 	"\aRoleExt\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\fR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
@@ -676,7 +684,8 @@ const file_entpb_ext_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x81\x01\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12$\n" +
+	"\x05perms\x18\b \x03(\v2\x0e.entpb.PermExtR\x05perms\"\x81\x01\n" +
 	"\aPermExt\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\fR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
@@ -728,24 +737,25 @@ var file_entpb_ext_proto_depIdxs = []int32{
 	12, // 3: entpb.RoleExt.description:type_name -> google.protobuf.StringValue
 	13, // 4: entpb.RoleExt.created_at:type_name -> google.protobuf.Timestamp
 	13, // 5: entpb.RoleExt.updated_at:type_name -> google.protobuf.Timestamp
-	12, // 6: entpb.PermExt.description:type_name -> google.protobuf.StringValue
-	0,  // 7: entpb.ExtService.DeleteUserPermsByUserID:input_type -> entpb.DeleteUserPermsByUserIDRequest
-	1,  // 8: entpb.ExtService.DeleteUserRolesByUserID:input_type -> entpb.DeleteUserRolesByUserIDRequest
-	2,  // 9: entpb.ExtService.UpdateUserPerms:input_type -> entpb.UpdateUserPermsRequest
-	4,  // 10: entpb.ExtService.UpdateUserRoles:input_type -> entpb.UpdateUserRolesRequest
-	6,  // 11: entpb.ExtService.GetUserPerms:input_type -> entpb.GetUserPermsRequest
-	7,  // 12: entpb.ExtService.GetUserRoles:input_type -> entpb.GetUserRolesRequest
-	14, // 13: entpb.ExtService.DeleteUserPermsByUserID:output_type -> google.protobuf.Empty
-	14, // 14: entpb.ExtService.DeleteUserRolesByUserID:output_type -> google.protobuf.Empty
-	3,  // 15: entpb.ExtService.UpdateUserPerms:output_type -> entpb.UpdateUserPermsResponse
-	5,  // 16: entpb.ExtService.UpdateUserRoles:output_type -> entpb.UpdateUserRolesResponse
-	8,  // 17: entpb.ExtService.GetUserPerms:output_type -> entpb.GetUserPermsResponse
-	9,  // 18: entpb.ExtService.GetUserRoles:output_type -> entpb.GetUserRolesResponse
-	13, // [13:19] is the sub-list for method output_type
-	7,  // [7:13] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	11, // 6: entpb.RoleExt.perms:type_name -> entpb.PermExt
+	12, // 7: entpb.PermExt.description:type_name -> google.protobuf.StringValue
+	0,  // 8: entpb.ExtService.DeleteUserPermsByUserID:input_type -> entpb.DeleteUserPermsByUserIDRequest
+	1,  // 9: entpb.ExtService.DeleteUserRolesByUserID:input_type -> entpb.DeleteUserRolesByUserIDRequest
+	2,  // 10: entpb.ExtService.UpdateUserPerms:input_type -> entpb.UpdateUserPermsRequest
+	4,  // 11: entpb.ExtService.UpdateUserRoles:input_type -> entpb.UpdateUserRolesRequest
+	6,  // 12: entpb.ExtService.GetUserPerms:input_type -> entpb.GetUserPermsRequest
+	7,  // 13: entpb.ExtService.GetUserRoles:input_type -> entpb.GetUserRolesRequest
+	14, // 14: entpb.ExtService.DeleteUserPermsByUserID:output_type -> google.protobuf.Empty
+	14, // 15: entpb.ExtService.DeleteUserRolesByUserID:output_type -> google.protobuf.Empty
+	3,  // 16: entpb.ExtService.UpdateUserPerms:output_type -> entpb.UpdateUserPermsResponse
+	5,  // 17: entpb.ExtService.UpdateUserRoles:output_type -> entpb.UpdateUserRolesResponse
+	8,  // 18: entpb.ExtService.GetUserPerms:output_type -> entpb.GetUserPermsResponse
+	9,  // 19: entpb.ExtService.GetUserRoles:output_type -> entpb.GetUserRolesResponse
+	14, // [14:20] is the sub-list for method output_type
+	8,  // [8:14] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_entpb_ext_proto_init() }
