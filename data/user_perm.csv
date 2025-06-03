@@ -1,2 +1,8 @@
 user_id,perm_code
-1,HR_MANAGEMENT
+1,task_report:create
+1,task_report:update
+1,leave_request:read:admin
+1,leave_request:reject:admin
+1,leave_request:approve:admin
+1,leave_request:read:employee
+1,leave_request:create:employee

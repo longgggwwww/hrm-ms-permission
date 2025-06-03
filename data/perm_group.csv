@@ -1,4 +1,3 @@
 code,name
-HR,Nhân sự
-FIN,Tài chính
-PRJ,Dự án
+task_report,Báo cáo công việc
+leave_request,Quản lý đơn nghỉ phép

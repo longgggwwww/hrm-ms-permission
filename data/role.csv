@@ -1,4 +1,3 @@
 code,name,color,perm_codes,description
-manager,Quản lý,#FF5733,"HR_MANAGEMENT,HR_MANAGEMENT_READ,HR_MANAGEMENT_WRITE,HR_MANAGEMENT_UPDATE,HR_MANAGEMENT_DELETE,FIN_MANAGEMENT,FIN_MANAGEMENT_READ,FIN_MANAGEMENT_WRITE,FIN_MANAGEMENT_UPDATE,FIN_MANAGEMENT_DELETE,PRJ_MANAGEMENT,PRJ_MANAGEMENT_READ,PRJ_MANAGEMENT_WRITE,PRJ_MANAGEMENT_UPDATE,PRJ_MANAGEMENT_DELETE",
-monitor,Giám sát,#33FF57,"HR_MANAGEMENT_READ,FIN_MANAGEMENT_READ,PRJ_MANAGEMENT_READ","Vai trò giám sát với quyền chỉ đọc"
-user,Người dùng,#3357FF,,
+manager,Quản trị viên,#FF0000,"task_report:create;task_report:update;leave_request:read:admin;leave_request:reject:admin;leave_request:approve:admin","Quản trị toàn bộ hệ thống"
+employee,Nhân viên,#00FF00,"leave_request:read:employee;leave_request:create:employee","Nhân viên thông thường"

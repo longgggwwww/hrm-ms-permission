@@ -1,16 +1,8 @@
 code,group_code,name,description
-HR_MANAGEMENT,HR,Quản lý nhân sự,Quyền quản lý thông tin nhân sự
-HR_MANAGEMENT_READ,HR,Xem thông tin nhân sự,Quyền xem thông tin nhân sự
-HR_MANAGEMENT_WRITE,HR,Tạo nhân sự,Quyền tạo nhân sự
-HR_MANAGEMENT_UPDATE,HR,Cập nhật thông tin nhân sự,Quyền cập nhật thông tin nhân sự
-HR_MANAGEMENT_DELETE,HR,Xóa nhân sự,Quyền xóa nhân sự
-FIN_MANAGEMENT,FIN,Quản lý tài chính,Quyền quản lý thông tin tài chính
-FIN_MANAGEMENT_READ,FIN,Xem thông tin tài chính,Quyền xem thông tin tài chính
-FIN_MANAGEMENT_WRITE,FIN,Tạo thông tin tài chính,Quyền tạo thông tin tài chính
-FIN_MANAGEMENT_UPDATE,FIN,Cập nhật thông tin tài chính,Quyền cập nhật thông tin tài chính
-FIN_MANAGEMENT_DELETE,FIN,Xóa thông tin tài chính,Quyền xóa thông tin tài chính
-PRJ_MANAGEMENT,PRJ,Quản lý dự án,Quyền quản lý thông tin dự án
-PRJ_MANAGEMENT_READ,PRJ,Xem thông tin dự án,Quyền xem thông tin dự án
-PRJ_MANAGEMENT_WRITE,PRJ,Tạo dự án,Quyền tạo dự án
-PRJ_MANAGEMENT_UPDATE,PRJ,Cập nhật thông tin dự án,Quyền cập nhật thông tin dự án
-PRJ_MANAGEMENT_DELETE,PRJ,Xóa dự án,Quyền xóa dự án
+task_report:create,task_report,Tạo báo cáo công việc,Quyền tạo báo cáo công việc
+task_report:update,task_report,Cập nhật báo cáo công việc,Quyền cập nhật báo cáo công việc
+leave_request:read:admin,leave_request,Xem tất cả đơn nghỉ phép,Quyền xem tất cả đơn nghỉ phép (dành cho quản trị)
+leave_request:reject:admin,leave_request,Duyệt từ chối đơn nghỉ phép,Quyền duyệt từ chối đơn nghỉ phép (dành cho quản trị)
+leave_request:approve:admin,leave_request,Duyệt chấp nhận đơn nghỉ phép,Quyền duyệt chấp nhận đơn nghỉ phép (dành cho quản trị)
+leave_request:read:employee,leave_request,Xem đơn nghỉ phép của tôi,Quyền xem tất cả đơn nghỉ phép (dành cho nhân viên)
+leave_request:create:employee,leave_request,Tạo đơn nghỉ phép,Quyền tạo đơn nghỉ phép
