@@ -6,3 +6,7 @@ leave_request:reject:admin,leave_request,Duyệt từ chối đơn nghỉ phép,
 leave_request:approve:admin,leave_request,Duyệt chấp nhận đơn nghỉ phép,Quyền duyệt chấp nhận đơn nghỉ phép (dành cho quản trị)
 leave_request:read:employee,leave_request,Xem đơn nghỉ phép của tôi,Quyền xem tất cả đơn nghỉ phép (dành cho nhân viên)
 leave_request:create:employee,leave_request,Tạo đơn nghỉ phép,Quyền tạo đơn nghỉ phép
+employee:create,employee,Tạo nhân viên,Quyền tạo nhân viên
+employee:read,employee,Xem nhân viên,Quyền xem danh sách và chi tiết nhân viên
+employee:update,employee,Cập nhật nhân viên,Quyền cập nhật thông tin nhân viên
+employee:delete,employee,Xóa nhân viên,Quyền xóa nhân viên
