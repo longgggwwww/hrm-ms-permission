@@ -69,10 +69,10 @@ func SeedRoles(ctx context.Context, client *ent.Client) error {
 		}
 
 		// Handle perm_codes
-		// Split elements by comma
+		// Split elements by semicolon
 		permCodes := record[permCodesIdx]
 		if permCodes != "" {
-			permCodesList := strings.Split(permCodes, ",")
+			permCodesList := strings.Split(permCodes, ";")
 			for _, permCode := range permCodesList {
 				// Find the permission by code
 				perm, err := client.Perm.Query().

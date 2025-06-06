@@ -20,6 +20,8 @@ services:
   perm_postgres:
     image: postgres:16-alpine
     container_name: hrm_perm_postgres
+    ports:
+      - "5434:5432"
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER:-root}

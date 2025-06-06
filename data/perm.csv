@@ -1,12 +1,36 @@
 code,group_code,name,description
-task_report:create,task_report,Tạo báo cáo công việc,Quyền tạo báo cáo công việc
-task_report:update,task_report,Cập nhật báo cáo công việc,Quyền cập nhật báo cáo công việc
-leave_request:read:admin,leave_request,Xem tất cả đơn nghỉ phép,Quyền xem tất cả đơn nghỉ phép (dành cho quản trị)
-leave_request:reject:admin,leave_request,Duyệt từ chối đơn nghỉ phép,Quyền duyệt từ chối đơn nghỉ phép (dành cho quản trị)
-leave_request:approve:admin,leave_request,Duyệt chấp nhận đơn nghỉ phép,Quyền duyệt chấp nhận đơn nghỉ phép (dành cho quản trị)
-leave_request:read:employee,leave_request,Xem đơn nghỉ phép của tôi,Quyền xem tất cả đơn nghỉ phép (dành cho nhân viên)
-leave_request:create:employee,leave_request,Tạo đơn nghỉ phép,Quyền tạo đơn nghỉ phép
 employee:create,employee,Tạo nhân viên,Quyền tạo nhân viên
 employee:read,employee,Xem nhân viên,Quyền xem danh sách và chi tiết nhân viên
 employee:update,employee,Cập nhật nhân viên,Quyền cập nhật thông tin nhân viên
 employee:delete,employee,Xóa nhân viên,Quyền xóa nhân viên
+project:create,project,Tạo dự án,Quyền tạo dự án
+project:read,project,Xem dự án,Quyền xem danh sách và chi tiết dự án
+project:update,project,Cập nhật dự án,Quyền cập nhật thông tin dự án
+project:delete,project,Xóa dự án,Quyền xóa dự án
+leave_request:read:admin,leave_request,Xem tất cả đơn nghỉ phép,Quyền xem tất cả đơn nghỉ phép (dành cho quản trị)
+leave_request:read:employee,leave_request,Xem đơn nghỉ phép của tôi,Quyền xem tất cả đơn nghỉ phép (dành cho nhân viên)
+leave_request:approve:admin,leave_request,Duyệt chấp nhận đơn nghỉ phép,Quyền duyệt chấp nhận đơn nghỉ phép (dành cho quản trị)
+leave_request:reject:admin,leave_request,Duyệt từ chối đơn nghỉ phép,Quyền duyệt từ chối đơn nghỉ phép (dành cho quản trị)
+leave_request:create:employee,leave_request,Tạo đơn nghỉ phép,Quyền tạo đơn nghỉ phép
+task_report:create,task_report,Tạo báo cáo công việc,Quyền tạo báo cáo công việc
+task_report:update,task_report,Cập nhật báo cáo công việc,Quyền cập nhật báo cáo công việc
+task:create,task,Tạo công việc,Quyền tạo công việc
+task:read,task,Xem công việc,Quyền xem danh sách và chi tiết công việc
+task:update,task,Cập nhật công việc,Quyền cập nhật thông tin công việc
+task:delete,task,Xóa công việc,Quyền xóa công việc
+org:create,org,Tạo tổ chức,Quyền tạo tổ chức
+org:read,org,Xem tổ chức,Quyền xem danh sách và chi tiết tổ chức
+org:update,org,Cập nhật tổ chức,Quyền cập nhật thông tin tổ chức
+org:delete,org,Xóa tổ chức,Quyền xóa tổ chức
+department:create,department,Tạo phòng ban,Quyền tạo phòng ban
+department:read,department,Xem phòng ban,Quyền xem danh sách và chi tiết phòng ban
+department:update,department,Cập nhật phòng ban,Quyền cập nhật thông tin phòng ban
+department:delete,department,Xóa phòng ban,Quyền xóa phòng ban
+position:create,position,Tạo vị trí,Quyền tạo vị trí công việc
+position:read,position,Xem vị trí,Quyền xem danh sách và chi tiết vị trí công việc
+position:update,position,Cập nhật vị trí,Quyền cập nhật thông tin vị trí công việc
+position:delete,position,Xóa vị trí,Quyền xóa vị trí công việc
+label:create,label,Tạo nhãn,Quyền tạo nhãn
+label:read,label,Xem nhãn,Quyền xem danh sách và chi tiết nhãn
+label:update,label,Cập nhật nhãn,Quyền cập nhật thông tin nhãn
+label:delete,label,Xóa nhãn,Quyền xóa nhãn

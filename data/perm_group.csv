@@ -1,4 +1,10 @@
 code,name
-task_report,Báo cáo công việc
-leave_request,Quản lý đơn nghỉ phép
 employee,Quản lý nhân viên
+project,Quản lý dự án
+leave_request,Quản lý đơn nghỉ phép
+task_report,Báo cáo công việc
+task,Quản lý công việc
+org,Quản lý tổ chức
+department,Quản lý phòng ban
+position,Quản lý vị trí
+label,Quản lý nhãn
